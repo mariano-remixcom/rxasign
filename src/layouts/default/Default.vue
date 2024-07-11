@@ -18,6 +18,7 @@ html {
   min-height: 100%;
 }
 body {
+  background-color: $gray-100; /* color de fondo */
   margin-bottom: 60px; /* Margin bottom equal to footer height */
 }
 .default-page-wrapper {

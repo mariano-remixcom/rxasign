@@ -1,7 +1,7 @@
 <template>
   <footer class="footer">
     <div class="container">
-      <span>Developed by</span> <a href="https://github.com/kouts" target="_blank" rel="noopener">@kouts</a>
+      <span>Un proyecto</span> <a href="https://www.remixcom.com/" target="_blank" rel="noopener">remixcom</a>
     </div>
   </footer>
 </template>

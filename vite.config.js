@@ -10,8 +10,8 @@ export default defineConfig({
       minify: true,
       inject: {
         data: {
-          title: 'ProjectName',
-          description: 'A single page application created using Vue.js 3'
+          title: 'Asignaciones - Proyecto Interno RX',
+          description: 'Gestión de proyectos, recursos y horas por períodos. Una app re cheta.'
         }
       }
     })
