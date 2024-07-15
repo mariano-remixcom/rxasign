@@ -19,6 +19,14 @@ const routes = [
     }
   },
   {
+    path: '/proyectos/agregar',
+    name: 'Agregar Proyecto',
+    component: () => import(/* webpackChunkName: "proyectosagregar" */ '../views/ProyectosAgregar.vue'),
+    meta: {
+      layout: 'default'
+    }
+  },
+  {
     path: '/horas',
     name: 'Registro de horas',
     component: () => import(/* webpackChunkName: "horas" */ '../views/Horas.vue'),

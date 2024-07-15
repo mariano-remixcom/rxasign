@@ -1,67 +1,16 @@
-<!-- <template>
-  <div class="container mt-5">
-    <div class="p-5 mb-4 box rounded-3">
-      <div class="container-fluid py-5">
-        <h1 class="display-5 fw-bold">Login</h1>
-        <b-form @submit.prevent="handleSubmit">
-          <b-form-group label="Email" label-for="email">
-            <b-form-input
-              id="email"
-              type="email"
-              v-model="email"
-              required
-            ></b-form-input>
-          </b-form-group>
-
-          <b-form-group label="Password" label-for="password">
-            <b-form-input
-              id="password"
-              type="password"
-              v-model="password"
-              required
-            ></b-form-input>
-          </b-form-group>
-
-          <b-button type="submit" variant="primary" block>Login</b-button>
-        </b-form>
-      </div>
-    </div>
+<!-- <form>
+  <div class="form-group">
+    <label for="exampleInputEmail1">Email address</label>
+    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
   </div>
-</template>
-
-<script lang="ts">
-import { defineComponent, ref } from 'vue';
-import { useRouter } from 'vue-router';
-
-export default defineComponent({
-  name: 'Login',
-  setup() {
-    const email = ref<string>('');
-    const password = ref<string>('');
-    const router = useRouter();
-
-    const handleSubmit = () => {
-      // Simulación de autenticación
-      if (email.value === 'user@example.com' && password.value === 'password') {
-        // Redirigir al dashboard u otra ruta protegida
-        router.push('/dashboard');
-      } else {
-        alert('Credenciales incorrectas');
-      }
-    };
-
-    return {
-      email,
-      password,
-      handleSubmit
-    };
-  }
-});
-</script>
-
-<style scoped>
-.container {
-  max-width: 400px;
-}
-</style>
- -->
+  <div class="form-group">
+    <label for="exampleInputPassword1">Password</label>
+    <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+  </div>
+  <div class="form-check">
+    <input type="checkbox" class="form-check-input" id="exampleCheck1">
+    <label class="form-check-label" for="exampleCheck1">Check me out</label>
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form> -->

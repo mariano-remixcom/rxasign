@@ -5,31 +5,29 @@
         <h1 class="display-6 fw-bold">Proyectos</h1>
         <p class="text-muted">Lista de proyectos por cliente con su equipo.</p>
       </div>
-      <router-link to="#">
-        <button class="btn btn-primary btn-lg">Nuevo</button>
-      </router-link>
+      <!-- Acciones inicio -->
+      <div class="d-flex gap-2">
+        <router-link to="/proyectos/agregar">
+          <button class="btn btn-primary btn-lg">Nuevo</button>
+        </router-link>
+      </div>
+      <!-- Acciones fin -->
     </div>
   </div>
   <div id="app">
     <ProyectosTable />
-  </div>
+  </div> 
 </template>
 
 <script>
-import ProyectosTable from '@/components/ProyectosTable.vue'
+import ProyectosTable from '@/components/ProyectosTable.vue';
 
 export default {
   name: 'App',
   components: {
-    ProyectosTable
+    ProyectosTable,
   },
-  methods: {
-    addProject() {
-      // Lógica para agregar un nuevo proyecto
-      console.log('Agregar nuevo proyecto')
-    }
-  }
-}
+};
 </script>
 
 <style scoped>
