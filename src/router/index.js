@@ -23,7 +23,7 @@ const routes = [
     name: 'Agregar Proyecto',
     component: () => import(/* webpackChunkName: "proyectosagregar" */ '../views/ProyectosAgregar.vue'),
     meta: {
-      layout: 'default'
+      layout: 'admin' // Cambiar layout a 'admin'
     }
   },
   {
@@ -51,6 +51,7 @@ const routes = [
     }
   }
 ]
+
 const router = createRouter({
   linkActiveClass: 'active',
   history,

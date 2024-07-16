@@ -1,101 +1,93 @@
 <template>
-    <div class="alert alert-primary w-75" role="alert">
-        Integrantes del equipo
-      </div>
-    <div class="wmt-4 container w-75 mb-4">
-      <table class="table">
-        <thead class="table-light">
-          <tr>
-            <th scope="col">Nombre</th>
-            <th scope="col">Cliente</th>
-            <th scope="col">Integrantes</th>
-            <th scope="col">Contrato</th>
-            <th scope="col">Asignadas</th>
-            <th scope="col">Modificado</th>
-            <th scope="col">Acciones</th>
-          </tr>
-        </thead>
-        <tbody class="table-group-divider align-middle">
-          <tr v-for="(item, index) in tableData" :key="index">
-            <td>{{ item.nombre }}</td>
-            <td>{{ item.cliente }}</td>
-            <td>
-              <div class="avatars">
-                <template v-for="(nombre, idx) in item.nombres" :key="idx">
-                  <i class="bi bi-person-circle avatar-fallback" :title="nombre"></i>
-                </template>
-              </div>
-            </td>
-            <td>{{ item.contrato }}</td>
-            <td>{{ item.asignadas }}</td>
-            <td>{{ item.modificado }}</td>
-            <td>
-              <button class="btn btn-link btn-m"><i class="bi bi-clipboard-data"></i></button>
-              <button class="btn btn-link btn-m"><i class="bi bi-check-circle"></i></button>
-              <button class="btn btn-link btn-m"><i class="bi bi-pencil-square"></i></button>
-              <button class="btn btn-link btn-m"><i class="bi bi-trash"></i></button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+  <div class="alert alert-primary w-75" role="alert">
+    Integrantes del equipo
+  </div>
+  <div class="wmt-4 container w-75 mb-4">
+    <table class="table">
+      <thead class="table-light">
+        <tr>
+          <th scope="col">Nombre</th>
+          <th scope="col">Rol</th>
+          <th scope="col">Disponibles</th>
+          <th scope="col">Asignadas (hs)</th>
+          <th scope="col">Acciones</th>
+        </tr>
+      </thead>
+      <tbody class="table-group-divider align-middle">
+        <tr v-for="(member, index) in teamMembers" :key="index">
+          <td>
+            <select v-model="member.name" class="form-select">
+              <option v-for="name in names" :key="name" :value="name">{{ name }}</option>
+            </select>
+          </td>
+          <td>
+            <select v-model="member.role" class="form-select">
+              <option v-for="role in roles" :key="role" :value="role">{{ role }}</option>
+            </select>
+          </td>
+          <td>{{ member.hoursAvailable - member.hoursAssigned }} hs</td>
+          <td>
+            <input type="number" v-model="member.hoursAssigned" class="form-control" min="0" :max="member.hoursAvailable" />
+          </td>
+          <td>
+            <button class="btn btn-link btn-m" @click="removeMember(index)"><i class="bi bi-trash"></i></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <button class="btn btn-primary" @click="addMember">Agregar Integrante</button>
+  </div>
 </template>
 
 <script>
 export default {
-  name: 'ProyectosTable',
+  name: 'ProjectAddTeam',
   data() {
     return {
-      tableData: [
+      names: [
+        'Rodrigo Loza',
+        'Agustin Menegat',
+        'Joaquin Zanardi',
+        'Matias Berthelot',
+        'Yanina Silva',
+        'Mariano Soulé',
+        'Yoana Gerling',
+        'Patricio Sabatini'
+      ],
+      roles: ['Desarrollador', 'Diseñador', 'Gerente de Proyecto', 'QA'],
+      teamMembers: [
         {
-          nombre: 'Recaudaciones',
-          cliente: 'Bancor',
-          nombres: ['Rodrigo Loza', 'Agustin Menegat', 'Joaquin Zanardi', 'Matias Berthelot'],
-          contrato: '160 hs',
-          asignadas: '140 hs',
-          modificado: '2023-07-01'
+          name: 'Rodrigo Loza',
+          role: 'Desarrollador',
+          hoursAvailable: 160,
+          hoursAssigned: 140
         },
         {
-          nombre: 'Odoo dev',
-          cliente: 'Hoklan',
-          nombres: ['Rodrigo Loza', 'Yanina Silva', 'Mariano Soulé', 'Joaquin Zanardi', 'Yoana Gerling', 'Patricio Sabatini'],
-          contrato: '160 hs',
-          asignadas: '140 hs',
-          modificado: '2023-07-01'
+          name: 'Agustin Menegat',
+          role: 'Diseñador',
+          hoursAvailable: 160,
+          hoursAssigned: 130
         },
         {
-          nombre: 'Desarrollo App',
-          cliente: 'Checkpet',
-          nombres: ['Agustin Menegat', 'Yanina Silva', 'Yoana Gerling'],
-          contrato: '160 hs',
-          asignadas: '140 hs',
-          modificado: '2023-07-01'
-        },
-        {
-          nombre: 'Discovery',
-          cliente: 'FUDU',
-          nombres: ['Yanina Silva', 'Patricio Sabatini'],
-          contrato: '160 hs',
-          asignadas: '140 hs',
-          modificado: '2023-07-01'
-        },
-        {
-          nombre: 'Asignaciones',
-          cliente: 'Remix',
-          nombres: ['Maurizio Volpe', 'Joaquin Zanardi', 'Yoana Gerling', 'Patricio Sabatini'],
-          contrato: '160 hs',
-          asignadas: '140 hs',
-          modificado: '2023-07-01'
-        },
-        {
-          nombre: 'Redes',
-          cliente: 'Remix',
-          nombres: ['Yanina Silva', 'Mariano Soulé', 'Patricio Sabatini'],
-          contrato: '160 hs',
-          asignadas: '140 hs',
-          modificado: '2023-07-01'
+          name: 'Joaquin Zanardi',
+          role: 'Gerente de Proyecto',
+          hoursAvailable: 160,
+          hoursAssigned: 120
         }
       ]
+    }
+  },
+  methods: {
+    addMember() {
+      this.teamMembers.push({
+        name: '',
+        role: '',
+        hoursAvailable: 160, // Horas disponibles por defecto
+        hoursAssigned: 0
+      });
+    },
+    removeMember(index) {
+      this.teamMembers.splice(index, 1);
     }
   },
   mounted() {
@@ -103,15 +95,15 @@ export default {
   },
   updated() {
     this.initTooltips()
-  }
-  /*  methods: {
+  },
+  methods: {
     initTooltips() {
       const tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'));
       tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
       });
     }
-  } */
+  }
 }
 </script>
 
@@ -120,22 +112,5 @@ export default {
 button.btn.btn-link.btn-m {
   --bs-btn-padding-x: 0.2rem;
   --bs-btn-padding-y: 0;
-}
-/* avatares */
-.avatars {
-  display: flex;
-}
-
-.avatar,
-.avatar-fallback {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  margin-right: 0px; /* Espacio entre avatares */
-}
-
-.avatar:last-child,
-.avatar-fallback:last-child {
-  margin-right: 0; /* Eliminar margen derecho del último avatar */
 }
 </style>
