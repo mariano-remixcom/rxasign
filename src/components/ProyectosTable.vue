@@ -96,19 +96,19 @@ export default {
     }
   },
   mounted() {
-    this.initTooltips()
+    // this.initTooltips();
   },
   updated() {
-    this.initTooltips()
+    // this.initTooltips();
+  },
+  methods: {
+    // initTooltips() {
+    //   const tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'));
+    //   tooltipTriggerList.map(function (tooltipTriggerEl) {
+    //     return new bootstrap.Tooltip(tooltipTriggerEl);
+    //   });
+    // }
   }
-  /*  methods: {
-    initTooltips() {
-      const tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'));
-      tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-      });
-    }
-  } */
 }
 </script>
 

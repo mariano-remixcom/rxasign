@@ -96,10 +96,10 @@ export default {
     }
   },
   mounted() {
-    this.initTooltips()
+    // this.initTooltips()
   },
   updated() {
-    this.initTooltips()
+    // this.initTooltips()
   }
   /* methods: {
     initTooltips() {
