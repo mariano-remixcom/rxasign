@@ -50,3 +50,36 @@ const router = createRouter({
 })
 
 export { router }
+// import { createRouter, createWebHistory } from 'vue-router';
+// import Vue from 'vue';
+// import Dashboard from '../views/Dashboard.vue';
+// import Proyectos from '../views/Proyectos.vue';
+// import Horas from '../views/Horas.vue';
+// import Usuarios from '../views/Usuarios.vue';
+
+// Vue.use(Router);
+
+// export default new Router({
+//   routes: [
+//     {
+//       path: '/',
+//       name: 'Dashboard',
+//       component: Dashboard
+//     },
+//     {
+//       path: '/proyectos',
+//       name: 'Proyectos',
+//       component: Proyectos
+//     },
+//     {
+//       path: '/horas',
+//       name: 'Horas',
+//       component: Horas
+//     },
+//     {
+//       path: '/usuarios',
+//       name: 'Usuarios',
+//       component: Usuarios
+//     },
+//   ]
+// });
