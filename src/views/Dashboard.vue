@@ -15,11 +15,13 @@
             <p class="card-text text-secondary">Lista de proyectos por cliente con su equipo.</p>
           </div>
           <!-- Columna de los links -->
-          <div class="link-column">
-            <a href="#" class="btn btn-secondary m-2">Agregar</a>
-            <a class="btn btn-primary">
-              <router-link to="/proyectos" class="nav-link">Abrir</router-link>
-            </a>
+          <div class="d-flex gap-2">
+            <router-link to="/proyectos/agregar">
+              <button class="btn btn-secondary">Agregar</button>
+            </router-link>
+            <router-link to="/proyectos">
+              <button class="btn btn-primary">Abrir</button>
+            </router-link>
           </div>
         </div>
       </div>

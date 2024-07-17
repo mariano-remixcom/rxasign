@@ -21,6 +21,12 @@ A single page app [Vite](https://vitejs.dev) starter template, created to easily
 npm install
 ```
 
+### el plugin de Vue para Vite 
+npm install @vitejs/plugin-vue --save-dev
+
+### correr el proyecto
+ npx vite --port=4000
+
 ### Compiles and hot-reloads for development
 
 ```
