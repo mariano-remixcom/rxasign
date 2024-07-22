@@ -1,5 +1,5 @@
 <template>
-  <div v-if="proyecto" class="container">
+  <div v-if="!!proyecto" class="container">
     <div class="mb-4">
       <div class="d-flex align-items-center justify-content-between">
         <div class="me-2">
@@ -8,7 +8,7 @@
           </button>
         </div>
         <div class="me-auto">
-          <h1 class="display-6 fw-bold">{{ proyecto.cliente.nombre }} - {{ proyecto.nombreProyecto }}</h1>
+          <h1 class="display-6 fw-bold">{{ proyecto.cliente.nombre }} - {{ proyecto.nombre }}</h1>
         </div>
         <div class="d-flex">
           <router-link to="#" class="me-2">
@@ -20,20 +20,33 @@
         </div>
       </div>
     </div>
-    <div class="border-top border-dotted border-gray display-fluid"></div>
-    <div id="app"></div>
+
+    <div class="border-top border-dotted border-black-50 display-fluid mb-3"></div>
+
+    <div class="mb-3">
+      <proyecto-summary :proyecto="proyecto" />
+    </div>
+
+    <div>
+      <equipo-summary />
+    </div>
   </div>
 </template>
 <script setup>
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
+</script>
+
+<script>
+import EquipoSummary from '@/components/proyectos/EquipoSummary.vue'
+import ProyectoSummary from '@/components/proyectos/ProyectoSummary.vue'
 
 const PROYECTO = {
-  nombreProyecto: 'Empleado digital',
+  nombre: 'Empleado digital',
   cliente: { nombre: 'Bancor' },
-  fechaInicio: new Date('01/06/2024'),
-  fechaFin: new Date('31/12/2024'),
-  fechaUltimaEdicion: new Date('25/06/24 15:17'),
+  fechaInicio: new Date('06/01/2024'),
+  fechaFin: new Date('12/31/2024'),
+  fechaUltimaEdicion: new Date('06/25/24 15:17'),
   horasMensualesContratadas: 160,
   equipo: []
 }
@@ -63,26 +76,31 @@ async function fetchData(id) {
 function getProyecto(id) {
   return Promise.resolve(PROYECTO)
 }
+
+export default {
+  components: {
+    ProyectoSummary,
+    EquipoSummary
+  }
+}
 </script>
+
 <style scoped>
 .btn-secondary {
-  --bs-btn-color: var(--color-primary);
+  --bs-btn-color: var(--bs-primary);
   --bs-btn-font-weight: 600;
   --bs-btn-bg: #ebe5fc;
   --bs-btn-border-color: #ebe5fc;
-  --bs-btn-hover-color: var(--color-primary);
+  --bs-btn-hover-color: var(--bs-primary);
   --bs-btn-hover-bg: #d5c8fa;
   --bs-btn-hover-border-color: var(--bs-btn-hover-bg);
-  --bs-btn-active-color: var(--color-primary);
+  --bs-btn-active-color: var(--bs-primary);
   --bs-btn-active-bg: #b19bf0;
   --bs-btn-active-border-color: var(--bs-btn-active-bg);
 }
 
 .border-dotted {
-  --bs-border-style: dashed;
-}
-
-.border-gray {
-  --bs-border-color: #828282;
+  --bs-border-style: dotted;
+  --bs-border-width: 2px;
 }
 </style>
