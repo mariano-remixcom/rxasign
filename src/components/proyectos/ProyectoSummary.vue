@@ -31,11 +31,13 @@
 </template>
 <script>
 import FieldWithLabel from './FieldWithLabel.vue'
+import FormatDate from '@/mixins/FormatDate.vue'
 
 export default {
   components: {
     FieldWithLabel
   },
+  mixins: [FormatDate],
   props: {
     proyecto: {
       type: Object,
@@ -53,40 +55,6 @@ export default {
   methods: {
     getDaysBetweenDates: function (first, second) {
       return Math.round((second - first) / (1000 * 60 * 60 * 24))
-    },
-    formatDate: function (value, format) {
-      if (!value) return ''
-
-      const date = new Date(value)
-
-      if (isNaN(date.getTime())) {
-        return value
-      }
-
-      switch (format) {
-        case 'dateAndTime': {
-          const formattedDate = new Intl.DateTimeFormat('es-AR', {
-            day: '2-digit',
-            month: '2-digit',
-            year: '2-digit',
-            hour: 'numeric',
-            minute: 'numeric',
-            hourCycle: 'h23'
-          }).format(date)
-
-          return formattedDate.replace(',', '')
-        }
-        case 'monthAndYear': {
-          const formattedDate = new Intl.DateTimeFormat('es-AR', {
-            month: 'long',
-            year: 'numeric'
-          }).formatToParts(date)
-
-          return `${formattedDate[0].value} ${formattedDate[2].value}`
-        }
-        default:
-          return new Intl.DateTimeFormat('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(date)
-      }
     },
     capitalizeFirstLetter: function (value) {
       return value.charAt(0).toUpperCase() + value.slice(1)

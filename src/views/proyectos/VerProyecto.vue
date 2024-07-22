@@ -28,7 +28,7 @@
     </div>
 
     <div>
-      <equipo-summary />
+      <equipo-summary :equipo="proyecto.equipo.miembros" :fecha-ultima-edicion="proyecto.equipo.fechaUltimaEdicion" />
     </div>
   </div>
 </template>
@@ -38,6 +38,8 @@ import ProyectoSummary from '@/components/proyectos/ProyectoSummary.vue'
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
+// TODO: Agregar navegación desde y hasta esta page
+
 const PROYECTO = {
   nombre: 'Empleado digital',
   cliente: { nombre: 'Bancor' },
@@ -45,7 +47,41 @@ const PROYECTO = {
   fechaFin: new Date('12/31/2024'),
   fechaUltimaEdicion: new Date('06/25/24 15:17'),
   horasMensualesContratadas: 160,
-  equipo: []
+  equipo: {
+    miembros: [
+      {
+        nombre: 'Yoana Gerling',
+        rol: 'QA',
+        horasDisponibles: 80,
+        horasAsignadas: 40
+      },
+      {
+        nombre: 'Patricio Sabatini',
+        rol: 'CEO',
+        horasDisponibles: 120,
+        horasAsignadas: 10
+      },
+      {
+        nombre: 'Rodrigo Loza',
+        rol: 'CTO',
+        horasDisponibles: 100,
+        horasAsignadas: 40
+      },
+      {
+        nombre: 'Joaquin Zanardi',
+        rol: 'DEV',
+        horasDisponibles: 160,
+        horasAsignadas: 40
+      },
+      {
+        nombre: 'Yoana Gerling',
+        rol: 'ADMIN',
+        horasDisponibles: 160,
+        horasAsignadas: 40
+      }
+    ],
+    fechaUltimaEdicion: new Date('06/25/24 18:24')
+  }
 }
 
 const route = useRoute()
