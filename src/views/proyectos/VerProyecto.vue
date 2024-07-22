@@ -33,13 +33,10 @@
   </div>
 </template>
 <script setup>
-import { ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
-</script>
-
-<script>
 import EquipoSummary from '@/components/proyectos/EquipoSummary.vue'
 import ProyectoSummary from '@/components/proyectos/ProyectoSummary.vue'
+import { ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 
 const PROYECTO = {
   nombre: 'Empleado digital',
@@ -76,7 +73,8 @@ async function fetchData(id) {
 function getProyecto(id) {
   return Promise.resolve(PROYECTO)
 }
-
+</script>
+<script>
 export default {
   components: {
     ProyectoSummary,
