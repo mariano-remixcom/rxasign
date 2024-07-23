@@ -14,7 +14,9 @@
       </thead>
       <tbody class="table-group-divider align-middle">
         <tr v-for="(item, index) in tableData" :key="index">
-          <td>{{ item.nombre }}</td>
+          <td>
+            <a class="link-secondary pointer" @click="goToVerProyecto(index)">{{ item.nombre }}</a>
+          </td>
           <td>{{ item.cliente }}</td>
           <td>
             <div class="avatars">
@@ -142,6 +144,9 @@ export default {
     },
     editProject() {
       this.$router.push('/proyectos/editar')
+    },
+      goToVerProyecto(id) {
+      this.$router.push({ name: 'VerProyecto', params: { id } })
     }
     // initTooltips() {
     //   const tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'));
@@ -154,11 +159,15 @@ export default {
 </script>
 
 <style scoped>
+.pointer {
+  cursor: pointer;
+}
 /* fix botones de tabla */
 button.btn.btn-link.btn-m {
   --bs-btn-padding-x: 0.2rem;
   --bs-btn-padding-y: 0;
 }
+
 /* avatares */
 .avatars {
   display: flex;
@@ -169,11 +178,13 @@ button.btn.btn-link.btn-m {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  margin-right: 0px; /* Espacio entre avatares */
+  margin-right: 0px;
+  /* Espacio entre avatares */
 }
 
 .avatar:last-child,
 .avatar-fallback:last-child {
-  margin-right: 0; /* Eliminar margen derecho del último avatar */
+  margin-right: 0;
+  /* Eliminar margen derecho del último avatar */
 }
 </style>

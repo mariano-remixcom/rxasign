@@ -12,11 +12,24 @@ const routes = [
   },
   {
     path: '/proyectos',
-    name: 'Proyectos',
-    component: () => import(/* webpackChunkName: "proyectos" */ '../views/Proyectos.vue'),
-    meta: {
-      layout: 'default'
-    }
+    children: [
+      {
+        path: '',
+        name: 'Proyectos',
+        component: () => import(/* webpackChunkName: "proyectos" */ '../views/Proyectos.vue'),
+        meta: {
+          layout: 'default'
+        }
+      },
+      {
+        path: ':id',
+        name: 'VerProyecto',
+        component: () => import('../views/proyectos/VerProyecto.vue'),
+        meta: {
+          layout: 'default'
+        }
+      }
+    ]
   },
   {
     path: '/proyectos/agregar',
