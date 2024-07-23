@@ -14,7 +14,9 @@
       </thead>
       <tbody class="table-group-divider align-middle">
         <tr v-for="(item, index) in tableData" :key="index">
-          <td>{{ item.nombre }}</td>
+          <td>
+            <a class="link-secondary pointer" @click="goToVerProyecto(index)">{{ item.nombre }}</a>
+          </td>
           <td>{{ item.cliente }}</td>
           <td>
             <div class="avatars">
@@ -27,7 +29,7 @@
           <td>{{ item.asignadas }}</td>
           <td>{{ item.modificado }}</td>
           <td>
-            <button class="btn btn-link btn-m" @click="goToVerProyecto(index)"><i class="bi bi-clipboard-data"></i></button>
+            <button class="btn btn-link btn-m"><i class="bi bi-clipboard-data"></i></button>
             <button class="btn btn-link btn-m"><i class="bi bi-check-circle"></i></button>
             <button class="btn btn-link btn-m"><i class="bi bi-pencil-square"></i></button>
             <button class="btn btn-link btn-m"><i class="bi bi-trash"></i></button>
@@ -116,6 +118,9 @@ export default {
 </script>
 
 <style scoped>
+.pointer {
+  cursor: pointer;
+}
 /* fix botones de tabla */
 button.btn.btn-link.btn-m {
   --bs-btn-padding-x: 0.2rem;
