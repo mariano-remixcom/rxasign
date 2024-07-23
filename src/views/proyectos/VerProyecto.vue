@@ -3,7 +3,7 @@
     <div class="mb-4">
       <div class="d-flex align-items-center justify-content-between">
         <div class="me-2">
-          <button class="btn btn-secondary rounded-circle btn-lg">
+          <button class="btn btn-secondary rounded-circle btn-lg" @click="goBack()">
             <i class="bi bi-arrow-left"></i>
           </button>
         </div>
@@ -28,17 +28,21 @@
     </div>
 
     <div>
-      <equipo-summary :equipo="proyecto.equipo.miembros" :fecha-ultima-edicion="proyecto.equipo.fechaUltimaEdicion" />
+      <equipo-summary
+        :equipo="proyecto.equipo.miembros"
+        :fecha-ultima-edicion="proyecto.equipo.fechaUltimaEdicion"
+        @add-resource="onAddResource"
+        @remove-resource="onRemoveResource"
+      />
     </div>
   </div>
 </template>
-<script setup>
+<script>
 import EquipoSummary from '@/components/proyectos/EquipoSummary.vue'
+import NavigateBack from '@/mixins/navigation/NavigateBack.vue'
 import ProyectoSummary from '@/components/proyectos/ProyectoSummary.vue'
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-
-// TODO: Agregar navegación desde y hasta esta page
 
 const PROYECTO = {
   nombre: 'Empleado digital',
@@ -84,37 +88,52 @@ const PROYECTO = {
   }
 }
 
-const route = useRoute()
-
-const loading = ref(false)
-const proyecto = ref(null)
-const error = ref(null)
-
-watch(() => route.params.id, fetchData, { immediate: true })
-
-async function fetchData(id) {
-  error.value = proyecto.value = null
-  loading.value = true
-
-  try {
-    // TODO: Des-hardcodear esto.
-    proyecto.value = await getProyecto(id)
-  } catch (err) {
-    error.value = err.toString()
-  } finally {
-    loading.value = false
-  }
-}
-
-function getProyecto(id) {
-  return Promise.resolve(PROYECTO)
-}
-</script>
-<script>
 export default {
+  name: 'VerProyecto',
   components: {
     ProyectoSummary,
     EquipoSummary
+  },
+  mixins: [NavigateBack],
+  setup: function () {
+    const route = useRoute()
+
+    const loading = ref(false)
+    const proyecto = ref(null)
+    const error = ref(null)
+
+    watch(() => route.params.id, fetchProyectoData, { immediate: true })
+
+    async function fetchProyectoData(id) {
+      error.value = proyecto.value = null
+      loading.value = true
+
+      try {
+        proyecto.value = await getProyecto(id)
+      } catch (err) {
+        error.value = err.toString()
+      } finally {
+        loading.value = false
+      }
+    }
+
+    async function getProyecto(id) {
+      return Promise.resolve(PROYECTO)
+    }
+
+    return {
+      loading,
+      proyecto,
+      error
+    }
+  },
+  methods: {
+    onAddResource: function () {
+      this.proyecto.equipo.miembros.push({ horasDisponibles: 160 })
+    },
+    onRemoveResource: function (index) {
+      this.proyecto.equipo.miembros.splice(index, 1)
+    }
   }
 }
 </script>

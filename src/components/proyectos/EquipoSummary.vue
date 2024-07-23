@@ -38,7 +38,7 @@
           <input class="form-control" type="number" max="9999" :value="miembro.horasAsignadas" />
         </td>
         <td class="text-center">
-          <button class="btn icon">
+          <button class="btn icon" @click="$emit('removeResource', index)">
             <i class="bi bi-trash"></i>
           </button>
         </td>
@@ -46,7 +46,7 @@
     </tbody>
   </table>
   <div class="d-flex flex-row px-3">
-    <button class="btn btn-outline-primary btn-lg" @click="addResource">Agregar recurso</button>
+    <button class="btn btn-outline-primary btn-lg" @click="$emit('addResource')">Agregar recurso</button>
     <div class="col d-flex flex-row justify-content-end text-black-50 fw-light h5">
       <i class="bi bi-arrow-repeat"></i>
       <div class="fecha ms-1">{{ formatDate(fechaUltimaEdicion, 'dateAndTime') }}</div>
@@ -54,7 +54,7 @@
   </div>
 </template>
 <script>
-import FormatDate from '@/mixins/FormatDate.vue'
+import FormatDate from '@/mixins/formatting-text/FormatDate.vue'
 
 export default {
   mixins: [FormatDate],
@@ -68,16 +68,11 @@ export default {
       required: true
     }
   },
+  emits: ['addResource', 'removeResource'],
   data() {
     return {
       recursos: ['Rodrigo Loza', 'Yanina Silva', 'Mariano Soulé', 'Joaquin Zanardi', 'Yoana Gerling', 'Patricio Sabatini'],
       roles: ['QA', 'CEO', 'CTO', 'DEV', 'ADMIN']
-    }
-  },
-  methods: {
-    addResource: function () {
-      // TODO: Emit event and mutate parent
-      // this.equipo.push({ horasDisponibles: 160 });
     }
   }
 }

@@ -12,6 +12,9 @@ export default {
     layout() {
       return `layout-${this.$route.meta.layout || 'default'}`
     }
+  },
+  beforeMount: function () {
+    this.$root.historyCount = window.history.length
   }
 }
 </script>

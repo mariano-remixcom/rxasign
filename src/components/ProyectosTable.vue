@@ -27,7 +27,7 @@
           <td>{{ item.asignadas }}</td>
           <td>{{ item.modificado }}</td>
           <td>
-            <button class="btn btn-link btn-m"><i class="bi bi-clipboard-data"></i></button>
+            <button class="btn btn-link btn-m" @click="goToVerProyecto(index)"><i class="bi bi-clipboard-data"></i></button>
             <button class="btn btn-link btn-m"><i class="bi bi-check-circle"></i></button>
             <button class="btn btn-link btn-m"><i class="bi bi-pencil-square"></i></button>
             <button class="btn btn-link btn-m"><i class="bi bi-trash"></i></button>
@@ -95,20 +95,23 @@ export default {
       ]
     }
   },
-  mounted() {
-    this.initTooltips()
-  },
-  updated() {
-    this.initTooltips()
-  }
-  /*  methods: {
-    initTooltips() {
-      const tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'));
-      tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-      });
+  // mounted() {
+  //   this.initTooltips()
+  // },
+  // updated() {
+  //   this.initTooltips()
+  // },
+  methods: {
+    // initTooltips() {
+    //   const tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'));
+    //   tooltipTriggerList.map(function (tooltipTriggerEl) {
+    //     return new bootstrap.Tooltip(tooltipTriggerEl);
+    //   });
+    // },
+    goToVerProyecto(id) {
+      this.$router.push({ name: 'VerProyecto', params: { id } })
     }
-  } */
+  }
 }
 </script>
 
@@ -118,6 +121,7 @@ button.btn.btn-link.btn-m {
   --bs-btn-padding-x: 0.2rem;
   --bs-btn-padding-y: 0;
 }
+
 /* avatares */
 .avatars {
   display: flex;
@@ -128,11 +132,13 @@ button.btn.btn-link.btn-m {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  margin-right: 0px; /* Espacio entre avatares */
+  margin-right: 0px;
+  /* Espacio entre avatares */
 }
 
 .avatar:last-child,
 .avatar-fallback:last-child {
-  margin-right: 0; /* Eliminar margen derecho del último avatar */
+  margin-right: 0;
+  /* Eliminar margen derecho del último avatar */
 }
 </style>

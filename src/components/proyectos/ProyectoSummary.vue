@@ -31,7 +31,7 @@
 </template>
 <script>
 import FieldWithLabel from './FieldWithLabel.vue'
-import FormatDate from '@/mixins/FormatDate.vue'
+import FormatDate from '@/mixins/formatting-text/FormatDate.vue'
 
 export default {
   components: {
