@@ -9,7 +9,12 @@
       </div>
       <div class="form-group">
         <label for="password">Password</label>
-        <input id="password" v-model="password" type="password" />
+        <div class="input-password-container">
+          <input id="password" v-model="password" :type="showPassword ? 'text' : 'password'" />
+          <span class="input-group-text" @click="toggleShowPassword">
+            <i :class="showPassword ? 'bi bi-eye' : 'bi bi-eye-slash'"></i>
+          </span>
+        </div>
       </div>
       <div class="form-actions">
         <div class="remember-me">
@@ -29,7 +34,8 @@ export default {
     return {
       email: '',
       password: '',
-      rememberMe: false
+      rememberMe: false,
+      showPassword: false
     }
   },
   methods: {
@@ -37,6 +43,9 @@ export default {
       console.log('Email:', this.email)
       console.log('Password:', this.password)
       console.log('Remember Me:', this.rememberMe)
+    },
+    toggleShowPassword() {
+      this.showPassword = !this.showPassword
     }
   }
 }
@@ -68,6 +77,7 @@ body {
   text-align: center;
   margin-top: calc((100vh - 700px) / 2);
 }
+
 h1 {
   margin-bottom: 15px;
   font-size: 40px;
@@ -100,14 +110,25 @@ p {
   box-sizing: border-box;
 }
 
-.toggle-password {
-  position: absolute;
-  right: 10px;
-  top: 38px;
+.input-password-container {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.input-password-container input {
+  flex: 1;
   border: none;
-  background: none;
+  padding: 12px;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+
+.input-password-container .input-group-text {
+  padding: 12px;
+  border-left: 1px solid #ccc;
   cursor: pointer;
-  color: #999;
 }
 
 .form-actions {
