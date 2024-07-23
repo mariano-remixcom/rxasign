@@ -43,9 +43,22 @@
 </template>
 
 <script setup>
+// import { ref } from 'vue'
+
+// const navbarExpanded = ref(false)
+
+// const toggleNavbar = () => {
+//   navbarExpanded.value = !navbarExpanded.value
+// }
+
+// const collapseNavbar = () => {
+//   navbarExpanded.value = false
+// }
 import { ref } from 'vue'
+// import { useRouter } from 'vue-router';
 
 const navbarExpanded = ref(false)
+// const router = useRouter();
 
 const toggleNavbar = () => {
   navbarExpanded.value = !navbarExpanded.value
