@@ -49,6 +49,14 @@ const routes = [
     meta: {
       layout: 'default'
     }
+  },
+  {
+    path: '/proyectos/editar',
+    name: 'Editar proyecto',
+    component: () => import(/* webpackChunkName: "login" */ '../views/ProyectosEditar.vue'),
+    meta: {
+      layout: 'default'
+    }
   }
 ]
 

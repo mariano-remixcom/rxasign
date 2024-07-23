@@ -28,19 +28,40 @@
           <td>{{ item.modificado }}</td>
           <td>
             <button class="btn btn-link btn-m"><i class="bi bi-clipboard-data"></i></button>
-            <button class="btn btn-link btn-m"><i class="bi bi-check-circle"></i></button>
-            <button class="btn btn-link btn-m"><i class="bi bi-pencil-square"></i></button>
-            <button class="btn btn-link btn-m"><i class="bi bi-trash"></i></button>
+            <button class="btn btn-link btn-m" @click="finishProject"><i class="bi bi-check-circle"></i></button>
+            <button class="btn btn-link btn-m" @click="editProject"><i class="bi bi-pencil-square"></i></button>
+            <button class="btn btn-link btn-m" @click="deleteProject"><i class="bi bi-trash"></i></button>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
+  <Modal
+    :is-visible="showModal"
+    :title="title"
+    @close="
+      () => {
+        ;(showModal = false), (isDeleting = false), (isEnding = false)
+      }
+    "
+  >
+    <Eliminar v-if="isDeleting" :ente="ente" />
+    <Finalizar v-if="isEnding" :ente="ente" />
+  </Modal>
 </template>
 
 <script>
+import Eliminar from '@/components/EliminarModal.vue'
+import Finalizar from '@/components/FinalizarModal.vue'
+import Modal from '@/layouts/default/ModalModal.vue'
+
 export default {
   name: 'ProyectosTable',
+  components: {
+    Modal,
+    Eliminar,
+    Finalizar
+  },
   data() {
     return {
       tableData: [
@@ -92,7 +113,12 @@ export default {
           asignadas: '140 hs',
           modificado: '2023-07-01'
         }
-      ]
+      ],
+      showModal: false,
+      isDeleting: false,
+      isEnding: false,
+      title: '',
+      ente: ''
     }
   },
   mounted() {
@@ -102,6 +128,21 @@ export default {
     // this.initTooltips();
   },
   methods: {
+    deleteProject() {
+      this.showModal = true
+      this.isDeleting = true
+      this.title = 'Eliminar proyecto'
+      this.ente = 'proyecto'
+    },
+    finishProject() {
+      this.showModal = true
+      this.isEnding = true
+      this.title = 'Finalizar proyecto'
+      this.ente = 'proyecto'
+    },
+    editProject() {
+      this.$router.push('/proyectos/editar')
+    }
     // initTooltips() {
     //   const tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'));
     //   tooltipTriggerList.map(function (tooltipTriggerEl) {
