@@ -1,11 +1,44 @@
+// Custom theme colors
 $primary: #7749F8;
-$alert-primary: #EBE5FC;
-$body-color: #313055;
-$info: #73abfe;
-$gray-100: #f6f6f6;
+$secondary: #6C757D;
+$success: #28A745;
+$danger: #DC3545;
+$warning: #FFC107;
+$info: #17A2B8;
+
+$theme-colors: (
+    "primary": $primary,
+    "secondary": $secondary,
+    "success": $success,
+    "info": $info,
+    "warning": $warning,
+    "danger": $danger,
+);
+
+
+// Custom colors
+$primary-dark: #5227CC;
+$primary-light: #EBE5FC;
+$secondary-dark: #54595E;
+$secondary-light: #ABB5BE;
+
+// Custom colors with shades
+$gray: #CED4DA;
+
+$colors: (
+    "gray": $gray,
+);
+
+// Alert colors
+$alert-primary: $primary-light;
+
+
 $text-muted: #4e6e8e;
-$gray-900: #273849;
-$dark: #1a1628;
+
+// Inter font-family
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+$font-family-base: "Inter", sans-serif;
+
 
 @import "~bootstrap/scss/functions";
 @import "~bootstrap/scss/variables";
@@ -16,3 +49,39 @@ $dark: #1a1628;
 @import "~bootstrap/scss/alert";
 
 $navbar-dark-color: rgba($white, .7);
+$body-color: $gray-800;
+$body-bg: $gray-100;
+
+// Font weights
+$font-weight-lighter: 200;
+$font-weight-light: 300;
+$font-weight-normal: 400;
+$font-weight-medium: 500; 
+$font-weight-semibold: 600; // Semi-Bold Headings en figma
+$font-weight-bold: 700; // Bold Headings
+$font-weight-bolder: 800; // Extra-Bold Headings
+
+$headings-font-weight: 600;
+$display-font-weight: 700;
+
+// Font size
+$display-font-sizes: (
+    1: 72px,
+    2: 64px,
+    3: 58px,
+    4: 52px
+);
+
+$font-size-base: 15px;
+
+$font-weight-base: $font-weight-normal;
+$headings-line-height: 1.2;
+$display-line-height: $headings-line-height;
+$line-height-base: $headings-line-height;
+
+$h1-font-size: 40px;
+$h2-font-size: 32px;
+$h3-font-size: 28px;
+$h4-font-size: 24px;
+$h5-font-size: 20px;
+$h6-font-size: 16px;
