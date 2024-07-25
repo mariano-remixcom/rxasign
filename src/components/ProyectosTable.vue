@@ -40,11 +40,13 @@
     :is-visible="showModal"
     :title="title"
     :large="large"
+    :is-editing="isEditing"
     @close="
       () => {
         ;(showModal = false), (isDeleting = false), (isEnding = false), (isEditing = false), (large = false)
       }
     "
+    @save="saveChanges"
   >
     <Eliminar v-if="isDeleting" :ente="ente" />
     <Finalizar v-if="isEnding" :ente="ente" />
@@ -155,6 +157,7 @@ export default {
       this.ente = 'proyecto'
       this.large = true
     }
+
     // initTooltips() {
     //   const tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'));
     //   tooltipTriggerList.map(function (tooltipTriggerEl) {

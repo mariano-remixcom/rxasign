@@ -20,10 +20,16 @@
       </div>
     </div>
   </transition>
+  <Guardar :is-visible="showConfirmacionModal" @confirm="confirmSave" @cancel="cancelSave" />
 </template>
 
 <script>
+import Guardar from '@/components/GuardarModal.vue'
+
 export default {
+  components: {
+    Guardar
+  },
   props: {
     isVisible: {
       type: Boolean,
@@ -36,12 +42,36 @@ export default {
     large: {
       type: Boolean,
       default: false
+    },
+    isEditing: {
+      type: Boolean,
+      default: false
     }
   },
   emits: ['close', 'save'],
+  data() {
+    return {
+      showModal: false,
+      showConfirmacionModal: false
+    }
+  },
   methods: {
     handleSave() {
+      if (this.isEditing) {
+        this.showConfirmacionModal = true
+      } else {
+        this.$emit('save')
+      }
+    },
+    closeGuardarModal() {
+      this.showModal = false
+    },
+    confirmSave() {
+      this.showConfirmacionModal = false
       this.$emit('save')
+    },
+    cancelSave() {
+      this.showConfirmacionModal = false
     }
   }
 }
