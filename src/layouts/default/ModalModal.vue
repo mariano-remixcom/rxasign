@@ -102,7 +102,7 @@ export default {
   max-width: 500px;
 }
 .modal-large {
-  max-width: 800px;
+  max-width: 1000px;
 }
 
 .modal-header {
