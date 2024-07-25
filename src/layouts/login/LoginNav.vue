@@ -1,7 +1,11 @@
 <template>
   <nav class="navbar navbar-expand-md navbar-dark bg-primary fixed-top">
     <div class="d-flex m-auto">
-      <router-link to="/login" class="navbar-brand"> Asignaciones </router-link>
+      <AsignacionesConLogo route="/login" />
     </div>
   </nav>
 </template>
+
+<script setup>
+import AsignacionesConLogo from '../default/AsignacionesConLogo.vue'
+</script>

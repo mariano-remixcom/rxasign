@@ -2,7 +2,7 @@
   <nav class="navbar navbar-expand-md navbar-dark bg-primary fixed-top">
     <div class="container d-flex justify-content-between align-items-center">
       <!-- Marca y enlaces de navegación -->
-      <router-link to="/" class="navbar-brand" @click="collapseNavbar">Asignaciones</router-link>
+      <AsignacionesConLogo @click="collapseNavbar" />
 
       <!-- Sección de login del usuario -->
       <div class="d-flex align-items-center">
@@ -14,6 +14,7 @@
 </template>
 
 <script setup>
+import AsignacionesConLogo from '../default/AsignacionesConLogo.vue'
 import { ref } from 'vue'
 
 const navbarExpanded = ref(false)
