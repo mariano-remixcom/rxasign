@@ -55,7 +55,7 @@
 <script>
 import Eliminar from '@/components/EliminarModal.vue'
 import Finalizar from '@/components/FinalizarModal.vue'
-import Modal from '@/layouts/default/ModalModal.vue'
+import Modal from '@/components/shared/ModalModal.vue'
 
 export default {
   name: 'ProyectosTable',
@@ -145,7 +145,7 @@ export default {
     editProject() {
       this.$router.push('/proyectos/editar')
     },
-      goToVerProyecto(id) {
+    goToVerProyecto(id) {
       this.$router.push({ name: 'VerProyecto', params: { id } })
     }
     // initTooltips() {
