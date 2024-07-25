@@ -65,7 +65,7 @@
           </div>
           <!-- Columna de los links -->
           <div class="link-column">
-            <a href="#" class="btn btn-secondary m-2">Agregar</a>
+            <a href="#" class="btn btn-secondary m-2" @click="addUser">Agregar</a>
             <a class="btn btn-primary">
               <router-link to="/usuarios" class="nav-link">Abrir</router-link>
             </a>
@@ -74,4 +74,45 @@
       </div>
     </div>
   </div>
+  <Modal
+    :is-visible="showModal"
+    :title="title"
+    :large="large"
+    @close="
+      () => {
+        ;(showModal = false), (isAdding = false), (large = false)
+      }
+    "
+  >
+    <AgregarUsuario v-if="isAdding" />
+  </Modal>
 </template>
+
+<script>
+import AgregarUsuario from '@/components/AgregarUsuario.vue'
+import Modal from '@/layouts/default/ModalModal.vue'
+
+export default {
+  name: 'DashboardAsignaciones',
+  components: {
+    Modal,
+    AgregarUsuario
+  },
+  data() {
+    return {
+      isAdding: false,
+      title: '',
+      showModal: false,
+      large: false
+    }
+  },
+  methods: {
+    addUser() {
+      this.showModal = true
+      this.isAdding = true
+      this.title = 'Agregar usuario'
+      this.large = true
+    }
+  }
+}
+</script>
