@@ -39,14 +39,18 @@
   <Modal
     :is-visible="showModal"
     :title="title"
+    :large="large"
     @close="
       () => {
-        ;(showModal = false), (isDeleting = false), (isEnding = false)
+        ;(showModal = false), (isDeleting = false), (isEnding = false), (isEditing = false), (large = false)
       }
     "
   >
     <Eliminar v-if="isDeleting" :ente="ente" />
     <Finalizar v-if="isEnding" :ente="ente" />
+    <div v-if="isEditing" class="modal-body-content">
+      <ProjectAddForm />
+    </div>
   </Modal>
 </template>
 
@@ -54,13 +58,15 @@
 import Eliminar from '@/components/EliminarModal.vue'
 import Finalizar from '@/components/FinalizarModal.vue'
 import Modal from '@/layouts/default/ModalModal.vue'
+import ProjectAddForm from './ProjectAddForm.vue'
 
 export default {
   name: 'ProyectosTable',
   components: {
     Modal,
     Eliminar,
-    Finalizar
+    Finalizar,
+    ProjectAddForm
   },
   data() {
     return {
@@ -118,7 +124,9 @@ export default {
       isDeleting: false,
       isEnding: false,
       title: '',
-      ente: ''
+      ente: '',
+      isEditing: false,
+      large: false
     }
   },
   mounted() {
@@ -141,7 +149,11 @@ export default {
       this.ente = 'proyecto'
     },
     editProject() {
-      this.$router.push('/proyectos/editar')
+      this.showModal = true
+      this.isEditing = true
+      this.title = 'Editar proyecto'
+      this.ente = 'proyecto'
+      this.large = true
     }
     // initTooltips() {
     //   const tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'));

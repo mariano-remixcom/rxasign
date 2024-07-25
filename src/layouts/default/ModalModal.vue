@@ -1,17 +1,19 @@
 <template>
   <transition name="modal">
     <div v-if="isVisible" class="modal-overlay">
-      <div class="modal-content">
+      <div :class="['modal-content', { 'modal-large': large }]">
         <div class="modal-header">
           <h4 class="text-16 mb-0">{{ title }}</h4>
           <button class="modal-close" @click="$emit('close')">&times;</button>
         </div>
         <div class="modal-body">
-          <slot></slot>
+          <div class="modal-body-content">
+            <slot></slot>
+          </div>
         </div>
         <div class="modal-footer">
           <slot name="footer">
-            <button class="btn button-claro" @click="$emit('close')">Cancelar</button>
+            <button class="btn button-claro me-2" @click="$emit('close')">Cancelar</button>
             <button class="btn button-oscuro" @click="handleSave">Confirmar</button>
           </slot>
         </div>
@@ -25,14 +27,18 @@ export default {
   props: {
     isVisible: {
       type: Boolean,
-      default: () => null
+      default: false
     },
     title: {
       type: String,
-      default: () => null
+      default: ''
+    },
+    large: {
+      type: Boolean,
+      default: false
     }
   },
-  emits: ['close', 'save'], // Declara los eventos que se emiten
+  emits: ['close', 'save'],
   methods: {
     handleSave() {
       this.$emit('save')
@@ -64,7 +70,9 @@ export default {
   border-radius: 8px;
   width: 90%;
   max-width: 500px;
-  border-radius: 15px;
+}
+.modal-large {
+  max-width: 800px;
 }
 
 .modal-header {
@@ -80,17 +88,21 @@ export default {
 
 .modal-body {
   padding: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-body-content {
+  width: 100%;
 }
 
 .modal-footer {
   padding: 15px;
   text-align: right;
   border-top: 1px solid #eee;
-}
-
-.modal-footer {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
 }
 
 .btn {
