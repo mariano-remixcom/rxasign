@@ -1,4 +1,5 @@
 $primary: #7749F8;
+$alert-primary: #EBE5FC;
 $body-color: #313055;
 $info: #73abfe;
 $gray-100: #f6f6f6;
@@ -12,5 +13,6 @@ $dark: #1a1628;
 @import "~bootstrap/scss/maps";
 @import "~bootstrap/scss/mixins";
 @import "~bootstrap/scss/utilities";
+@import "~bootstrap/scss/alert";
 
 $navbar-dark-color: rgba($white, .7);

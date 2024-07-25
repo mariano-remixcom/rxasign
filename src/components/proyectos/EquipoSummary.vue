@@ -1,5 +1,5 @@
 <template>
-  <h2 class="h5 title py-2 px-3 text-primary rounded fw-bold mb-3">Equipo</h2>
+  <div class="alert alert-primary fw-bold px-3 py-2">Equipo</div>
   <table class="table mb-3">
     <thead class="table-light">
       <tr>

@@ -1,5 +1,5 @@
 <template v-if="!!proyecto">
-  <h2 class="h5 title py-2 px-3 text-primary rounded fw-bold mb-3">Proyecto</h2>
+  <div class="alert alert-primary fw-bold px-3 py-2">Proyecto</div>
   <div class="px-3 py-1 row">
     <div class="col">
       <field-with-label label="Cliente" :value="proyecto.cliente.nombre" />
