@@ -1,5 +1,5 @@
 <template v-if="!!proyecto">
-  <div class="alert alert-primary fw-bold px-3 py-2">Proyecto</div>
+  <div class="section-header-primary">Proyecto</div>
   <div class="px-3 py-1 row">
     <div class="col">
       <field-with-label label="Cliente" :value="proyecto.cliente.nombre" />
@@ -19,11 +19,11 @@
     <div class="col-2">
       <div class="d-flex flex-column">
         <div class="d-flex justify-content-end">
-          <button class="btn btn-secondary btn-lg mb-1">Editar</button>
+          <button class="btn btn-soft-primary mb-1">Editar</button>
         </div>
-        <div class="d-flex flex-row justify-content-end text-black-50 fw-light h5">
+        <div class="d-flex flex-row justify-content-end text-muted mt-1">
           <i class="bi bi-arrow-repeat"></i>
-          <div class="fecha ms-1">{{ formatDate(proyecto.fechaUltimaEdicion, 'dateAndTime') }}</div>
+          <div class="ms-1">{{ formatDate(proyecto.fechaUltimaEdicion, 'dateAndTime') }}</div>
         </div>
       </div>
     </div>
@@ -62,7 +62,7 @@ export default {
   }
 }
 </script>
-<style scoped>
+<style scoped lang="scss">
 .btn-secondary {
   --bs-btn-color: var(--bs-primary);
   --bs-btn-font-weight: 600;

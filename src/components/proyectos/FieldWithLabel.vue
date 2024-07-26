@@ -1,8 +1,12 @@
 <template>
   <div class="mb-2">
-    <div class="text-black-50 fw-light">{{ label }}</div>
-    <div class="h4 m-0 fw-bold">{{ value }}</div>
-    <div v-if="!!helper" class="text-black-50 fw-light">{{ helper }}</div>
+    <div class="text-muted">
+      <small>{{ label }}</small>
+    </div>
+    <div class="h5 m-0 fw-semibold">{{ value }}</div>
+    <div v-if="!!helper" class="text-muted">
+      <small>{{ helper }}</small>
+    </div>
   </div>
 </template>
 <script>

@@ -54,7 +54,7 @@
 // const collapseNavbar = () => {
 //   navbarExpanded.value = false
 // }
-import AsignacionesConLogo from './AsignacionesConLogo.vue'
+import AsignacionesConLogo from './Brand.vue'
 import { ref } from 'vue'
 // import { useRouter } from 'vue-router';
 

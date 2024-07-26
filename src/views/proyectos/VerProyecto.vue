@@ -1,28 +1,25 @@
 <template>
   <div v-if="!!proyecto" class="container">
-    <div class="mb-4">
+    <div class="pb-4 mb-4 page-title-separation">
       <div class="d-flex align-items-center justify-content-between">
         <div class="me-2">
-          <button class="btn btn-secondary rounded-circle btn-lg" @click="goBack()">
+          <button class="btn btn-soft-primary rounded-circle" @click="goBack()">
             <i class="bi bi-arrow-left"></i>
           </button>
         </div>
         <div class="me-auto">
-          <h1 class="display-6 fw-bold">{{ proyecto.cliente.nombre }} - {{ proyecto.nombre }}</h1>
+          <h1 class="h3 mb-0 fw-semibold">{{ proyecto.cliente.nombre }} - {{ proyecto.nombre }}</h1>
         </div>
         <div class="d-flex">
           <router-link to="#" class="me-2">
-            <button class="btn btn-secondary btn-lg">Finalizar</button>
+            <button class="btn btn-soft-primary">Finalizar</button>
           </router-link>
           <router-link to="#">
-            <button class="btn btn-primary btn-lg">Horas proyecto</button>
+            <button class="btn btn-primary">Horas proyecto</button>
           </router-link>
         </div>
       </div>
     </div>
-
-    <div class="border-top border-dotted border-black-50 display-fluid mb-3"></div>
-
     <div class="mb-3">
       <proyecto-summary :proyecto="proyecto" />
     </div>
@@ -138,7 +135,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .btn-secondary {
   --bs-btn-color: var(--bs-primary);
   --bs-btn-font-weight: 600;
@@ -150,10 +147,5 @@ export default {
   --bs-btn-active-color: var(--bs-primary);
   --bs-btn-active-bg: #b19bf0;
   --bs-btn-active-border-color: var(--bs-btn-active-bg);
-}
-
-.border-dotted {
-  --bs-border-style: dotted;
-  --bs-border-width: 2px;
 }
 </style>

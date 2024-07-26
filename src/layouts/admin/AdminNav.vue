@@ -14,7 +14,7 @@
 </template>
 
 <script setup>
-import AsignacionesConLogo from '../default/AsignacionesConLogo.vue'
+import AsignacionesConLogo from '../default/Brand.vue'
 import { ref } from 'vue'
 
 const navbarExpanded = ref(false)

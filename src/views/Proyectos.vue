@@ -1,9 +1,9 @@
 <template>
-  <div class="mb-1 rounded-3">
-    <div class="container d-flex align-items-center justify-content-between">
+  <div class="mb-4 rounded-3">
+    <div class="container d-flex align-items-center justify-content-between page-title-separation">
       <div class="container-fluid">
-        <h1 class="display-6 fw-bold">Proyectos</h1>
-        <p class="text-muted">Lista de proyectos por cliente con su equipo.</p>
+        <h1 class="h3 fw-semibold">Proyectos</h1>
+        <p>Lista de proyectos por cliente con su equipo.</p>
       </div>
       <!-- Acciones inicio -->
       <div class="d-flex gap-2">

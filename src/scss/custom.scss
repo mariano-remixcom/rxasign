@@ -1,0 +1,22 @@
+.page-title-separation {
+    border-bottom: 1px dashed $gray-300;
+}
+
+.section-header {
+    &-primary {
+        width: 100%;
+        border-radius: 7px;
+        padding: 6px 10px;
+
+        font-size: 17px;
+        line-height: 20.57px;
+        font-weight: $font-weight-bold;
+
+        margin-bottom: 18px;
+    }
+
+    &-primary {
+        color: $primary;
+        background-color: $primary-light;
+    }
+}
