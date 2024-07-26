@@ -1,14 +1,14 @@
 <template>
   <div class="admin-page-wrapper">
-    <default-nav />
+    <admin-nav />
     <slot />
     <default-footer />
   </div>
 </template>
 
 <script setup>
-import DefaultFooter from './DefaultFooter.vue'
-import DefaultNav from './AdminNav.vue'
+import AdminNav from './AdminNav.vue'
+import DefaultFooter from '../default/DefaultFooter.vue'
 </script>
 
 <style lang="scss">

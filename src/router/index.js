@@ -1,3 +1,6 @@
+import AdminLayout from '../layouts/admin/AdminLayout.vue'
+import DefaultLayout from '../layouts/default/DefaultLayout.vue'
+import LoginLayout from '../layouts/login/LoginLayout.vue'
 import { createRouter, createWebHashHistory } from 'vue-router'
 
 const history = createWebHashHistory()
@@ -7,7 +10,7 @@ const routes = [
     name: 'Dashboard',
     component: () => import(/* webpackChunkName: "dashboard" */ '../views/Dashboard.vue'),
     meta: {
-      layout: 'default'
+      layout: DefaultLayout
     }
   },
   {
@@ -16,9 +19,22 @@ const routes = [
       {
         path: '',
         name: 'Proyectos',
-        component: () => import(/* webpackChunkName: "proyectos" */ '../views/Proyectos.vue'),
+        component: () => import(/* webpackChunkName: "proyectos" */ '../views/Proyectos.vue')
+      },
+      {
+        path: 'agregar',
+        name: 'Agregar Proyecto',
+        component: () => import(/* webpackChunkName: "proyectosagregar" */ '../views/ProyectosAgregar.vue'),
         meta: {
-          layout: 'default'
+          layout: AdminLayout
+        }
+      },
+      {
+        path: 'editar',
+        name: 'Editar proyecto',
+        component: () => import(/* webpackChunkName: "login" */ '../views/ProyectosEditar.vue'),
+        meta: {
+          layout: DefaultLayout
         }
       },
       {
@@ -26,25 +42,17 @@ const routes = [
         name: 'VerProyecto',
         component: () => import('../views/proyectos/VerProyecto.vue'),
         meta: {
-          layout: 'default'
+          layout: DefaultLayout
         }
       }
     ]
-  },
-  {
-    path: '/proyectos/agregar',
-    name: 'Agregar Proyecto',
-    component: () => import(/* webpackChunkName: "proyectosagregar" */ '../views/ProyectosAgregar.vue'),
-    meta: {
-      layout: 'admin' // Cambiar layout a 'admin'
-    }
   },
   {
     path: '/horas',
     name: 'Registro de horas',
     component: () => import(/* webpackChunkName: "horas" */ '../views/Horas.vue'),
     meta: {
-      layout: 'default'
+      layout: DefaultLayout
     }
   },
   {
@@ -52,7 +60,7 @@ const routes = [
     name: 'Usuarios',
     component: () => import(/* webpackChunkName: "usuarios" */ '../views/Usuarios.vue'),
     meta: {
-      layout: 'default'
+      layout: DefaultLayout
     }
   },
   {
@@ -60,15 +68,7 @@ const routes = [
     name: 'Login',
     component: () => import(/* webpackChunkName: "login" */ '../views/Login.vue'),
     meta: {
-      layout: 'default'
-    }
-  },
-  {
-    path: '/proyectos/editar',
-    name: 'Editar proyecto',
-    component: () => import(/* webpackChunkName: "login" */ '../views/ProyectosEditar.vue'),
-    meta: {
-      layout: 'default'
+      layout: LoginLayout
     }
   }
 ]
@@ -80,36 +80,3 @@ const router = createRouter({
 })
 
 export { router }
-// import { createRouter, createWebHistory } from 'vue-router';
-// import Vue from 'vue';
-// import Dashboard from '../views/Dashboard.vue';
-// import Proyectos from '../views/Proyectos.vue';
-// import Horas from '../views/Horas.vue';
-// import Usuarios from '../views/Usuarios.vue';
-
-// Vue.use(Router);
-
-// export default new Router({
-//   routes: [
-//     {
-//       path: '/',
-//       name: 'Dashboard',
-//       component: Dashboard
-//     },
-//     {
-//       path: '/proyectos',
-//       name: 'Proyectos',
-//       component: Proyectos
-//     },
-//     {
-//       path: '/horas',
-//       name: 'Horas',
-//       component: Horas
-//     },
-//     {
-//       path: '/usuarios',
-//       name: 'Usuarios',
-//       component: Usuarios
-//     },
-//   ]
-// });

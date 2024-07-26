@@ -27,7 +27,7 @@
       <proyecto-summary :proyecto="proyecto" />
     </div>
 
-    <div>
+    <div class="mb-4">
       <equipo-summary
         :equipo="proyecto.equipo.miembros"
         :fecha-ultima-edicion="proyecto.equipo.fechaUltimaEdicion"

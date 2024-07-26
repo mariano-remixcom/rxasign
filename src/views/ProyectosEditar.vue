@@ -35,7 +35,7 @@
 
 <script>
 import Guardar from '@/components/GuardarModal.vue'
-import Modal from '@/layouts/default/ModalModal.vue'
+import Modal from '@/components/shared/ModalModal.vue'
 import ProjectAddForm from '@/components/ProjectAddForm.vue'
 import ProjectAddTeam from '@/components/ProjectAddTeam.vue'
 
