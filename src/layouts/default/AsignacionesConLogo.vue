@@ -1,7 +1,9 @@
 <template>
   <router-link :to="!route ? '/' : route" class="navbar-brand">
-    <i class="bi bi-hexagon"></i>
-    Asignaciones
+    <div class="d-flex flex-row">
+      <i class="bi bi-hexagon align-content-center"></i>
+      <h6 class="fw-bold m-0 ms-1 align-content-center">Asignaciones</h6>
+    </div>
   </router-link>
 </template>
 
