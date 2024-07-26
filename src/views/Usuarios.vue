@@ -27,7 +27,7 @@
 
 <script>
 import AgregarUsuario from '@/components/AgregarUsuario.vue'
-import Modal from '@/layouts/default/ModalModal.vue'
+import Modal from '@/components/shared/ModalModal.vue'
 import UsuariosTable from '@/components/UsuariosTable.vue'
 
 export default {

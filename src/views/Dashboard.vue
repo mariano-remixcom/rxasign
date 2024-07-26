@@ -90,7 +90,7 @@
 
 <script>
 import AgregarUsuario from '@/components/AgregarUsuario.vue'
-import Modal from '@/layouts/default/ModalModal.vue'
+import Modal from '@/components/shared/ModalModal.vue'
 
 export default {
   name: 'DashboardAsignaciones',

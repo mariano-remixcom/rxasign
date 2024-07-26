@@ -61,7 +61,7 @@
 <script>
 import Eliminar from '@/components/EliminarModal.vue'
 import Finalizar from '@/components/FinalizarModal.vue'
-import Modal from '@/layouts/default/ModalModal.vue'
+import Modal from '@/components/shared/ModalModal.vue'
 import ProjectAddForm from '@/components/ProjectAddForm.vue'
 
 export default {
@@ -153,7 +153,9 @@ export default {
       this.ente = 'proyecto'
     },
     editProject() {
-      this.$router.push('/proyectos/editar')
+      this.showModal = true
+      this.isEditing = true
+      this.title = 'Finalizar proyecto'
     },
     goToVerProyecto(id) {
       this.$router.push({ name: 'VerProyecto', params: { id } })
