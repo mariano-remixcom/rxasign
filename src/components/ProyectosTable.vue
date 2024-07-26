@@ -14,7 +14,9 @@
       </thead>
       <tbody class="table-group-divider align-middle">
         <tr v-for="(item, index) in tableData" :key="index">
-          <td>{{ item.nombre }}</td>
+          <td>
+            <a class="link-secondary pointer" @click="goToVerProyecto(index)">{{ item.nombre }}</a>
+          </td>
           <td>{{ item.cliente }}</td>
           <td>
             <div class="avatars">
@@ -39,14 +41,20 @@
   <Modal
     :is-visible="showModal"
     :title="title"
+    :large="large"
+    :is-editing="isEditing"
     @close="
       () => {
-        ;(showModal = false), (isDeleting = false), (isEnding = false)
+        ;(showModal = false), (isDeleting = false), (isEnding = false), (isEditing = false), (large = false)
       }
     "
+    @save="saveChanges"
   >
     <Eliminar v-if="isDeleting" :ente="ente" />
     <Finalizar v-if="isEnding" :ente="ente" />
+    <div v-if="isEditing" class="modal-body-content">
+      <ProjectAddForm />
+    </div>
   </Modal>
 </template>
 
@@ -54,13 +62,15 @@
 import Eliminar from '@/components/EliminarModal.vue'
 import Finalizar from '@/components/FinalizarModal.vue'
 import Modal from '@/layouts/default/ModalModal.vue'
+import ProjectAddForm from '@/components/ProjectAddForm.vue'
 
 export default {
   name: 'ProyectosTable',
   components: {
     Modal,
     Eliminar,
-    Finalizar
+    Finalizar,
+    ProjectAddForm
   },
   data() {
     return {
@@ -118,7 +128,9 @@ export default {
       isDeleting: false,
       isEnding: false,
       title: '',
-      ente: ''
+      ente: '',
+      isEditing: false,
+      large: false
     }
   },
   mounted() {
@@ -142,7 +154,11 @@ export default {
     },
     editProject() {
       this.$router.push('/proyectos/editar')
+    },
+    goToVerProyecto(id) {
+      this.$router.push({ name: 'VerProyecto', params: { id } })
     }
+
     // initTooltips() {
     //   const tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'));
     //   tooltipTriggerList.map(function (tooltipTriggerEl) {
@@ -154,11 +170,15 @@ export default {
 </script>
 
 <style scoped>
+.pointer {
+  cursor: pointer;
+}
 /* fix botones de tabla */
 button.btn.btn-link.btn-m {
   --bs-btn-padding-x: 0.2rem;
   --bs-btn-padding-y: 0;
 }
+
 /* avatares */
 .avatars {
   display: flex;
@@ -169,11 +189,13 @@ button.btn.btn-link.btn-m {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  margin-right: 0px; /* Espacio entre avatares */
+  margin-right: 0px;
+  /* Espacio entre avatares */
 }
 
 .avatar:last-child,
 .avatar-fallback:last-child {
-  margin-right: 0; /* Eliminar margen derecho del último avatar */
+  margin-right: 0;
+  /* Eliminar margen derecho del último avatar */
 }
 </style>
