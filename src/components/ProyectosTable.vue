@@ -155,7 +155,8 @@ export default {
     editProject() {
       this.showModal = true
       this.isEditing = true
-      this.title = 'Finalizar proyecto'
+      this.title = 'Editar proyecto'
+      this.large = true
     },
     goToVerProyecto(id) {
       this.$router.push({ name: 'VerProyecto', params: { id } })
