@@ -29,7 +29,6 @@ const routes = [
           layout: AdminLayout
         }
       },
-
       {
         path: ':id',
         name: 'VerProyecto',
