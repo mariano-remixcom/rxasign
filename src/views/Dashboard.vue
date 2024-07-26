@@ -2,7 +2,7 @@
   <div class="container">
     <!-- inicio card proyectos-->
     <div class="row align-items-center mb-3">
-      <div class="card container w-75">
+      <div class="card bg-white container w-75">
         <div class="card-body d-flex align-items-center">
           <!-- Columna del icono -->
           <div class="icon-column text-primary">
@@ -28,7 +28,7 @@
     </div>
     <!-- inicio card horas -->
     <div class="row align-items-center mb-3">
-      <div class="card container w-75">
+      <div class="card bg-white container w-75">
         <div class="card-body d-flex align-items-center">
           <!-- Columna del icono -->
           <div class="icon-column text-primary">
@@ -51,7 +51,7 @@
     </div>
     <!-- inicio card usuarios-->
     <div class="row align-items-center mb-3">
-      <div class="card container w-75">
+      <div class="card bg-white container w-75">
         <div class="card-body d-flex align-items-center">
           <!-- Columna del icono -->
           <div class="icon-column text-primary">
@@ -74,6 +74,7 @@
       </div>
     </div>
   </div>
+
   <Modal
     :is-visible="showModal"
     :title="title"
@@ -116,3 +117,12 @@ export default {
   }
 }
 </script>
+
+<style>
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+</style>

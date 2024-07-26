@@ -134,18 +134,3 @@ export default {
   }
 }
 </script>
-
-<style scoped lang="scss">
-.btn-secondary {
-  --bs-btn-color: var(--bs-primary);
-  --bs-btn-font-weight: 600;
-  --bs-btn-bg: #ebe5fc;
-  --bs-btn-border-color: #ebe5fc;
-  --bs-btn-hover-color: var(--bs-primary);
-  --bs-btn-hover-bg: #d5c8fa;
-  --bs-btn-hover-border-color: var(--bs-btn-hover-bg);
-  --bs-btn-active-color: var(--bs-primary);
-  --bs-btn-active-bg: #b19bf0;
-  --bs-btn-active-border-color: var(--bs-btn-active-bg);
-}
-</style>

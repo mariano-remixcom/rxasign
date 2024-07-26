@@ -1,9 +1,9 @@
 <template>
   <div class="mb-1 rounded-3">
-    <div class="container d-flex align-items-center justify-content-between">
+    <div class="container page-title-separation d-flex align-items-center justify-content-between">
       <div class="container-fluid">
-        <h1 class="display-6 fw-bold">Usuarios</h1>
-        <p class="text-muted">Lista de usuarios y sus horas asignadas.</p>
+        <h1 class="h3">Usuarios</h1>
+        <p>Lista de usuarios y sus horas asignadas.</p>
       </div>
       <button class="btn btn-primary btn-lg" @click="addUser">Nuevo</button>
     </div>
