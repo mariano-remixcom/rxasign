@@ -22,7 +22,7 @@ const routes = [
         component: () => import(/* webpackChunkName: "proyectos" */ '../views/Proyectos.vue')
       },
       {
-        path: 'agregar',
+        path: 'proyectos/agregar',
         name: 'Agregar Proyecto',
         component: () => import(/* webpackChunkName: "proyectosagregar" */ '../views/ProyectosAgregar.vue'),
         meta: {

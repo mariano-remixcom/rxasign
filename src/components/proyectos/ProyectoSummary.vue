@@ -19,7 +19,7 @@
     <div class="col-2">
       <div class="d-flex flex-column">
         <div class="d-flex justify-content-end">
-          <button class="btn btn-secondary btn-lg mb-1">Editar</button>
+          <button class="btn btn-secondary btn-lg mb-1" @click="editProject">Editar</button>
         </div>
         <div class="d-flex flex-row justify-content-end text-black-50 fw-light h5">
           <i class="bi bi-arrow-repeat"></i>
@@ -28,20 +28,54 @@
       </div>
     </div>
   </div>
+  <Modal
+    :is-visible="showModal"
+    :title="title"
+    :large="large"
+    :is-editing="isEditing"
+    @close="
+      () => {
+        ;(showModal = false), (isEnding = false), (isEditing = false), (large = false)
+      }
+    "
+    @save="saveChanges"
+  >
+    <Finalizar v-if="isEnding" :ente="ente" />
+    <div v-if="isEditing" class="modal-body-content">
+      <ProjectAddForm />
+    </div>
+  </Modal>
 </template>
 <script>
 import FieldWithLabel from './FieldWithLabel.vue'
+import Finalizar from '@/components/FinalizarModal.vue'
 import FormatDate from '@/mixins/formatting-text/FormatDate.vue'
+import Modal from '@/components/shared/ModalModal.vue'
+import ProjectAddForm from '@/components/ProjectAddForm.vue'
 
 export default {
   components: {
-    FieldWithLabel
+    FieldWithLabel,
+    Finalizar,
+    Modal,
+    ProjectAddForm
   },
   mixins: [FormatDate],
   props: {
     proyecto: {
       type: Object,
       required: true
+    }
+  },
+  data() {
+    return {
+      showModal: false,
+      isDeleting: false,
+      isEnding: false,
+      title: '',
+      ente: '',
+      isEditing: false,
+      large: false
     }
   },
   computed: {
@@ -58,6 +92,18 @@ export default {
     },
     capitalizeFirstLetter: function (value) {
       return value.charAt(0).toUpperCase() + value.slice(1)
+    },
+    finishProject() {
+      this.showModal = true
+      this.isEnding = true
+      this.title = 'Finalizar proyecto'
+      this.ente = 'proyecto'
+    },
+    editProject() {
+      this.showModal = true
+      this.isEditing = true
+      this.title = 'Editar proyecto'
+      this.large = true
     }
   }
 }
