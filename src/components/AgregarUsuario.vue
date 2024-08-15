@@ -24,6 +24,14 @@
             <small class="form-text text-muted">Cantidad de horas contratadas por mes</small>
           </div>
         </div>
+        <div class="mb-3 row">
+          <label for="horas" class="col-sm-2 col-form-label">Tipo</label>
+          <div class="col-sm-10">
+            <div class="input-group">
+              <input class="form-control" required />
+            </div>
+          </div>
+        </div>
       </form>
     </div>
   </div>
