@@ -20,7 +20,7 @@
               v-for="(recurso, recursoIndex) in recursos"
               :key="recursoIndex"
               :value="recursoIndex"
-              :selected="miembro.nombre == recurso"
+              :selected="miembro.name == recurso"
             >
               {{ recurso }}
             </option>

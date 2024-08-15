@@ -8,7 +8,7 @@
           </button>
         </div>
         <div class="me-auto">
-          <h1 class="h3 mb-0 fw-semibold">{{ proyecto.cliente.nombre }} - {{ proyecto.nombre }}</h1>
+          <h1 class="h3 mb-0 fw-semibold">{{ proyecto.client.name }} - {{ proyecto.name }}</h1>
         </div>
         <div class="d-flex">
           <router-link to="#" class="me-2">
@@ -26,8 +26,8 @@
 
     <div class="mb-4">
       <equipo-summary
-        :equipo="proyecto.equipo.miembros"
-        :fecha-ultima-edicion="proyecto.equipo.fechaUltimaEdicion"
+        :equipo="proyecto.squad.resources"
+        :fecha-ultima-edicion="proyecto.squad.updatedAt"
         @add-resource="onAddResource"
         @remove-resource="onRemoveResource"
       />
@@ -40,50 +40,6 @@ import NavigateBack from '@/mixins/navigation/NavigateBack.vue'
 import ProyectoSummary from '@/components/proyectos/ProyectoSummary.vue'
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-
-const PROYECTO = {
-  nombre: 'Empleado digital',
-  cliente: { nombre: 'Bancor' },
-  fechaInicio: new Date('06/01/2024'),
-  fechaFin: new Date('12/31/2024'),
-  fechaUltimaEdicion: new Date('06/25/24 15:17'),
-  horasMensualesContratadas: 160,
-  equipo: {
-    miembros: [
-      {
-        nombre: 'Yoana Gerling',
-        rol: 'QA',
-        horasDisponibles: 80,
-        horasAsignadas: 40
-      },
-      {
-        nombre: 'Patricio Sabatini',
-        rol: 'CEO',
-        horasDisponibles: 120,
-        horasAsignadas: 10
-      },
-      {
-        nombre: 'Rodrigo Loza',
-        rol: 'CTO',
-        horasDisponibles: 100,
-        horasAsignadas: 40
-      },
-      {
-        nombre: 'Joaquin Zanardi',
-        rol: 'DEV',
-        horasDisponibles: 160,
-        horasAsignadas: 40
-      },
-      {
-        nombre: 'Yoana Gerling',
-        rol: 'ADMIN',
-        horasDisponibles: 160,
-        horasAsignadas: 40
-      }
-    ],
-    fechaUltimaEdicion: new Date('06/25/24 18:24')
-  }
-}
 
 export default {
   name: 'VerProyecto',
@@ -102,11 +58,13 @@ export default {
     watch(() => route.params.id, fetchProyectoData, { immediate: true })
 
     async function fetchProyectoData(id) {
+      console.log(id)
       error.value = proyecto.value = null
       loading.value = true
 
       try {
-        proyecto.value = await getProyecto(id)
+        proyecto.value = (await getProyecto(id)).blob()
+        console.log(proyecto.value)
       } catch (err) {
         error.value = err.toString()
       } finally {
@@ -115,7 +73,21 @@ export default {
     }
 
     async function getProyecto(id) {
-      return Promise.resolve(PROYECTO)
+      console.log(id)
+      const headers = new Headers()
+
+      headers.append('Access-Control-Allow-Origin', '*')
+
+      // const req = new Request(`http://localhost:3000/projects/${id}`, {
+      //   method: 'GET',
+      //   headers
+      // })
+
+      return await fetch({
+        url: `http://localhost:3000/projects/${id}`,
+        method: 'GET',
+        headers
+      })
     }
 
     return {

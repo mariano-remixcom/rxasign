@@ -2,18 +2,18 @@
   <div class="section-header-primary">Proyecto</div>
   <div class="px-3 py-1 row">
     <div class="col">
-      <field-with-label label="Cliente" :value="proyecto.cliente.nombre" />
-      <field-with-label label="Proyecto" :value="proyecto.nombre" />
-      <field-with-label label="Cantidad de horas contratadas por mes" :value="`${proyecto.horasMensualesContratadas} hs`" />
+      <field-with-label label="Cliente" :value="proyecto.client.name" />
+      <field-with-label label="Proyecto" :value="proyecto.name" />
+      <field-with-label label="Cantidad de horas contratadas por mes" :value="`${proyecto.monthlyContractedHours} hs`" />
     </div>
     <div class="col">
       <field-with-label label="Período actual" :value="capitalizeFirstLetter(formatDate(new Date(), 'monthAndYear'))" />
       <field-with-label
         label="Inicio"
-        :value="formatDate(proyecto.fechaInicio)"
+        :value="formatDate(proyecto.startDate)"
         :helper="`Hace ${daysSinceStartOfProject} días`"
       />
-      <field-with-label label="Fin" :value="formatDate(proyecto.fechaFin)" :helper="`Faltan ${daysUntilProjectEnds} días`" />
+      <field-with-label label="Fin" :value="formatDate(proyecto.endDate)" :helper="`Faltan ${daysUntilProjectEnds} días`" />
     </div>
 
     <div class="col-2">
@@ -23,7 +23,7 @@
         </div>
         <div class="d-flex flex-row justify-content-end text-muted mt-1">
           <i class="bi bi-arrow-repeat"></i>
-          <div class="ms-1">{{ formatDate(proyecto.fechaUltimaEdicion, 'dateAndTime') }}</div>
+          <div class="ms-1">{{ formatDate(proyecto.updatedAt, 'dateAndTime') }}</div>
         </div>
       </div>
     </div>
@@ -80,10 +80,10 @@ export default {
   },
   computed: {
     daysSinceStartOfProject: function () {
-      return this.getDaysBetweenDates(this.proyecto.fechaInicio, new Date())
+      return this.getDaysBetweenDates(this.proyecto.startDate, new Date())
     },
     daysUntilProjectEnds: function () {
-      return this.getDaysBetweenDates(new Date(), this.proyecto.fechaFin)
+      return this.getDaysBetweenDates(new Date(), this.proyecto.endDate)
     }
   },
   methods: {
