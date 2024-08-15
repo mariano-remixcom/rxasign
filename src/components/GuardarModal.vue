@@ -10,8 +10,8 @@
           <p>¿Estás seguro de que quieres guardar los cambios?</p>
         </div>
         <div class="modal-footer">
-          <button class="btn button-claro me-2" @click="cancel">Cancelar</button>
-          <button class="btn button-oscuro" @click="confirm">Confirmar</button>
+          <button class="btn btn-secondary me-2" @click="cancel">Cancelar</button>
+          <button class="btn btn-primary" @click="confirm">Confirmar</button>
         </div>
       </div>
     </div>
@@ -93,20 +93,5 @@ export default {
   border-top: 1px solid #eee;
   display: flex;
   justify-content: flex-end;
-}
-
-.btn {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  color: white;
-}
-.button-claro {
-  background-color: #b4aeae;
-}
-
-.button-oscuro {
-  background-color: #7c59cc;
 }
 </style>

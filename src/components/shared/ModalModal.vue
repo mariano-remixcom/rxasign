@@ -13,8 +13,8 @@
         </div>
         <div class="modal-footer">
           <slot name="footer">
-            <button class="btn button-claro me-2" @click="$emit('close')">Cancelar</button>
-            <button class="btn button-oscuro" @click="handleSave">Confirmar</button>
+            <button class="btn btn-secondary me-2" @click="$emit('close')">Cancelar</button>
+            <button class="btn btn-primary" @click="handleSave">Confirmar</button>
           </slot>
         </div>
       </div>
@@ -133,20 +133,5 @@ export default {
   border-top: 1px solid #eee;
   display: flex;
   justify-content: flex-end;
-}
-
-.btn {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  color: white;
-}
-.button-claro {
-  background-color: #b4aeae;
-}
-
-.button-oscuro {
-  background-color: #7c59cc;
 }
 </style>

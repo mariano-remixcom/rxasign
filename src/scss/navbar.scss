@@ -1,0 +1,16 @@
+.navbar {
+    color: $white;
+    font-size: 14px;
+    line-height: 16px;
+    font-weight: $font-weight-semibold;
+    .nav-item {
+        .nav-link {
+            color: $white;
+        }
+
+        .active {
+            background-color: $primary-dark;
+            border-radius: 6px;
+        }
+    }
+}

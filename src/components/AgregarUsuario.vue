@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="alert alert-primary w-75" role="alert">Datos del usuario</div>
+    <div class="section-header-primary w-75" role="alert">Datos del usuario</div>
     <div class="project-add-form w-75 mb-4">
       <form @submit.prevent="submitForm">
         <div class="mb-3 row">

@@ -11,7 +11,7 @@
           <th scope="col">Acciones</th>
         </tr>
       </thead>
-      <tbody class="table-group-divider align-middle">
+      <tbody class="align-middle">
         <tr v-for="(user, index) in users" :key="index">
           <td>
             <div class="avatar-container">
@@ -112,11 +112,12 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 /* Estilo de botones de tabla */
 button.btn.btn-link.btn-m {
   --bs-btn-padding-x: 0.2rem;
   --bs-btn-padding-y: 0;
+  color: $blue;
 }
 
 /* Estilo de avatares */

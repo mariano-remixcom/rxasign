@@ -21,9 +21,9 @@
           <input id="remember-me" v-model="rememberMe" type="checkbox" />
           <label for="remember-me">Recordarme</label>
         </div>
-        <a href="#" class="forgot-password">Recuperar Contraseña</a>
+        <a href="#" class="fw-semibold">Recuperar Contraseña</a>
       </div>
-      <button class="login-button" @click="login">Ingresar</button>
+      <button class="btn btn-primary w-100" @click="login">Ingresar</button>
     </div>
   </div>
 </template>
@@ -145,30 +145,5 @@ p {
 
 .remember-me input {
   margin-right: 8px;
-}
-
-.forgot-password {
-  font-size: 1em;
-  color: #6c63ff;
-  text-decoration: none;
-}
-
-.forgot-password:hover {
-  text-decoration: underline;
-}
-
-.login-button {
-  width: 100%;
-  padding: 15px;
-  border: none;
-  border-radius: 5px;
-  background-color: #6c63ff;
-  color: white;
-  font-size: 1em;
-  cursor: pointer;
-}
-
-.login-button:hover {
-  background-color: #594ad3;
 }
 </style>

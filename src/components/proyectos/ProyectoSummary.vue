@@ -1,5 +1,5 @@
 <template v-if="!!proyecto">
-  <h2 class="h5 title py-2 px-3 text-primary rounded fw-bold mb-3">Proyecto</h2>
+  <div class="section-header-primary">Proyecto</div>
   <div class="px-3 py-1 row">
     <div class="col">
       <field-with-label label="Cliente" :value="proyecto.cliente.nombre" />
@@ -19,11 +19,11 @@
     <div class="col-2">
       <div class="d-flex flex-column">
         <div class="d-flex justify-content-end">
-          <button class="btn btn-secondary btn-lg mb-1" @click="editProject">Editar</button>
+          <button class="btn btn-soft-primary mb-1" @click="editProject">Editar</button>
         </div>
-        <div class="d-flex flex-row justify-content-end text-black-50 fw-light h5">
+        <div class="d-flex flex-row justify-content-end text-muted mt-1">
           <i class="bi bi-arrow-repeat"></i>
-          <div class="fecha ms-1">{{ formatDate(proyecto.fechaUltimaEdicion, 'dateAndTime') }}</div>
+          <div class="ms-1">{{ formatDate(proyecto.fechaUltimaEdicion, 'dateAndTime') }}</div>
         </div>
       </div>
     </div>
@@ -108,21 +108,3 @@ export default {
   }
 }
 </script>
-<style scoped>
-.btn-secondary {
-  --bs-btn-color: var(--bs-primary);
-  --bs-btn-font-weight: 600;
-  --bs-btn-bg: #ebe5fc;
-  --bs-btn-border-color: #ebe5fc;
-  --bs-btn-hover-color: var(--bs-primary);
-  --bs-btn-hover-bg: #d5c8fa;
-  --bs-btn-hover-border-color: var(--bs-btn-hover-bg);
-  --bs-btn-active-color: var(--bs-primary);
-  --bs-btn-active-bg: #b19bf0;
-  --bs-btn-active-border-color: var(--bs-btn-active-bg);
-}
-
-.title {
-  background-color: #ebe5fc;
-}
-</style>

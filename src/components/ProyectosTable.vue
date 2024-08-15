@@ -12,10 +12,10 @@
           <th scope="col">Acciones</th>
         </tr>
       </thead>
-      <tbody class="table-group-divider align-middle">
+      <tbody class="align-middle">
         <tr v-for="(item, index) in tableData" :key="index">
           <td>
-            <a class="link-secondary pointer" @click="goToVerProyecto(index)">{{ item.nombre }}</a>
+            <a class="link pointer" @click="goToVerProyecto(index)">{{ item.nombre }}</a>
           </td>
           <td>{{ item.cliente }}</td>
           <td>
@@ -172,14 +172,16 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .pointer {
+  color: $blue;
   cursor: pointer;
 }
 /* fix botones de tabla */
 button.btn.btn-link.btn-m {
   --bs-btn-padding-x: 0.2rem;
   --bs-btn-padding-y: 0;
+  color: $blue;
 }
 
 /* avatares */
@@ -191,8 +193,9 @@ button.btn.btn-link.btn-m {
 .avatar-fallback {
   width: 24px;
   height: 24px;
+  font-size: 24px;
   border-radius: 50%;
-  margin-right: 0px;
+  margin-right: 4px;
   /* Espacio entre avatares */
 }
 

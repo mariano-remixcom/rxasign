@@ -1,5 +1,5 @@
 <template>
-  <div class="alert alert-primary w-75" role="alert">Integrantes del equipo</div>
+  <div class="section-header-primary w-75" role="alert">Integrantes del equipo</div>
   <div class="wmt-4 container w-75 mb-4">
     <table class="table">
       <thead class="table-light">
@@ -11,7 +11,7 @@
           <th scope="col">Acciones</th>
         </tr>
       </thead>
-      <tbody class="table-group-divider align-middle">
+      <tbody class="align-middle">
         <tr v-for="(member, index) in teamMembers" :key="index">
           <td>
             <select v-model="member.name" class="form-select">
@@ -33,7 +33,7 @@
         </tr>
       </tbody>
     </table>
-    <button class="btn btn-primary" @click="addMember">Agregar Integrante</button>
+    <button class="btn btn-outline-primary" @click="addMember">Agregar Integrante</button>
   </div>
 </template>
 
@@ -106,9 +106,10 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 /* fix botones de tabla */
 button.btn.btn-link.btn-m {
+  color: $blue;
   --bs-btn-padding-x: 0.2rem;
   --bs-btn-padding-y: 0;
 }

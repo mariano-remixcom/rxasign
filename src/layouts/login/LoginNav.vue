@@ -7,5 +7,5 @@
 </template>
 
 <script setup>
-import AsignacionesConLogo from '../default/AsignacionesConLogo.vue'
+import AsignacionesConLogo from '../default/Brand.vue'
 </script>
