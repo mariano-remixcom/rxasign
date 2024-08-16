@@ -53,7 +53,7 @@
     <Eliminar v-if="isDeleting" :ente="ente" />
     <Finalizar v-if="isEnding" :ente="ente" />
     <div v-if="isEditing" class="modal-body-content">
-      <ProjectAddForm />
+      <ProjectAddForm :project-id="projectId" />
     </div>
   </Modal>
 </template>
@@ -130,7 +130,8 @@ export default {
       title: '',
       ente: '',
       isEditing: false,
-      large: false
+      large: false,
+      projectId: null
     }
   },
   mounted() {
@@ -152,11 +153,12 @@ export default {
       this.title = 'Finalizar proyecto'
       this.ente = 'proyecto'
     },
-    editProject() {
+    editProject(id) {
       this.showModal = true
       this.isEditing = true
       this.title = 'Editar proyecto'
       this.large = true
+      this.projectId = id
     },
     goToVerProyecto(id) {
       this.$router.push({ name: 'VerProyecto', params: { id } })

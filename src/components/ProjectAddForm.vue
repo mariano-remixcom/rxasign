@@ -68,8 +68,16 @@
 </template>
 
 <script>
+import ProjectsService from '@/services/projects'
+
 export default {
   name: 'ProjectAddForm',
+  props: {
+    //  projectId: {
+    //     type: Number,
+    //     default: null
+    //   },
+  },
   data() {
     return {
       form: {
@@ -82,10 +90,26 @@ export default {
           fin: ''
         }
       },
-      clientes: ['Bancor', 'Otro Cliente', 'Más Clientes'] // Agrega más clientes según sea necesario
+      clientes: ['Bancor', 'Otro Cliente', 'Más Clientes'], // Agrega más clientes según sea necesario
+      project: null,
+      projectsService: new ProjectsService()
     }
   },
+  async mounted() {
+    // if(this.projectId){
+    try {
+      this.project = await this.getProject(2)
+    } catch (error) {
+      console.log('Error al recuperar un proyecto por id')
+    }
+    // }
+  },
   methods: {
+    async getProject(id) {
+      const respuesta = await this.projectsService.getProjectById(id)
+
+      console.log(respuesta)
+    },
     submitForm() {
       // Emitir el formulario completo al componente padre
       this.$emit('submit', this.form)
