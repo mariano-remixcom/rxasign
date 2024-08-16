@@ -40,6 +40,7 @@
 <script>
 export default {
   name: 'AgregarUsuarioForm',
+  emits: ['submit'],
   data() {
     return {
       nombre: '',

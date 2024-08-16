@@ -97,6 +97,7 @@ export default {
       default: null
     }
   },
+  emits: ['update-data'],
   data() {
     return {
       idClient: '',
