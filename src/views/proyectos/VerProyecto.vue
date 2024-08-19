@@ -1,5 +1,8 @@
 <template>
-  <div v-if="!!proyecto" class="container">
+  <div v-if="error?.status === 404">
+    <proyecto-no-encontrado></proyecto-no-encontrado>
+  </div>
+  <div v-if="!!proyecto && !error" class="container">
     <div class="pb-4 mb-4 page-title-separation">
       <div class="d-flex align-items-center justify-content-between">
         <div class="me-2">
@@ -37,7 +40,9 @@
 <script>
 import EquipoSummary from '@/components/proyectos/EquipoSummary.vue'
 import NavigateBack from '@/mixins/navigation/NavigateBack.vue'
+import ProyectoNoEncontrado from './ProyectoNoEncontrado.vue'
 import ProyectoSummary from '@/components/proyectos/ProyectoSummary.vue'
+import { getProject } from '@/api/projects'
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
@@ -45,7 +50,8 @@ export default {
   name: 'VerProyecto',
   components: {
     ProyectoSummary,
-    EquipoSummary
+    EquipoSummary,
+    ProyectoNoEncontrado
   },
   mixins: [NavigateBack],
   setup: function () {
@@ -53,41 +59,25 @@ export default {
 
     const loading = ref(false)
     const proyecto = ref(null)
+    // const usuarios = ref(null)
     const error = ref(null)
 
     watch(() => route.params.id, fetchProyectoData, { immediate: true })
 
     async function fetchProyectoData(id) {
-      console.log(id)
       error.value = proyecto.value = null
       loading.value = true
 
-      try {
-        proyecto.value = (await getProyecto(id)).blob()
-        console.log(proyecto.value)
-      } catch (err) {
-        error.value = err.toString()
-      } finally {
-        loading.value = false
-      }
-    }
-
-    async function getProyecto(id) {
-      console.log(id)
-      const headers = new Headers()
-
-      headers.append('Access-Control-Allow-Origin', '*')
-
-      // const req = new Request(`http://localhost:3000/projects/${id}`, {
-      //   method: 'GET',
-      //   headers
-      // })
-
-      return await fetch({
-        url: `http://localhost:3000/projects/${id}`,
-        method: 'GET',
-        headers
-      })
+      getProject(id)
+        .then((response) => {
+          proyecto.value = response.data
+        })
+        .catch((err) => {
+          error.value = err.response
+        })
+        .finally(() => {
+          loading.value = false
+        })
     }
 
     return {

@@ -52,6 +52,7 @@ import Finalizar from '@/components/FinalizarModal.vue'
 import FormatDate from '@/mixins/formatting-text/FormatDate.vue'
 import Modal from '@/components/shared/ModalModal.vue'
 import ProjectAddForm from '@/components/ProjectAddForm.vue'
+import moment from 'moment'
 
 export default {
   components: {
@@ -80,16 +81,13 @@ export default {
   },
   computed: {
     daysSinceStartOfProject: function () {
-      return this.getDaysBetweenDates(this.proyecto.startDate, new Date())
+      return moment().diff(moment(this.proyecto.startDate), 'days')
     },
     daysUntilProjectEnds: function () {
-      return this.getDaysBetweenDates(new Date(), this.proyecto.endDate)
+      return moment(this.proyecto.endDate).diff(moment(), 'days')
     }
   },
   methods: {
-    getDaysBetweenDates: function (first, second) {
-      return Math.round((second - first) / (1000 * 60 * 60 * 24))
-    },
     capitalizeFirstLetter: function (value) {
       return value.charAt(0).toUpperCase() + value.slice(1)
     },

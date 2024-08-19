@@ -64,7 +64,7 @@ export default {
       required: true
     },
     fechaUltimaEdicion: {
-      type: Date,
+      type: String,
       required: true
     }
   },
