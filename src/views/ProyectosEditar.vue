@@ -5,22 +5,21 @@
         <h1 class="display-6 fw-bold">Editar proyecto</h1>
       </div>
       <!-- Acciones inicio -->
-      <div class="d-flex gap-2">
+      <!-- <div class="d-flex gap-2">
         <router-link to="/">
           <button class="btn btn-secondary">Cancelar</button>
         </router-link>
         <button class="btn btn-primary" @click="addProject">Guardar</button>
-      </div>
+      </div> -->
       <!-- Acciones fin -->
     </div>
   </div>
   <div id="app">
     <div class="container d-flex flex-column">
-      <ProjectAddForm @submit="handleFormSubmit" />
-      <ProjectAddTeam />
+      <ProjectAddForm @update-data="updateDataEdit" />
     </div>
   </div>
-  <Modal
+  <!-- <Modal
     :is-visible="showModal"
     :title="title"
     @close="
@@ -30,22 +29,20 @@
     "
   >
     <Guardar v-if="isSaving" :ente="ente" />
-  </Modal>
+  </Modal> -->
 </template>
 
 <script>
-import Guardar from '@/components/GuardarModal.vue'
-import Modal from '@/components/shared/ModalModal.vue'
+// import Guardar from '@/components/GuardarModal.vue'
+// import Modal from '@/components/shared/ModalModal.vue'
 import ProjectAddForm from '@/components/ProjectAddForm.vue'
-import ProjectAddTeam from '@/components/ProjectAddTeam.vue'
 
 export default {
   name: 'EditProject',
   components: {
-    ProjectAddForm,
-    ProjectAddTeam,
-    Modal,
-    Guardar
+    ProjectAddForm
+    // Modal,
+    // Guardar
   },
   data() {
     return {
@@ -53,10 +50,18 @@ export default {
       isSaving: false,
 
       title: '',
-      ente: ''
+      ente: '',
+      project: {
+        name: ''
+      }
     }
   },
   methods: {
+    updateDataEdit(updatedProject) {
+      console.log('updateDataEdit called in parent with:', updatedProject)
+      this.project = { ...this.project, ...updatedProject }
+      console.log(this.project)
+    },
     handleFormSubmit(form) {
       // Lógica para manejar el formulario enviado
       console.log('Formulario recibido', form)

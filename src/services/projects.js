@@ -16,6 +16,8 @@ export default class ProjectsService {
   }
 
   updateProject(id, data) {
+    console.log('Datos enviados:', data)
+
     return api().patch(`/projects/${id}`, data)
   }
 

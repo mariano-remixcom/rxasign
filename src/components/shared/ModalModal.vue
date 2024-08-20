@@ -46,6 +46,10 @@ export default {
     isEditing: {
       type: Boolean,
       default: false
+    },
+    isDeleting: {
+      type: Boolean,
+      default: false
     }
   },
   emits: ['close', 'save'],
@@ -61,6 +65,9 @@ export default {
         this.showConfirmacionModal = true
       } else {
         this.$emit('save')
+      }
+      if (this.isDeleting) {
+        this.$emit('delete')
       }
     },
     closeGuardarModal() {

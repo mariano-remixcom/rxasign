@@ -6,9 +6,9 @@
         <div class="mb-3 row">
           <label for="cliente" class="col-sm-2 col-form-label">Cliente</label>
           <div class="col-sm-10">
-            <select id="cliente" v-model="form.cliente" class="form-select" required>
+            <select id="cliente" v-model="selectedClient" class="form-select" required @change="updateData">
               <option value="" disabled>Seleccione un cliente</option>
-              <option v-for="option in clientes" :key="option" :value="option">{{ option }}</option>
+              <option v-for="option in clients" :key="option" :value="option.id">{{ option.name }}</option>
             </select>
           </div>
         </div>
@@ -18,11 +18,12 @@
           <div class="col-sm-10">
             <input
               id="proyecto"
-              v-model="form.proyecto"
+              v-model="project.name"
               type="text"
               class="form-control"
               placeholder="Recaudaciones"
               required
+              @input="updateData"
             />
           </div>
         </div>
@@ -31,9 +32,17 @@
           <label for="horas" class="col-sm-2 col-form-label">Horas</label>
           <div class="col-sm-10">
             <div class="input-group">
-              <input id="horas" v-model="form.horas" type="number" class="form-control" min="0" required />
+              <input
+                id="horas"
+                v-model="project.monthlyContractedHours"
+                type="number"
+                class="form-control"
+                min="0"
+                required
+                @change="updateData"
+              />
               <span class="input-group-text">
-                <input v-model="form.contratoAbierto" type="checkbox" />
+                <input type="checkbox" />
                 Contrato abierto
               </span>
             </div>
@@ -48,15 +57,24 @@
               <div class="col">
                 <input
                   id="inicio"
-                  v-model="form.vigencia.inicio"
+                  v-model="project.startDate"
                   type="date"
                   class="form-control"
                   placeholder="Desde"
                   required
+                  @change="updateData"
                 />
               </div>
               <div class="col">
-                <input id="fin" v-model="form.vigencia.fin" type="date" class="form-control" placeholder="Hasta" required />
+                <input
+                  id="fin"
+                  v-model="project.endDate"
+                  type="date"
+                  class="form-control"
+                  placeholder="Hasta"
+                  required
+                  @change="updateData"
+                />
               </div>
             </div>
             <small class="form-text text-muted">Inicio y fin del proyecto. Necesario para la funcionalidad de períodos.</small>
@@ -68,52 +86,105 @@
 </template>
 
 <script>
+import ClientsService from '@/services/clients'
 import ProjectsService from '@/services/projects'
 
 export default {
   name: 'ProjectAddForm',
   props: {
-    //  projectId: {
-    //     type: Number,
-    //     default: null
-    //   },
+    projectEdit: {
+      type: Object,
+      default: null
+    }
   },
   data() {
     return {
-      form: {
+      idClient: '',
+      contratoAbierto: false,
+      clients: [],
+      selectedClient: '',
+      project: {
         cliente: '',
-        proyecto: '',
-        horas: 0,
-        contratoAbierto: false,
-        vigencia: {
-          inicio: '',
-          fin: ''
-        }
+        name: '',
+        monthlyContractedHours: 0,
+        startDate: '',
+        endDate: ''
       },
-      clientes: ['Bancor', 'Otro Cliente', 'Más Clientes'], // Agrega más clientes según sea necesario
-      project: null,
-      projectsService: new ProjectsService()
+      projectsService: new ProjectsService(),
+      clientsService: new ClientsService()
+    }
+  },
+  computed: {
+    // Si estoy editando un proyecto busca el cliente correspondiente
+    selectedClientFromProject() {
+      if (this.projectEdit && this.projectEdit.nameClient && this.clients.length > 0) {
+        const client = this.clients.find((c) => c.name === this.projectEdit.nameClient)
+
+        return client ? client.id : ''
+      }
+
+      return ''
+    }
+  },
+  watch: {
+    selectedClientFromProject(newVal) {
+      if (newVal) {
+        this.selectedClient = newVal
+      }
+    },
+    selectedClient(newVal) {
+      const selectedOption = this.clients.find((client) => client.id === newVal)
+
+      if (selectedOption) {
+        this.project.idClient = selectedOption.id
+        this.project.nameClient = selectedOption.name
+      }
     }
   },
   async mounted() {
-    // if(this.projectId){
-    try {
-      this.project = await this.getProject(2)
-    } catch (error) {
-      console.log('Error al recuperar un proyecto por id')
+    if (this.projectEdit) {
+      try {
+        this.project = this.projectEdit
+        this.project.startDate = this.formatDate(this.project.startDate)
+        this.project.endDate = this.project.endDate ? this.formatDate(this.project.endDate) : null
+        this.project.createdAt = this.formatDate(this.project.createdAt)
+        this.project.updatedAt = this.formatDate(this.project.updatedAt)
+      } catch (error) {
+        console.log('Error al recuperar un proyecto por id')
+      }
     }
-    // }
+    this.getClients()
   },
   methods: {
-    async getProject(id) {
-      const respuesta = await this.projectsService.getProjectById(id)
+    async getClients() {
+      try {
+        const clientResponse = await this.clientsService.getAllClients()
 
-      console.log(respuesta)
+        this.clients = clientResponse.data
+
+        // Si estoy editando un proyecto se establece el cliente seleccionado
+        if (this.projectEdit) {
+          this.selectedClient = this.selectedClientFromProject
+        }
+      } catch (err) {
+        console.log('No se pueden recuparar los clientes: ', err)
+      }
     },
-    submitForm() {
-      // Emitir el formulario completo al componente padre
-      this.$emit('submit', this.form)
+    formatDate(dateString) {
+      const date = new Date(dateString)
+      const year = date.getFullYear()
+      const month = String(date.getMonth() + 1).padStart(2, '0')
+      const day = String(date.getDate()).padStart(2, '0')
+
+      return `${year}-${month}-${day}`
+    },
+    updateData() {
+      this.$emit('update-data', this.project)
     }
+    // submitForm() {
+    //   // Emitir el formulario completo al componente padre
+    //   this.$emit('submit', this.form)
+    // }
   }
 }
 </script>
