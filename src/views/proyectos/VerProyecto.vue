@@ -2,7 +2,7 @@
   <div v-if="error?.status === 404">
     <proyecto-no-encontrado></proyecto-no-encontrado>
   </div>
-  <div v-if="!!proyecto && !error" class="container">
+  <div v-if="!loading && !error" class="container">
     <div class="pb-4 mb-4 page-title-separation">
       <div class="d-flex align-items-center justify-content-between">
         <div class="me-2">
@@ -59,12 +59,11 @@ export default {
 
     const loading = ref(false)
     const proyecto = ref(null)
-    // const usuarios = ref(null)
     const error = ref(null)
 
     watch(() => route.params.id, fetchProyectoData, { immediate: true })
 
-    async function fetchProyectoData(id) {
+    function fetchProyectoData(id) {
       error.value = proyecto.value = null
       loading.value = true
 

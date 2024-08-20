@@ -1,4 +1,4 @@
-<template>
+<template v-if="!loading">
   <div class="section-header-primary">Equipo</div>
   <table class="table mb-3">
     <thead class="table-light">
@@ -19,23 +19,23 @@
             <option
               v-for="(recurso, recursoIndex) in recursos"
               :key="recursoIndex"
-              :value="recursoIndex"
-              :selected="miembro.name == recurso"
+              :value="recurso.id"
+              :selected="miembro.idUser === recurso.id"
             >
-              {{ recurso }}
+              {{ recurso.fullName }}
             </option>
           </select>
         </td>
         <td>
           <select class="form-select">
-            <option v-for="(rol, rolIndex) in roles" :key="rolIndex" :value="rolIndex" :selected="miembro.rol == rol">
-              {{ rol }}
+            <option v-for="(rol, rolIndex) in roles" :key="rolIndex" :value="rolIndex" :selected="miembro.rol === rol.key">
+              {{ rol.displayName }}
             </option>
           </select>
         </td>
-        <td class="text-center">{{ miembro.horasDisponibles }} hs</td>
+        <td class="text-center">{{ miembro.availableHours }} hs</td>
         <td>
-          <input class="form-control" type="number" max="9999" :value="miembro.horasAsignadas" />
+          <input class="form-control" type="number" max="9999" :value="miembro.assignedHours" />
         </td>
         <td class="text-center">
           <button class="btn icon" @click="$emit('removeResource', index)">
@@ -55,6 +55,9 @@
 </template>
 <script>
 import FormatDate from '@/mixins/formatting-text/FormatDate.vue'
+import { USER_ROLES } from '@/constants/UserRoles'
+import { obtenerRecursosActivosParaCombos } from '@/api/users'
+import { ref } from 'vue'
 
 export default {
   mixins: [FormatDate],
@@ -69,10 +72,28 @@ export default {
     }
   },
   emits: ['addResource', 'removeResource'],
+  setup: function () {
+    const loading = ref(false)
+    const recursos = ref(null)
+
+    loading.value = true
+
+    obtenerRecursosActivosParaCombos()
+      .then((response) => {
+        recursos.value = response.data
+      })
+      .finally(() => {
+        loading.value = false
+      })
+
+    return {
+      loading,
+      recursos
+    }
+  },
   data() {
     return {
-      recursos: ['Rodrigo Loza', 'Yanina Silva', 'Mariano Soulé', 'Joaquin Zanardi', 'Yoana Gerling', 'Patricio Sabatini'],
-      roles: ['QA', 'CEO', 'CTO', 'DEV', 'ADMIN']
+      roles: USER_ROLES
     }
   }
 }

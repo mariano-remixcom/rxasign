@@ -13,7 +13,13 @@
         :value="formatDate(proyecto.startDate)"
         :helper="`Hace ${daysSinceStartOfProject} días`"
       />
-      <field-with-label label="Fin" :value="formatDate(proyecto.endDate)" :helper="`Faltan ${daysUntilProjectEnds} días`" />
+      <field-with-label
+        v-if="!!proyecto.endDate"
+        label="Fin"
+        :value="formatDate(proyecto.endDate)"
+        :helper="`Faltan ${daysUntilProjectEnds} días`"
+      />
+      <field-with-label v-else label="Fin" value="A definir" />
     </div>
 
     <div class="col-2">
