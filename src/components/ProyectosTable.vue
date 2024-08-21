@@ -13,9 +13,9 @@
         </tr>
       </thead>
       <tbody class="align-middle">
-        <tr v-for="(item, index) in projects" :key="index">
+        <tr v-for="item in projects" :key="item.id">
           <td>
-            <a class="link pointer" @click="goToVerProyecto(index)">{{ item.name }}</a>
+            <a class="link pointer" @click="goToVerProyecto(item.id)">{{ item.name }}</a>
           </td>
           <td>{{ item.nameClient }}</td>
           <td>

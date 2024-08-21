@@ -6,8 +6,6 @@ export default class ClientsService {
   }
 
   getClientById(id) {
-    console.log(id)
-
     return api().get(`/clients/${id}`)
   }
 }

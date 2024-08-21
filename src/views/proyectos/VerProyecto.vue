@@ -40,9 +40,9 @@
 <script>
 import EquipoSummary from '@/components/proyectos/EquipoSummary.vue'
 import NavigateBack from '@/mixins/navigation/NavigateBack.vue'
+import ProjectsService from '@/services/projects'
 import ProyectoNoEncontrado from './ProyectoNoEncontrado.vue'
 import ProyectoSummary from '@/components/proyectos/ProyectoSummary.vue'
-import { getProject } from '@/api/projects'
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
@@ -67,7 +67,8 @@ export default {
       error.value = proyecto.value = null
       loading.value = true
 
-      getProject(id)
+      new ProjectsService()
+        .getProjectById(id)
         .then((response) => {
           proyecto.value = response.data
         })

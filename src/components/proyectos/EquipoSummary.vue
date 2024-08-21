@@ -1,6 +1,6 @@
 <template v-if="!loading">
   <div class="section-header-primary">Equipo</div>
-  <table class="table mb-3">
+  <table v-if="equipo.length > 0" class="table mb-3">
     <thead class="table-light">
       <tr>
         <th scope="col">#</th>
@@ -56,7 +56,7 @@
 <script>
 import FormatDate from '@/mixins/formatting-text/FormatDate.vue'
 import { USER_ROLES } from '@/constants/UserRoles'
-import { obtenerRecursosActivosParaCombos } from '@/api/users'
+import { UsersService } from '@/services/users'
 import { ref } from 'vue'
 
 export default {
@@ -78,7 +78,8 @@ export default {
 
     loading.value = true
 
-    obtenerRecursosActivosParaCombos()
+    new UsersService()
+      .getActiveResourcesForCombobox()
       .then((response) => {
         recursos.value = response.data
       })
