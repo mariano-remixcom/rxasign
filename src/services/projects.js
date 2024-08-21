@@ -10,13 +10,11 @@ export default class ProjectsService {
   }
 
   getProjectById(id) {
-    console.log(id)
-
     return api().get(`/projects/${id}`)
   }
 
   updateProject(id, data) {
-    console.log('Datos enviados:', data)
+    console.log(id, data)
 
     return api().patch(`/projects/${id}`, data)
   }

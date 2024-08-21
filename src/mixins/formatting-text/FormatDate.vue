@@ -1,32 +1,20 @@
 <script>
+import moment from 'moment'
+
 export default {
   methods: {
-    formatDate: function (date, format) {
-      if (!date) return ''
+    formatDate: function (value, format) {
+      const date = moment(value)
 
       switch (format) {
         case 'dateAndTime': {
-          const formattedDate = new Intl.DateTimeFormat('es-AR', {
-            day: '2-digit',
-            month: '2-digit',
-            year: '2-digit',
-            hour: 'numeric',
-            minute: 'numeric',
-            hourCycle: 'h23'
-          }).format(date)
-
-          return formattedDate.replace(',', '')
+          return date.format('DD/MM/YY HH:mm')
         }
         case 'monthAndYear': {
-          const formattedDate = new Intl.DateTimeFormat('es-AR', {
-            month: 'long',
-            year: 'numeric'
-          }).formatToParts(date)
-
-          return `${formattedDate[0].value} ${formattedDate[2].value}`
+          return date.format('MMMM YYYY')
         }
         default:
-          return new Intl.DateTimeFormat('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(date)
+          return date.format('DD/MM/YYYY')
       }
     }
   }

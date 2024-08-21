@@ -1,5 +1,8 @@
 <template>
-  <div v-if="!!proyecto" class="container">
+  <div v-if="error?.status === 404">
+    <proyecto-no-encontrado></proyecto-no-encontrado>
+  </div>
+  <div v-if="!loading && !error" class="container">
     <div class="pb-4 mb-4 page-title-separation">
       <div class="d-flex align-items-center justify-content-between">
         <div class="me-2">
@@ -8,7 +11,7 @@
           </button>
         </div>
         <div class="me-auto">
-          <h1 class="h3 mb-0 fw-semibold">{{ proyecto.cliente.nombre }} - {{ proyecto.nombre }}</h1>
+          <h1 class="h3 mb-0 fw-semibold">{{ proyecto.client.name }} - {{ proyecto.name }}</h1>
         </div>
         <div class="d-flex">
           <router-link to="#" class="me-2">
@@ -26,8 +29,8 @@
 
     <div class="mb-4">
       <equipo-summary
-        :equipo="proyecto.equipo.miembros"
-        :fecha-ultima-edicion="proyecto.equipo.fechaUltimaEdicion"
+        :equipo="proyecto.squad.resources"
+        :fecha-ultima-edicion="proyecto.squad.updatedAt"
         @add-resource="onAddResource"
         @remove-resource="onRemoveResource"
       />
@@ -37,59 +40,18 @@
 <script>
 import EquipoSummary from '@/components/proyectos/EquipoSummary.vue'
 import NavigateBack from '@/mixins/navigation/NavigateBack.vue'
+import ProjectsService from '@/services/projects'
+import ProyectoNoEncontrado from './ProyectoNoEncontrado.vue'
 import ProyectoSummary from '@/components/proyectos/ProyectoSummary.vue'
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-
-const PROYECTO = {
-  nombre: 'Empleado digital',
-  cliente: { nombre: 'Bancor' },
-  fechaInicio: new Date('06/01/2024'),
-  fechaFin: new Date('12/31/2024'),
-  fechaUltimaEdicion: new Date('06/25/24 15:17'),
-  horasMensualesContratadas: 160,
-  equipo: {
-    miembros: [
-      {
-        nombre: 'Yoana Gerling',
-        rol: 'QA',
-        horasDisponibles: 80,
-        horasAsignadas: 40
-      },
-      {
-        nombre: 'Patricio Sabatini',
-        rol: 'CEO',
-        horasDisponibles: 120,
-        horasAsignadas: 10
-      },
-      {
-        nombre: 'Rodrigo Loza',
-        rol: 'CTO',
-        horasDisponibles: 100,
-        horasAsignadas: 40
-      },
-      {
-        nombre: 'Joaquin Zanardi',
-        rol: 'DEV',
-        horasDisponibles: 160,
-        horasAsignadas: 40
-      },
-      {
-        nombre: 'Yoana Gerling',
-        rol: 'ADMIN',
-        horasDisponibles: 160,
-        horasAsignadas: 40
-      }
-    ],
-    fechaUltimaEdicion: new Date('06/25/24 18:24')
-  }
-}
 
 export default {
   name: 'VerProyecto',
   components: {
     ProyectoSummary,
-    EquipoSummary
+    EquipoSummary,
+    ProyectoNoEncontrado
   },
   mixins: [NavigateBack],
   setup: function () {
@@ -101,21 +63,21 @@ export default {
 
     watch(() => route.params.id, fetchProyectoData, { immediate: true })
 
-    async function fetchProyectoData(id) {
+    function fetchProyectoData(id) {
       error.value = proyecto.value = null
       loading.value = true
 
-      try {
-        proyecto.value = await getProyecto(id)
-      } catch (err) {
-        error.value = err.toString()
-      } finally {
-        loading.value = false
-      }
-    }
-
-    async function getProyecto(id) {
-      return Promise.resolve(PROYECTO)
+      new ProjectsService()
+        .getProjectById(id)
+        .then((response) => {
+          proyecto.value = response.data
+        })
+        .catch((err) => {
+          error.value = err.response
+        })
+        .finally(() => {
+          loading.value = false
+        })
     }
 
     return {

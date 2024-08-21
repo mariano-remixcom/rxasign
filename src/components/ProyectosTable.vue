@@ -13,22 +13,27 @@
         </tr>
       </thead>
       <tbody class="align-middle">
-        <tr v-for="(item, index) in projects" :key="index">
+        <tr v-for="item in projects" :key="item.id">
           <td>
-            <a class="link pointer" @click="goToVerProyecto(index)">{{ item.name }}</a>
+            <a class="link pointer" @click="goToVerProyecto(item.id)">{{ item.name }}</a>
           </td>
-          <td>{{ item.nameClient }}</td>
+          <td>{{ item.client.name }}</td>
           <td>
             <div class="avatars">
-              <template v-if="!item.idSquad">
-                <!-- <i class="bi bi-person-circle avatar-fallback" :title="nombre"></i> -->
-                Sin squad
+              <template v-if="item.squad._count.resources === 0"> Sin squad </template>
+              <template v-else>
+                <i
+                  v-for="(resource, index) in Array(item.squad._count.resources)"
+                  :key="index"
+                  class="bi bi-person-circle avatar-fallback"
+                ></i>
               </template>
             </div>
           </td>
-          <td>{{ item.monthlyContractedHours }}</td>
-          <!-- <td>{{ item.asignadas }}</td> -->
-          <td v-if="!item.idSquad">-</td>
+          <td>{{ item.monthlyContractedHours }} hs</td>
+          <!-- TODO: Poner horas reales asignadas -->
+          <td v-if="item.squad._count.resources !== 0">{{ item.totalAsignedHours }} hs</td>
+          <td v-else>-</td>
           <td>{{ formatDate(item.updatedAt) }}</td>
           <td>
             <button class="btn btn-link btn-m"><i class="bi bi-clipboard-data"></i></button>
@@ -124,17 +129,6 @@ export default {
         const response = await this.projectsService.getAllProjects()
 
         this.projects = response.data
-        // Recorro el array de proyectos y obtengo el cliente de cada uno. Agrego la propiedad nameClient a cada proyecto.
-        for (const project of this.projects) {
-          try {
-            const clientResponse = await this.clientsService.getClientById(project.idClient)
-            const client = clientResponse.data
-
-            project.nameClient = client.name
-          } catch (err) {
-            console.log('Error al recuperar el cliente del proyecto ', project.name, err)
-          }
-        }
       } catch (err) {
         console.log('Error al obtener los proyectos: ', err)
       }
@@ -194,7 +188,7 @@ export default {
     // }
     updateDataEdit(updatedProject) {
       console.log('updateDataEdit called in parent with:', updatedProject)
-      this.project = { ...this.project, ...updatedProject }
+      this.project = updatedProject
       console.log(this.project)
     },
     formatDate(dateString) {
@@ -211,10 +205,9 @@ export default {
           const response = await this.projectsService.updateProject(this.project.id, {
             name: this.project.name,
             monthlyContractedHours: this.project.monthlyContractedHours,
-            startDate: this.project.startDate,
-            endDate: this.project.endDate,
-            idClient: this.project.idClient,
-            idSquad: this.project.idSquad
+            startDate: new Date(this.project.startDate),
+            endDate: this.project.endDate ? new Date(this.project.endDate) : null,
+            idClient: this.project.idClient
           })
 
           console.log(response)

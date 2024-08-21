@@ -2,18 +2,24 @@
   <div class="section-header-primary">Proyecto</div>
   <div class="px-3 py-1 row">
     <div class="col">
-      <field-with-label label="Cliente" :value="proyecto.cliente.nombre" />
-      <field-with-label label="Proyecto" :value="proyecto.nombre" />
-      <field-with-label label="Cantidad de horas contratadas por mes" :value="`${proyecto.horasMensualesContratadas} hs`" />
+      <field-with-label label="Cliente" :value="proyecto.client.name" />
+      <field-with-label label="Proyecto" :value="proyecto.name" />
+      <field-with-label label="Cantidad de horas contratadas por mes" :value="`${proyecto.monthlyContractedHours} hs`" />
     </div>
     <div class="col">
       <field-with-label label="Período actual" :value="capitalizeFirstLetter(formatDate(new Date(), 'monthAndYear'))" />
       <field-with-label
         label="Inicio"
-        :value="formatDate(proyecto.fechaInicio)"
+        :value="formatDate(proyecto.startDate)"
         :helper="`Hace ${daysSinceStartOfProject} días`"
       />
-      <field-with-label label="Fin" :value="formatDate(proyecto.fechaFin)" :helper="`Faltan ${daysUntilProjectEnds} días`" />
+      <field-with-label
+        v-if="!!proyecto.endDate"
+        label="Fin"
+        :value="formatDate(proyecto.endDate)"
+        :helper="`Faltan ${daysUntilProjectEnds} días`"
+      />
+      <field-with-label v-else label="Fin" value="A definir" />
     </div>
 
     <div class="col-2">
@@ -23,7 +29,7 @@
         </div>
         <div class="d-flex flex-row justify-content-end text-muted mt-1">
           <i class="bi bi-arrow-repeat"></i>
-          <div class="ms-1">{{ formatDate(proyecto.fechaUltimaEdicion, 'dateAndTime') }}</div>
+          <div class="ms-1">{{ formatDate(proyecto.updatedAt, 'dateAndTime') }}</div>
         </div>
       </div>
     </div>
@@ -42,7 +48,7 @@
   >
     <Finalizar v-if="isEnding" :ente="ente" />
     <div v-if="isEditing" class="modal-body-content">
-      <ProjectAddForm />
+      <ProjectAddForm :project-edit="proyecto" />
     </div>
   </Modal>
 </template>
@@ -52,6 +58,7 @@ import Finalizar from '@/components/FinalizarModal.vue'
 import FormatDate from '@/mixins/formatting-text/FormatDate.vue'
 import Modal from '@/components/shared/ModalModal.vue'
 import ProjectAddForm from '@/components/ProjectAddForm.vue'
+import moment from 'moment'
 
 export default {
   components: {
@@ -70,26 +77,30 @@ export default {
   data() {
     return {
       showModal: false,
-      isDeleting: false,
       isEnding: false,
       title: '',
       ente: '',
       isEditing: false,
-      large: false
+      large: false,
+      editForm: {
+        id: 0,
+        idClient: '',
+        name: '',
+        monthlyContractedHours: 0,
+        startDate: '',
+        endDate: ''
+      }
     }
   },
   computed: {
     daysSinceStartOfProject: function () {
-      return this.getDaysBetweenDates(this.proyecto.fechaInicio, new Date())
+      return moment().diff(moment(this.proyecto.startDate), 'days')
     },
     daysUntilProjectEnds: function () {
-      return this.getDaysBetweenDates(new Date(), this.proyecto.fechaFin)
+      return moment(this.proyecto.endDate).diff(moment(), 'days')
     }
   },
   methods: {
-    getDaysBetweenDates: function (first, second) {
-      return Math.round((second - first) / (1000 * 60 * 60 * 24))
-    },
     capitalizeFirstLetter: function (value) {
       return value.charAt(0).toUpperCase() + value.slice(1)
     },
@@ -104,6 +115,9 @@ export default {
       this.isEditing = true
       this.title = 'Editar proyecto'
       this.large = true
+    },
+    updateDataEdit(updatedProject) {
+      this.editForm = updatedProject
     }
   }
 }
