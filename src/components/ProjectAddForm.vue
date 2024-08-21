@@ -6,9 +6,16 @@
         <div class="mb-3 row">
           <label for="cliente" class="col-sm-2 col-form-label">Cliente</label>
           <div class="col-sm-10">
-            <select id="cliente" v-model="selectedClient" class="form-select" required @change="updateData">
-              <option value="" disabled>Seleccione un cliente</option>
-              <option v-for="option in clients" :key="option" :value="option.id">{{ option.name }}</option>
+            <select id="cliente" class="form-select" required @change="updateData">
+              <option value="none" disabled :selected="!projectEdit">Seleccione un cliente</option>
+              <option
+                v-for="option in clients"
+                :key="option"
+                :value="option.id"
+                :selected="option.id === projectEdit?.client.id"
+              >
+                {{ option.name }}
+              </option>
             </select>
           </div>
         </div>
@@ -118,8 +125,8 @@ export default {
   computed: {
     // Si estoy editando un proyecto busca el cliente correspondiente
     selectedClientFromProject() {
-      if (this.projectEdit && this.projectEdit.nameClient && this.clients.length > 0) {
-        const client = this.clients.find((c) => c.name === this.projectEdit.nameClient)
+      if (this.projectEdit && this.projectEdit.client.name && this.clients.length > 0) {
+        const client = this.clients.find((c) => c.name === this.projectEdit.client.name)
 
         return client ? client.id : ''
       }
@@ -138,21 +145,17 @@ export default {
 
       if (selectedOption) {
         this.project.idClient = selectedOption.id
-        this.project.nameClient = selectedOption.name
+        this.project.client.name = selectedOption.name
       }
     }
   },
   async mounted() {
     if (this.projectEdit) {
-      try {
-        this.project = this.projectEdit
-        this.project.startDate = this.formatDate(this.project.startDate)
-        this.project.endDate = this.project.endDate ? this.formatDate(this.project.endDate) : null
-        this.project.createdAt = this.formatDate(this.project.createdAt)
-        this.project.updatedAt = this.formatDate(this.project.updatedAt)
-      } catch (error) {
-        console.log('Error al recuperar un proyecto por id')
-      }
+      this.project = this.projectEdit
+      this.project.startDate = this.formatDate(this.project.startDate)
+      this.project.endDate = this.project.endDate ? this.formatDate(this.project.endDate) : null
+      this.project.createdAt = this.formatDate(this.project.createdAt)
+      this.project.updatedAt = this.formatDate(this.project.updatedAt)
     }
     this.getClients()
   },
@@ -163,10 +166,10 @@ export default {
 
         this.clients = clientResponse.data
 
-        // Si estoy editando un proyecto se establece el cliente seleccionado
-        if (this.projectEdit) {
-          this.selectedClient = this.selectedClientFromProject
-        }
+        // // Si estoy editando un proyecto se establece el cliente seleccionado
+        // if (this.projectEdit) {
+        //   this.selectedClient = this.selectedClientFromProject
+        // }
       } catch (err) {
         console.log('No se pueden recuparar los clientes: ', err)
       }

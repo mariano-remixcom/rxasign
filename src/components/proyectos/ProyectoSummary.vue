@@ -48,7 +48,7 @@
   >
     <Finalizar v-if="isEnding" :ente="ente" />
     <div v-if="isEditing" class="modal-body-content">
-      <ProjectAddForm />
+      <ProjectAddForm :project-edit="proyecto" />
     </div>
   </Modal>
 </template>
