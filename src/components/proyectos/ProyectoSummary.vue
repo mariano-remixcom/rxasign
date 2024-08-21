@@ -77,12 +77,19 @@ export default {
   data() {
     return {
       showModal: false,
-      isDeleting: false,
       isEnding: false,
       title: '',
       ente: '',
       isEditing: false,
-      large: false
+      large: false,
+      editForm: {
+        id: 0,
+        idClient: '',
+        name: '',
+        monthlyContractedHours: 0,
+        startDate: '',
+        endDate: ''
+      }
     }
   },
   computed: {
@@ -108,6 +115,9 @@ export default {
       this.isEditing = true
       this.title = 'Editar proyecto'
       this.large = true
+    },
+    updateDataEdit(updatedProject) {
+      this.editForm = updatedProject
     }
   }
 }

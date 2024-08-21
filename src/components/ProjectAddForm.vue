@@ -6,14 +6,9 @@
         <div class="mb-3 row">
           <label for="cliente" class="col-sm-2 col-form-label">Cliente</label>
           <div class="col-sm-10">
-            <select id="cliente" class="form-select" required @change="updateData">
-              <option value="none" disabled :selected="!projectEdit">Seleccione un cliente</option>
-              <option
-                v-for="option in clients"
-                :key="option"
-                :value="option.id"
-                :selected="option.id === projectEdit?.client.id"
-              >
+            <select id="cliente" v-model="project.idClient" class="form-select" required @change="updateData">
+              <option value="none" disabled :selected="!project">Seleccione un cliente</option>
+              <option v-for="option in clients" :key="option" :value="option.id" :selected="option.id === project?.idClient">
                 {{ option.name }}
               </option>
             </select>
@@ -95,6 +90,7 @@
 <script>
 import ClientsService from '@/services/clients'
 import ProjectsService from '@/services/projects'
+import moment from 'moment'
 
 export default {
   name: 'ProjectAddForm',
@@ -112,7 +108,8 @@ export default {
       clients: [],
       selectedClient: '',
       project: {
-        cliente: '',
+        id: 0,
+        idClient: '',
         name: '',
         monthlyContractedHours: 0,
         startDate: '',
@@ -134,28 +131,14 @@ export default {
       return ''
     }
   },
-  watch: {
-    selectedClientFromProject(newVal) {
-      if (newVal) {
-        this.selectedClient = newVal
-      }
-    },
-    selectedClient(newVal) {
-      const selectedOption = this.clients.find((client) => client.id === newVal)
-
-      if (selectedOption) {
-        this.project.idClient = selectedOption.id
-        this.project.client.name = selectedOption.name
-      }
-    }
-  },
   async mounted() {
     if (this.projectEdit) {
-      this.project = this.projectEdit
-      this.project.startDate = this.formatDate(this.project.startDate)
-      this.project.endDate = this.project.endDate ? this.formatDate(this.project.endDate) : null
-      this.project.createdAt = this.formatDate(this.project.createdAt)
-      this.project.updatedAt = this.formatDate(this.project.updatedAt)
+      this.project.id = this.projectEdit.id
+      this.project.name = this.projectEdit.name
+      this.project.monthlyContractedHours = this.projectEdit.monthlyContractedHours
+      this.project.idClient = this.projectEdit.client.id
+      this.project.startDate = this.formatDate(this.projectEdit.startDate)
+      this.project.endDate = this.projectEdit.endDate ? this.formatDate(this.projectEdit.endDate) : null
     }
     this.getClients()
   },
@@ -174,13 +157,8 @@ export default {
         console.log('No se pueden recuparar los clientes: ', err)
       }
     },
-    formatDate(dateString) {
-      const date = new Date(dateString)
-      const year = date.getFullYear()
-      const month = String(date.getMonth() + 1).padStart(2, '0')
-      const day = String(date.getDate()).padStart(2, '0')
-
-      return `${year}-${month}-${day}`
+    formatDate(date) {
+      return moment(date).format('YYYY-MM-DD')
     },
     updateData() {
       this.$emit('update-data', this.project)

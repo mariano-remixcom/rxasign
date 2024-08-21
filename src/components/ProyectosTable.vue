@@ -188,7 +188,7 @@ export default {
     // }
     updateDataEdit(updatedProject) {
       console.log('updateDataEdit called in parent with:', updatedProject)
-      this.project = { ...this.project, ...updatedProject }
+      this.project = updatedProject
       console.log(this.project)
     },
     formatDate(dateString) {
@@ -205,10 +205,9 @@ export default {
           const response = await this.projectsService.updateProject(this.project.id, {
             name: this.project.name,
             monthlyContractedHours: this.project.monthlyContractedHours,
-            startDate: this.project.startDate,
-            endDate: this.project.endDate,
-            idClient: this.project.idClient,
-            idSquad: this.project.idSquad
+            startDate: new Date(this.project.startDate),
+            endDate: this.project.endDate ? new Date(this.project.endDate) : null,
+            idClient: this.project.idClient
           })
 
           console.log(response)
