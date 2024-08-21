@@ -5,7 +5,7 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import { router } from './router'
 
-moment.locale('es', es)
+moment.updateLocale('es', es)
 
 const app = createApp(App)
 
