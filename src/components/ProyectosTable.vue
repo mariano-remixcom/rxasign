@@ -179,17 +179,8 @@ export default {
     goToVerProyecto(id) {
       this.$router.push({ name: 'VerProyecto', params: { id } })
     },
-
-    // initTooltips() {
-    //   const tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'));
-    //   tooltipTriggerList.map(function (tooltipTriggerEl) {
-    //     return new bootstrap.Tooltip(tooltipTriggerEl);
-    //   });
-    // }
     updateDataEdit(updatedProject) {
-      console.log('updateDataEdit called in parent with:', updatedProject)
       this.project = updatedProject
-      console.log(this.project)
     },
     formatDate(dateString) {
       const date = new Date(dateString)

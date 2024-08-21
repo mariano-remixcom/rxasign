@@ -148,11 +148,6 @@ export default {
         const clientResponse = await this.clientsService.getAllClients()
 
         this.clients = clientResponse.data
-
-        // // Si estoy editando un proyecto se establece el cliente seleccionado
-        // if (this.projectEdit) {
-        //   this.selectedClient = this.selectedClientFromProject
-        // }
       } catch (err) {
         console.log('No se pueden recuparar los clientes: ', err)
       }

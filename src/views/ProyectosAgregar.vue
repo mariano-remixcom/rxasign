@@ -1,23 +1,25 @@
 <template>
-  <div class="mb-1 rounded-3">
-    <div class="container d-flex justify-content-between">
-      <div>
-        <h1 class="display-6 fw-bold">Agregar proyecto</h1>
-      </div>
-      <!-- Acciones inicio -->
-      <div class="d-flex gap-2">
-        <router-link to="/">
-          <button class="btn btn-secondary">Cancelar</button>
-        </router-link>
-        <button class="btn btn-primary" @click="addProject">Guardar</button>
-      </div>
-      <!-- Acciones fin -->
-    </div>
-  </div>
   <div id="app">
-    <div class="container d-flex flex-column">
-      <ProjectAddForm @submit="handleFormSubmit" />
-      <ProjectAddTeam />
+    <div class="mb-1 rounded-3">
+      <div class="container d-flex justify-content-between">
+        <div>
+          <h1 class="display-6 fw-bold">Agregar proyecto</h1>
+        </div>
+        <!-- Acciones inicio -->
+        <div class="d-flex gap-2">
+          <router-link to="/">
+            <button class="btn btn-secondary">Cancelar</button>
+          </router-link>
+          <button class="btn btn-primary" @click="addProject">Guardar</button>
+        </div>
+        <!-- Acciones fin -->
+      </div>
+    </div>
+    <div>
+      <div class="container d-flex flex-column">
+        <ProjectAddForm @submit="handleFormSubmit" />
+        <ProjectAddTeam />
+      </div>
     </div>
   </div>
 </template>
