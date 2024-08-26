@@ -31,7 +31,6 @@
             </div>
           </td>
           <td>{{ item.monthlyContractedHours }} hs</td>
-          <!-- TODO: Poner horas reales asignadas -->
           <td v-if="item.squad._count.resources !== 0">{{ item.totalAsignedHours }} hs</td>
           <td v-else>-</td>
           <td>{{ formatDate(item.updatedAt) }}</td>
