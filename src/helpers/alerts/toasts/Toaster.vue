@@ -6,8 +6,8 @@
   </div>
 </template>
 <script>
-import BaseToast from '@/components/shared/BaseToast.vue'
-import { useToaster } from '@/composables/useToaster'
+import BaseToast from '@/helpers/alerts/toasts/BaseToast.vue'
+import { useToaster } from '@/helpers/alerts/toasts/useToaster'
 
 export default {
   name: 'ToasterComponent',

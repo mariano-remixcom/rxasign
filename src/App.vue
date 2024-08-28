@@ -7,7 +7,7 @@
 
 <script>
 import DefaultLayout from './layouts/default/DefaultLayout.vue'
-import Toaster from './mixins/alerts/Toaster.vue'
+import Toaster from './helpers/alerts/toasts/Toaster.vue'
 import '@/scss/app.scss'
 
 export default {

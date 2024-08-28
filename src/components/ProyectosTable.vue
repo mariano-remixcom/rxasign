@@ -73,7 +73,7 @@ import Finalizar from '@/components/FinalizarModal.vue'
 import Modal from '@/components/shared/ModalModal.vue'
 import ProjectAddForm from '@/components/ProjectAddForm.vue'
 import ProjectsService from '@/services/projects'
-import { useToaster } from '@/composables/useToaster'
+import { useToaster } from '@/helpers/alerts/toasts/useToaster'
 
 export default {
   name: 'ProyectosTable',

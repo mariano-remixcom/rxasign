@@ -21,7 +21,7 @@
 
 <script>
 import ProyectosTable from '@/components/ProyectosTable.vue'
-import { useToaster } from '@/composables/useToaster'
+import { useToaster } from '@/helpers/alerts/toasts/useToaster'
 
 export default {
   name: 'App',
