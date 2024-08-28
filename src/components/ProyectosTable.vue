@@ -31,7 +31,6 @@
             </div>
           </td>
           <td>{{ item.monthlyContractedHours }} hs</td>
-          <!-- TODO: Poner horas reales asignadas -->
           <td v-if="item.squad._count.resources !== 0">{{ item.totalAsignedHours }} hs</td>
           <td v-else>-</td>
           <td>{{ formatDate(item.updatedAt) }}</td>
@@ -179,17 +178,8 @@ export default {
     goToVerProyecto(id) {
       this.$router.push({ name: 'VerProyecto', params: { id } })
     },
-
-    // initTooltips() {
-    //   const tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'));
-    //   tooltipTriggerList.map(function (tooltipTriggerEl) {
-    //     return new bootstrap.Tooltip(tooltipTriggerEl);
-    //   });
-    // }
     updateDataEdit(updatedProject) {
-      console.log('updateDataEdit called in parent with:', updatedProject)
       this.project = updatedProject
-      console.log(this.project)
     },
     formatDate(dateString) {
       const date = new Date(dateString)

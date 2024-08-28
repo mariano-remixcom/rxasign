@@ -24,7 +24,7 @@
       </div>
     </div>
     <div class="mb-3">
-      <proyecto-summary :proyecto="proyecto" />
+      <proyecto-summary :proyecto="proyecto" @fetch-project="fetchProyectoData" />
     </div>
 
     <div class="mb-4">
@@ -83,7 +83,8 @@ export default {
     return {
       loading,
       proyecto,
-      error
+      error,
+      fetchProyectoData
     }
   },
   methods: {

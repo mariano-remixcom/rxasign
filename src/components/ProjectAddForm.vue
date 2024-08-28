@@ -1,11 +1,14 @@
 <template>
   <div class="container">
-    <div class="section-header-primary w-75" role="alert">Datos del proyecto</div>
-    <div class="project-add-form w-75 mb-4">
+    <div class="section-header-primary mb-0" role="alert">Datos del proyecto</div>
+    <div class="project-add-form">
       <form @submit.prevent="submitForm">
-        <div class="mb-3 row">
-          <label for="cliente" class="col-sm-2 col-form-label">Cliente</label>
-          <div class="col-sm-10">
+        <div class="mb-3 d-flex flex-row row">
+          <div class="d-flex flex-column col-4">
+            <label for="cliente" class="h6 semibold mb-0">Cliente</label>
+            <small>Seleccione un cliente</small>
+          </div>
+          <div class="col">
             <select id="cliente" v-model="project.idClient" class="form-select" required @change="updateData">
               <option value="none" disabled :selected="!project">Seleccione un cliente</option>
               <option v-for="option in clients" :key="option" :value="option.id" :selected="option.id === project?.idClient">
@@ -15,14 +18,17 @@
           </div>
         </div>
 
-        <div class="mb-3 row">
-          <label for="proyecto" class="col-sm-2 col-form-label">Nombre del proyecto</label>
-          <div class="col-sm-10">
+        <div class="mb-3 d-flex flex-row row">
+          <div class="d-flex flex-column col-4">
+            <label for="proyecto" class="h6 semibold mb-0">Nombre del proyecto</label>
+            <small>Ingrese el nombre del proyecto</small>
+          </div>
+          <div class="col">
             <input
               id="proyecto"
               v-model="project.name"
               type="text"
-              class="form-control"
+              class="form-control bg-white"
               placeholder="Recaudaciones"
               required
               @input="updateData"
@@ -30,38 +36,43 @@
           </div>
         </div>
 
-        <div class="mb-3 row">
-          <label for="horas" class="col-sm-2 col-form-label">Horas</label>
-          <div class="col-sm-10">
+        <div class="mb-3 d-flex flex-row row">
+          <div class="d-flex flex-column col-4">
+            <label for="horas" class="h6 semibold mb-0">Horas</label>
+            <small>Cantidad de horas contratadas por mes</small>
+          </div>
+          <div class="col">
             <div class="input-group">
               <input
                 id="horas"
                 v-model="project.monthlyContractedHours"
                 type="number"
-                class="form-control"
+                class="form-control bg-white"
                 min="0"
                 required
                 @change="updateData"
               />
               <span class="input-group-text">
-                <input type="checkbox" />
+                <input type="checkbox" class="me-1" />
                 Contrato abierto
               </span>
             </div>
-            <small class="form-text text-muted">Cantidad de horas contratadas por mes</small>
           </div>
         </div>
 
-        <div class="mb-3 row">
-          <label for="vigencia" class="col-sm-2 col-form-label">Vigencia</label>
-          <div class="col-sm-10">
+        <div class="mb-3 d-flex flex-row row">
+          <div class="d-flex flex-column col-4">
+            <label for="vigencia" class="h6 semibold mb-0">Vigencia</label>
+            <small>Inicio y fin del proyecto. Necesario para la funcionalidad de períodos.</small>
+          </div>
+          <div class="col">
             <div class="row">
               <div class="col">
                 <input
                   id="inicio"
                   v-model="project.startDate"
                   type="date"
-                  class="form-control"
+                  class="form-control bg-white"
                   placeholder="Desde"
                   required
                   @change="updateData"
@@ -72,14 +83,13 @@
                   id="fin"
                   v-model="project.endDate"
                   type="date"
-                  class="form-control"
+                  class="form-control bg-white"
                   placeholder="Hasta"
                   required
                   @change="updateData"
                 />
               </div>
             </div>
-            <small class="form-text text-muted">Inicio y fin del proyecto. Necesario para la funcionalidad de períodos.</small>
           </div>
         </div>
       </form>
@@ -143,16 +153,13 @@ export default {
     this.getClients()
   },
   methods: {
+    // TODO: agregar toasts de error y success
+    // TODO: agregar redireccion a proyectos
     async getClients() {
       try {
         const clientResponse = await this.clientsService.getAllClients()
 
         this.clients = clientResponse.data
-
-        // // Si estoy editando un proyecto se establece el cliente seleccionado
-        // if (this.projectEdit) {
-        //   this.selectedClient = this.selectedClientFromProject
-        // }
       } catch (err) {
         console.log('No se pueden recuparar los clientes: ', err)
       }
@@ -173,10 +180,8 @@ export default {
 
 <style scoped>
 .project-add-form {
-  padding: 16px;
-  background-color: #fff;
+  padding: 18px 10px;
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   margin: 0 auto; /* Centra el formulario horizontalmente */
   width: 100%;
 }
@@ -186,5 +191,8 @@ export default {
   align-items: center;
   flex-direction: column;
   height: 100%;
+}
+small {
+  color: var(--bs-gray-500);
 }
 </style>

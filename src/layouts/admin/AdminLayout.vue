@@ -1,5 +1,5 @@
 <template>
-  <div class="admin-page-wrapper">
+  <div class="default-page-wrapper">
     <admin-nav />
     <slot />
     <default-footer />
