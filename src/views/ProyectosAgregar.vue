@@ -54,7 +54,7 @@ export default {
         })
 
         if (response) {
-          console.log(response)
+          this.$router.push({ name: 'Proyectos' })
         }
       } catch (error) {
         console.log(error)
