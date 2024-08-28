@@ -1,7 +1,7 @@
 <template>
   <div
     ref="toastEl"
-    class="toast align-items-center text-white border-0 position-fixed bottom-0 start-0 m-3"
+    class="toast text-white"
     :class="`bg-${color}`"
     data-bs-animation="true"
     :data-bs-delay="delay"
@@ -46,9 +46,5 @@ export default {
 <style lang="scss" scoped>
 .toast {
   z-index: 1050;
-  bottom: 0;
-  left: 0;
-  position: fixed;
-  margin: 1rem;
 }
 </style>

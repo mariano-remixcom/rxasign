@@ -1,6 +1,8 @@
 <template>
-  <div>
-    <BaseToast v-for="toast in toasts" :key="toast.id" :message="toast.message" :color="toast.color" :delay="toast.delay" />
+  <div aria-live="polite" aria-atomic="true">
+    <div class="toast-container bottom-0 start-0 p-3">
+      <BaseToast v-for="toast in toasts" :key="toast.id" :message="toast.message" :color="toast.color" :delay="toast.delay" />
+    </div>
   </div>
 </template>
 <script>
