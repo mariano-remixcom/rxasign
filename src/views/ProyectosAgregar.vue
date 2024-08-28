@@ -30,7 +30,7 @@
 import ProjectAddForm from '@/components/ProjectAddForm.vue'
 import ProjectAddTeam from '@/components/ProjectAddTeam.vue'
 import ProjectsService from '@/services/projects'
-import { useToaster } from '@/composables/useToaster'
+import { useToaster } from '@/helpers/alerts/toasts/useToaster'
 
 export default {
   name: 'AddProject',
