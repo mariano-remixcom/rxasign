@@ -30,6 +30,7 @@
 import ProjectAddForm from '@/components/ProjectAddForm.vue'
 import ProjectAddTeam from '@/components/ProjectAddTeam.vue'
 import ProjectsService from '@/services/projects'
+import { useToaster } from '@/composables/useToaster'
 
 export default {
   name: 'AddProject',
@@ -53,11 +54,13 @@ export default {
           idClient: this.project.idClient
         })
 
-        if (response) {
-          this.$router.push({ name: 'Proyectos' })
+        if (response.status === 201) {
+          this.$router.push({ name: 'Proyectos', params: { status: 'success' } })
         }
       } catch (error) {
-        console.log(error)
+        const { addToast } = useToaster()
+
+        addToast('Error al crear el proyecto.', 'danger')
       }
     },
     onUpdateData(updatedProject) {

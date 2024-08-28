@@ -43,23 +43,6 @@
         </tr>
       </tbody>
     </table>
-    <div
-      v-if="showToast"
-      class="toast align-items-center text-bg-primary border-0 position-fixed bottom-0 start-0 m-3 show"
-      role="alert"
-      aria-live="assertive"
-      aria-atomic="true"
-    >
-      <div class="d-flex">
-        <div class="toast-body">{{ toastContent }}</div>
-        <button
-          type="button"
-          class="btn-close btn-close-white me-2 m-auto"
-          aria-label="Close"
-          @click="showToast = false"
-        ></button>
-      </div>
-    </div>
   </div>
   <Modal
     :is-visible="showModal"
@@ -90,6 +73,7 @@ import Finalizar from '@/components/FinalizarModal.vue'
 import Modal from '@/components/shared/ModalModal.vue'
 import ProjectAddForm from '@/components/ProjectAddForm.vue'
 import ProjectsService from '@/services/projects'
+import { useToaster } from '@/composables/useToaster'
 
 export default {
   name: 'ProyectosTable',
@@ -113,9 +97,7 @@ export default {
       projectId: null,
       projects: [],
       client: null,
-      idProjectToDelete: null,
-      toastContent: '',
-      showToast: false
+      idProjectToDelete: null
     }
   },
   async mounted() {
@@ -139,6 +121,16 @@ export default {
       this.ente = 'proyecto'
       this.idProjectToDelete = id
     },
+    showSuccessToast(message) {
+      const { addToast } = useToaster()
+
+      addToast(message, 'success')
+    },
+    showErrorToast(message) {
+      const { addToast } = useToaster()
+
+      addToast(message, 'danger')
+    },
     async deleteOk() {
       try {
         const response = await this.projectsService.deleteProject(this.idProjectToDelete)
@@ -148,17 +140,10 @@ export default {
         this.showModal = false
         this.isDeleting = false
         this.getProjects()
-        this.showToast = true
-        this.toastContent = 'El proyecto se eliminó exitosamente'
-        setTimeout(() => {
-          this.showToast = false
-        }, 3000)
+        this.showSuccessToast('El proyecto se eliminó exitosamente')
       } catch (err) {
-        this.showToast = true
-        this.toastContent = 'Se produjo un error al intentar eliminar el proyecto'
-        setTimeout(() => {
-          this.showToast = false
-        }, 3000)
+        this.showErrorToast('Se produjo un error al intentar eliminar el proyecto')
+
         console.log('Error al eliminar proyecto: ', err)
       }
     },
@@ -203,18 +188,9 @@ export default {
           console.log(response)
           this.getProjects()
           this.showModal = false
-          this.showToast = true
-          console.log(this.showToast)
-          this.toastContent = 'Los cambios se guardaron exitosamente'
-          setTimeout(() => {
-            this.showToast = false
-          }, 3000) // Oculta el toast después de 3 segundos
+          this.showSuccessToast('Los cambios se guardaron exitosamente')
         } catch (err) {
-          this.showToast = true
-          this.toastContent = 'Se produjo un error al intentar editar el proyecto'
-          setTimeout(() => {
-            this.showToast = false
-          }, 3000)
+          this.showErrorToast('Se produjo un error al intentar editar el proyecto')
           console.log('Error al editar proyecto: ', err)
         }
         this.isEditing = false
