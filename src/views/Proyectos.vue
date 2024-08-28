@@ -21,11 +21,28 @@
 
 <script>
 import ProyectosTable from '@/components/ProyectosTable.vue'
+import { useToaster } from '@/composables/useToaster'
 
 export default {
   name: 'App',
   components: {
     ProyectosTable
+  },
+  created() {
+    const { addToast } = useToaster()
+
+    if (this.$route.params.status === 'success') {
+      addToast('El nuevo proyecto se creó correctamente.', 'success')
+    }
+
+    this.$watch(
+      () => this.$route.params.status,
+      async (status) => {
+        if (status === 'success') {
+          addToast('El nuevo proyecto se creó correctamente.', 'success')
+        }
+      }
+    )
   }
 }
 </script>

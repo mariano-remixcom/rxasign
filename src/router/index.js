@@ -17,7 +17,7 @@ const routes = [
     path: '/proyectos',
     children: [
       {
-        path: '',
+        path: ':status(success)?',
         name: 'Proyectos',
         component: () => import(/* webpackChunkName: "proyectos" */ '../views/Proyectos.vue')
       },
@@ -30,7 +30,7 @@ const routes = [
         }
       },
       {
-        path: ':id',
+        path: ':id(\\d+)', // Match only numbers for ids
         name: 'VerProyecto',
         component: () => import('../views/proyectos/VerProyecto.vue'),
         meta: {
