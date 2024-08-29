@@ -51,6 +51,40 @@
       </div>
     </div>
   </div>
+  <div
+    v-if="showToast"
+    class="toast align-items-center text-bg-primary border-0 position-fixed bottom-0 start-0 m-3 show"
+    role="alert"
+    aria-live="assertive"
+    aria-atomic="true"
+  >
+    <div class="d-flex">
+      <div class="toast-body">{{ toastContent }}</div>
+      <button
+        type="button"
+        class="btn-close btn-close-white me-2 m-auto"
+        aria-label="Close"
+        @click="showToast = false"
+      ></button>
+    </div>
+  </div>
+  <div
+    v-if="showToast"
+    class="toast align-items-center text-bg-primary border-0 position-fixed bottom-0 start-0 m-3 show"
+    role="alert"
+    aria-live="assertive"
+    aria-atomic="true"
+  >
+    <div class="d-flex">
+      <div class="toast-body">{{ toastContent }}</div>
+      <button
+        type="button"
+        class="btn-close btn-close-white me-2 m-auto"
+        aria-label="Close"
+        @click="showToast = false"
+      ></button>
+    </div>
+  </div>
   <Modal
     :is-visible="showModal"
     :title="title"
@@ -65,6 +99,7 @@
   >
     <Finalizar v-if="isEnding" :ente="ente" />
     <div v-if="isEditing" class="modal-body-content">
+      <ProjectAddForm :project-edit="proyecto" @update-data="updateDataEdit" />
       <ProjectAddForm :project-edit="proyecto" @update-data="updateDataEdit" />
     </div>
   </Modal>
@@ -92,6 +127,7 @@ export default {
       required: true
     }
   },
+  emits: ['fetch-project'],
   data() {
     return {
       projectsService: new ProjectsService(),
@@ -138,35 +174,29 @@ export default {
       this.large = true
     },
     updateDataEdit(updatedProject) {
-      // console.log('updateDataEdit called in parent with:', updatedProject)
-      this.project = updatedProject
-      // console.log(this.project)
+      this.editForm = updatedProject
     },
     async saveChanges() {
       if (this.isEditing) {
         try {
-          // Llamar al servicio para actualizar el proyecto
-          await this.projectsService.updateProject(this.project.id, {
-            name: this.project.name,
-            monthlyContractedHours: this.project.monthlyContractedHours,
-            startDate: new Date(this.project.startDate),
-            endDate: this.project.endDate ? new Date(this.project.endDate) : null,
-            idClient: this.project.idClient
+          const response = await new ProjectsService().updateProject(this.editForm.id, {
+            name: this.editForm.name,
+            monthlyContractedHours: this.editForm.monthlyContractedHours,
+            startDate: new Date(this.editForm.startDate),
+            endDate: this.editForm.endDate ? new Date(this.editForm.endDate) : null,
+            idClient: this.editForm.idClient
           })
+
+          console.log(response)
           this.showModal = false
-          // Mostrar el toast de éxito
           this.showToast = true
+          console.log(this.showToast)
+          this.$emit('fetch-project', this.editForm.id)
           this.toastContent = 'Los cambios se guardaron exitosamente'
           setTimeout(() => {
             this.showToast = false
           }, 3000) // Oculta el toast después de 3 segundos
-
-          // Recargar la página
-          setTimeout(() => {
-            window.location.reload()
-          }, 3000)
         } catch (err) {
-          // Mostrar el toast de error
           this.showToast = true
           this.toastContent = 'Se produjo un error al intentar editar el proyecto'
           setTimeout(() => {

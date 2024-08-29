@@ -1,23 +1,27 @@
 <template>
-  <div class="mb-1 rounded-3">
-    <div class="container d-flex justify-content-between">
-      <div>
-        <h1 class="display-6 fw-bold">Agregar proyecto</h1>
+  <div id="app" class="container">
+    <div class="pb-4 mb-4 page-title-separation">
+      <div class="container d-flex justify-content-between">
+        <div class="d-flex align-items-center justify-content-between">
+          <div class="me-auto">
+            <h1 class="h3 mb-0 fw-semibold">Agregar proyecto</h1>
+          </div>
+        </div>
+        <!-- Acciones inicio -->
+        <div class="d-flex gap-2">
+          <router-link to="/">
+            <button class="btn btn-soft-primary">Cancelar</button>
+          </router-link>
+          <button class="btn btn-primary" @click="addProject">Guardar</button>
+        </div>
+        <!-- Acciones fin -->
       </div>
-      <!-- Acciones inicio -->
-      <div class="d-flex gap-2">
-        <router-link to="/">
-          <button class="btn btn-secondary">Cancelar</button>
-        </router-link>
-        <button class="btn btn-primary" @click="addProject">Guardar</button>
-      </div>
-      <!-- Acciones fin -->
     </div>
-  </div>
-  <div id="app">
-    <div class="container d-flex flex-column">
-      <ProjectAddForm @submit="handleFormSubmit" />
-      <ProjectAddTeam />
+    <div>
+      <div class="d-flex flex-column">
+        <ProjectAddForm @update-data="onUpdateData" />
+        <ProjectAddTeam />
+      </div>
     </div>
   </div>
 </template>
@@ -25,6 +29,8 @@
 <script>
 import ProjectAddForm from '@/components/ProjectAddForm.vue'
 import ProjectAddTeam from '@/components/ProjectAddTeam.vue'
+import ProjectsService from '@/services/projects'
+import { useToaster } from '@/helpers/alerts/toasts/useToaster'
 
 export default {
   name: 'AddProject',
@@ -32,24 +38,34 @@ export default {
     ProjectAddForm,
     ProjectAddTeam
   },
+  data() {
+    return {
+      project: null
+    }
+  },
   methods: {
-    handleFormSubmit(form) {
-      // Lógica para manejar el formulario enviado
-      console.log('Formulario recibido', form)
+    async addProject() {
+      try {
+        const response = await new ProjectsService().createProject({
+          name: this.project.name,
+          monthlyContractedHours: this.project.monthlyContractedHours,
+          startDate: new Date(this.project.startDate),
+          endDate: this.project.endDate ? new Date(this.project.endDate) : null,
+          idClient: this.project.idClient
+        })
+
+        if (response.status === 201) {
+          this.$router.push({ name: 'Proyectos', params: { status: 'success' } })
+        }
+      } catch (error) {
+        const { addToast } = useToaster()
+
+        addToast('Error al crear el proyecto.', 'danger')
+      }
     },
-    addProject() {
-      // Llamar a handleFormSubmit para manejar la lógica de guardar el proyecto
-      // Aquí puedes agregar más lógica para guardar el proyecto si es necesario
-      console.log('Guardar proyecto')
+    onUpdateData(updatedProject) {
+      this.project = updatedProject
     }
   }
 }
 </script>
-
-<style scoped>
-.container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-</style>

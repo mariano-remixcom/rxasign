@@ -1,44 +1,52 @@
 <template>
-  <div class="section-header-primary w-75" role="alert">Integrantes del equipo</div>
-  <div class="wmt-4 container w-75 mb-4">
-    <table class="table">
-      <thead class="table-light">
-        <tr>
-          <th scope="col">Nombre</th>
-          <th scope="col">Rol</th>
-          <th scope="col">Disponibles</th>
-          <th scope="col">Asignadas (hs)</th>
-          <th scope="col">Acciones</th>
-        </tr>
-      </thead>
-      <tbody class="align-middle">
-        <tr v-for="(member, index) in teamMembers" :key="index">
-          <td>
-            <select v-model="member.name" class="form-select">
-              <option v-for="name in names" :key="name" :value="name">{{ name }}</option>
-            </select>
-          </td>
-          <td>
-            <select v-model="member.role" class="form-select">
-              <option v-for="role in roles" :key="role" :value="role">{{ role }}</option>
-            </select>
-          </td>
-          <td>{{ member.hoursAvailable - member.hoursAssigned }} hs</td>
-          <td>
-            <input v-model="member.hoursAssigned" type="number" class="form-control" min="0" :max="member.hoursAvailable" />
-          </td>
-          <td>
-            <button class="btn btn-link btn-m" @click="removeMember(index)"><i class="bi bi-trash"></i></button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <button class="btn btn-outline-primary" @click="addMember">Agregar Integrante</button>
+  <div class="container">
+    <div class="section-header-primary" role="alert">Integrantes del equipo</div>
+    <div v-if="teamMembers?.length == 0" class="d-flex align-items-center justify-content-center">
+      <h2 class="h6 mb-4">Aún no hay recursos asociados a este proyecto.</h2>
+    </div>
+    <div v-else class="wmt-4 mb-4">
+      <table class="table">
+        <thead class="table-light">
+          <tr>
+            <th scope="col">Nombre</th>
+            <th scope="col">Rol</th>
+            <th scope="col">Disponibles</th>
+            <th scope="col">Asignadas (hs)</th>
+            <th scope="col">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="align-middle">
+          <tr v-for="(member, index) in teamMembers" :key="index">
+            <td>
+              <select v-model="member.name" class="form-select">
+                <option v-for="name in names" :key="name" :value="name">{{ name }}</option>
+              </select>
+            </td>
+            <td>
+              <select v-model="member.role" class="form-select">
+                <option v-for="role in roles" :key="role.key" :value="role.key">{{ role.displayName }}</option>
+              </select>
+            </td>
+            <td>{{ member.hoursAvailable - member.hoursAssigned }} hs</td>
+            <td>
+              <input v-model="member.hoursAssigned" type="number" class="form-control" min="0" :max="member.hoursAvailable" />
+            </td>
+            <td>
+              <button class="btn btn-link btn-m" @click="removeMember(index)"><i class="bi bi-trash"></i></button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="d-flex align-items-center justify-content-center">
+      <button class="btn btn-outline-primary" @click="addMember">Agregar Integrante</button>
+    </div>
   </div>
 </template>
 
 <script>
 import bootstrap from '@/config/bootstrap'
+import { USER_ROLES } from '@/constants/UserRoles'
 
 export default {
   name: 'ProjectAddTeam',
@@ -54,27 +62,8 @@ export default {
         'Yoana Gerling',
         'Patricio Sabatini'
       ],
-      roles: ['Desarrollador', 'Diseñador', 'Gerente de Proyecto', 'QA'],
-      teamMembers: [
-        {
-          name: 'Rodrigo Loza',
-          role: 'Desarrollador',
-          hoursAvailable: 160,
-          hoursAssigned: 140
-        },
-        {
-          name: 'Agustin Menegat',
-          role: 'Diseñador',
-          hoursAvailable: 160,
-          hoursAssigned: 130
-        },
-        {
-          name: 'Joaquin Zanardi',
-          role: 'Gerente de Proyecto',
-          hoursAvailable: 160,
-          hoursAssigned: 120
-        }
-      ]
+      roles: USER_ROLES,
+      teamMembers: []
     }
   },
   mounted() {
