@@ -128,6 +128,7 @@ export default {
         // Obtengo todos los proyectos
         const response = await this.projectsService.getAllProjects()
 
+        console.log(response)
         this.projects = response.data
       } catch (err) {
         console.log('Error al obtener los proyectos: ', err)
@@ -187,9 +188,9 @@ export default {
     //   });
     // }
     updateDataEdit(updatedProject) {
-      console.log('updateDataEdit called in parent with:', updatedProject)
+      // console.log('updateDataEdit called in parent with:', updatedProject)
       this.project = updatedProject
-      console.log(this.project)
+      // console.log(this.project)
     },
     formatDate(dateString) {
       const date = new Date(dateString)

@@ -78,6 +78,7 @@ export default {
         .finally(() => {
           loading.value = false
         })
+      console.log(proyecto, 'proyecto')
     }
 
     return {
@@ -87,11 +88,13 @@ export default {
     }
   },
   methods: {
-    onAddResource: function () {
+    onAddResource: function (miembro) {
       this.proyecto.equipo.miembros.push({ horasDisponibles: 160 })
+      console.log(miembro, 'miembro2')
+      console.log(this.proyecto)
     },
     onRemoveResource: function (index) {
-      this.proyecto.equipo.miembros.splice(index, 1)
+      // this.proyecto.equipo.miembros.splice(index, 1)
     }
   }
 }

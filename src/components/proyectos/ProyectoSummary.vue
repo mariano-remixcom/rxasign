@@ -33,6 +33,23 @@
         </div>
       </div>
     </div>
+    <div
+      v-if="showToast"
+      class="toast align-items-center text-bg-primary border-0 position-fixed bottom-0 start-0 m-3 show"
+      role="alert"
+      aria-live="assertive"
+      aria-atomic="true"
+    >
+      <div class="d-flex">
+        <div class="toast-body">{{ toastContent }}</div>
+        <button
+          type="button"
+          class="btn-close btn-close-white me-2 m-auto"
+          aria-label="Close"
+          @click="showToast = false"
+        ></button>
+      </div>
+    </div>
   </div>
   <Modal
     :is-visible="showModal"
@@ -48,7 +65,7 @@
   >
     <Finalizar v-if="isEnding" :ente="ente" />
     <div v-if="isEditing" class="modal-body-content">
-      <ProjectAddForm :project-edit="proyecto" />
+      <ProjectAddForm :project-edit="proyecto" @update-data="updateDataEdit" />
     </div>
   </Modal>
 </template>
@@ -58,6 +75,7 @@ import Finalizar from '@/components/FinalizarModal.vue'
 import FormatDate from '@/mixins/formatting-text/FormatDate.vue'
 import Modal from '@/components/shared/ModalModal.vue'
 import ProjectAddForm from '@/components/ProjectAddForm.vue'
+import ProjectsService from '@/services/projects'
 import moment from 'moment'
 
 export default {
@@ -76,6 +94,7 @@ export default {
   },
   data() {
     return {
+      projectsService: new ProjectsService(),
       showModal: false,
       isEnding: false,
       title: '',
@@ -89,7 +108,9 @@ export default {
         monthlyContractedHours: 0,
         startDate: '',
         endDate: ''
-      }
+      },
+      toastContent: '',
+      showToast: false
     }
   },
   computed: {
@@ -117,8 +138,55 @@ export default {
       this.large = true
     },
     updateDataEdit(updatedProject) {
-      this.editForm = updatedProject
+      // console.log('updateDataEdit called in parent with:', updatedProject)
+      this.project = updatedProject
+      // console.log(this.project)
+    },
+    async saveChanges() {
+      if (this.isEditing) {
+        try {
+          // Llamar al servicio para actualizar el proyecto
+          await this.projectsService.updateProject(this.project.id, {
+            name: this.project.name,
+            monthlyContractedHours: this.project.monthlyContractedHours,
+            startDate: new Date(this.project.startDate),
+            endDate: this.project.endDate ? new Date(this.project.endDate) : null,
+            idClient: this.project.idClient
+          })
+          this.showModal = false
+          // Mostrar el toast de éxito
+          this.showToast = true
+          this.toastContent = 'Los cambios se guardaron exitosamente'
+          setTimeout(() => {
+            this.showToast = false
+          }, 3000) // Oculta el toast después de 3 segundos
+
+          // Recargar la página
+          setTimeout(() => {
+            window.location.reload()
+          }, 3000)
+        } catch (err) {
+          // Mostrar el toast de error
+          this.showToast = true
+          this.toastContent = 'Se produjo un error al intentar editar el proyecto'
+          setTimeout(() => {
+            this.showToast = false
+          }, 3000)
+          console.log('Error al editar proyecto: ', err)
+        }
+        this.isEditing = false
+        this.large = false
+      }
     }
   }
 }
 </script>
+<style scoped>
+.toast {
+  z-index: 1050;
+  bottom: 0;
+  left: 0;
+  position: fixed;
+  margin: 1rem;
+}
+</style>
