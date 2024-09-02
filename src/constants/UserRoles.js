@@ -16,8 +16,8 @@ export const USER_ROLES = [
     displayName: 'Project Manager'
   },
   {
-    key: 'Tech Lead',
-    displayName: 'TechLead'
+    key: 'TechLead',
+    displayName: 'Tech Lead'
   },
   {
     key: 'CEO',

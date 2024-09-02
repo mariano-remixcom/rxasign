@@ -29,7 +29,6 @@
               v-model="project.name"
               type="text"
               class="form-control bg-white"
-              placeholder="Recaudaciones"
               required
               @input="updateData"
             />

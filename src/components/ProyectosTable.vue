@@ -20,13 +20,12 @@
           <td>{{ item.client.name }}</td>
           <td>
             <div class="avatars">
-              <template v-if="item.squad._count.resources === 0"> Sin squad </template>
+              <template v-if="!Array.isArray(item.squad.resources) || item.squad.resources.length === 0"> Sin squad </template>
               <template v-else>
-                <i
-                  v-for="(resource, index) in Array(item.squad._count.resources)"
-                  :key="index"
-                  class="bi bi-person-circle avatar-fallback"
-                ></i>
+                <div v-for="(resource, index) in item.squad.resources" :key="index" class="tooltip-wrapper">
+                  <i class="bi bi-person-circle avatar-fallback"></i>
+                  <span class="tooltip">{{ resource.user.fullName }}</span>
+                </div>
               </template>
             </div>
           </td>
@@ -70,9 +69,11 @@
 import ClientsService from '@/services/clients'
 import Eliminar from '@/components/EliminarModal.vue'
 import Finalizar from '@/components/FinalizarModal.vue'
+import FormatDate from '@/mixins/formatting-text/FormatDate.vue'
 import Modal from '@/components/shared/ModalModal.vue'
 import ProjectAddForm from '@/components/ProjectAddForm.vue'
 import ProjectsService from '@/services/projects'
+import ResourcesService from '@/services/resources'
 import { useToaster } from '@/helpers/alerts/toasts/useToaster'
 
 export default {
@@ -83,10 +84,12 @@ export default {
     Finalizar,
     ProjectAddForm
   },
+  mixins: [FormatDate],
   data() {
     return {
       projectsService: new ProjectsService(),
       clientsService: new ClientsService(),
+      resourcesService: new ResourcesService(),
       showModal: false,
       isDeleting: false,
       isEnding: false,
@@ -106,11 +109,28 @@ export default {
   methods: {
     async getProjects() {
       try {
-        // Obtengo todos los proyectos
         const response = await this.projectsService.getAllProjects()
 
-        console.log(response)
         this.projects = response.data
+
+        const resourcePromises = this.projects.map(async (project) => {
+          if (project.squad && project.squad.id) {
+            const resourcesResponse = await this.resourcesService.getResourcesBySquad(project.squad.id)
+
+            return {
+              ...project,
+              squad: {
+                ...project.squad,
+                resources: resourcesResponse.data
+              }
+            }
+          }
+
+          return project
+        })
+
+        this.projects = await Promise.all(resourcePromises)
+        console.log(this.projects)
       } catch (err) {
         console.log('Error al obtener los proyectos: ', err)
       }
@@ -166,14 +186,6 @@ export default {
     },
     updateDataEdit(updatedProject) {
       this.project = updatedProject
-    },
-    formatDate(dateString) {
-      const date = new Date(dateString)
-      const year = date.getFullYear()
-      const month = String(date.getMonth() + 1).padStart(2, '0')
-      const day = String(date.getDate()).padStart(2, '0')
-
-      return `${year}-${month}-${day}`
     },
     async saveChanges() {
       if (this.isEditing) {
@@ -240,5 +252,35 @@ button.btn.btn-link.btn-m {
   left: 0;
   position: fixed;
   margin: 1rem;
+}
+.tooltip-wrapper {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.tooltip {
+  visibility: hidden;
+  background-color: #6c757d; /* Color gris más claro */
+  color: #fff;
+  text-align: center;
+  border-radius: 4px; /* Redondez más sutil */
+  padding: 4px 8px; /* Ajuste del padding para un tamaño más compacto */
+  position: absolute;
+  z-index: 1;
+  bottom: 95%; /* Ajuste fino para acercar el tooltip */
+  left: 50%;
+  transform: translateX(-50%); /* Centra el tooltip */
+  width: auto; /* Ajusta el tamaño automáticamente */
+  white-space: nowrap; /* Evita que el texto se rompa en varias líneas */
+  opacity: 0;
+  transition: opacity 0.3s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Sombra más ligera */
+  margin-bottom: 2px; /* Espacio mínimo entre el tooltip y el icono */
+}
+
+.tooltip-wrapper:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
 }
 </style>

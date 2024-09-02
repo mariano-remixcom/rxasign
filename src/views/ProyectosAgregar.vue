@@ -19,8 +19,8 @@
     </div>
     <div>
       <div class="d-flex flex-column">
-        <ProjectAddForm @update-data="onUpdateData" />
-        <ProjectAddTeam />
+        <ProjectAddForm @update-data="onUpdateDataProject" />
+        <ProjectAddTeam @update-data="onUpdateDataTeam" />
       </div>
     </div>
   </div>
@@ -40,7 +40,8 @@ export default {
   },
   data() {
     return {
-      project: null
+      project: null,
+      teamMembers: []
     }
   },
   methods: {
@@ -51,9 +52,11 @@ export default {
           monthlyContractedHours: this.project.monthlyContractedHours,
           startDate: new Date(this.project.startDate),
           endDate: this.project.endDate ? new Date(this.project.endDate) : null,
-          idClient: this.project.idClient
+          idClient: this.project.idClient,
+          teamMembers: this.teamMembers
         })
 
+        console.log(response)
         if (response.status === 201) {
           this.$router.push({ name: 'Proyectos', params: { status: 'success' } })
         }
@@ -63,8 +66,13 @@ export default {
         addToast('Error al crear el proyecto.', 'danger')
       }
     },
-    onUpdateData(updatedProject) {
+    onUpdateDataProject(updatedProject) {
       this.project = updatedProject
+      console.log(this.project, 'project')
+    },
+    onUpdateDataTeam(updatedTeam) {
+      this.teamMembers = updatedTeam
+      console.log(this.teamMembers, 'team members')
     }
   }
 }

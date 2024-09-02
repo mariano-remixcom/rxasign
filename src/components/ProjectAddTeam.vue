@@ -1,10 +1,12 @@
 <template>
   <div class="container">
     <div class="section-header-primary" role="alert">Integrantes del equipo</div>
-    <div v-if="teamMembers?.length == 0" class="d-flex align-items-center justify-content-center">
+
+    <div v-if="teamMembers.length === 0" class="d-flex align-items-center justify-content-center">
       <h2 class="h6 mb-4">Aún no hay recursos asociados a este proyecto.</h2>
     </div>
-    <div v-else class="wmt-4 mb-4">
+
+    <div v-if="isAdding" class="wmt-4 mb-4">
       <table class="table">
         <thead class="table-light">
           <tr>
@@ -18,18 +20,25 @@
         <tbody class="align-middle">
           <tr v-for="(member, index) in teamMembers" :key="index">
             <td>
-              <select v-model="member.name" class="form-select">
-                <option v-for="name in names" :key="name" :value="name">{{ name }}</option>
+              <select v-model="member.userId" class="form-select" @change="updateMemberData(index)">
+                <option v-for="user in users" :key="user.id" :value="user.id">{{ user.fullName }}</option>
               </select>
             </td>
             <td>
-              <select v-model="member.role" class="form-select">
+              <select v-model="member.role" class="form-select" @change="updateData">
                 <option v-for="role in roles" :key="role.key" :value="role.key">{{ role.displayName }}</option>
               </select>
             </td>
-            <td>{{ member.hoursAvailable - member.hoursAssigned }} hs</td>
+            <td>{{ member.availableHours - member.hoursAssigned }} hs</td>
             <td>
-              <input v-model="member.hoursAssigned" type="number" class="form-control" min="0" :max="member.hoursAvailable" />
+              <input
+                v-model="member.hoursAssigned"
+                type="number"
+                class="form-control"
+                min="0"
+                :max="member.availableHours"
+                @input="updateData"
+              />
             </td>
             <td>
               <button class="btn btn-link btn-m" @click="removeMember(index)"><i class="bi bi-trash"></i></button>
@@ -45,56 +54,73 @@
 </template>
 
 <script>
-import bootstrap from '@/config/bootstrap'
 import { USER_ROLES } from '@/constants/UserRoles'
+import { UsersService } from '@/services/users'
 
 export default {
   name: 'ProjectAddTeam',
   data() {
     return {
-      names: [
-        'Rodrigo Loza',
-        'Agustin Menegat',
-        'Joaquin Zanardi',
-        'Matias Berthelot',
-        'Yanina Silva',
-        'Mariano Soulé',
-        'Yoana Gerling',
-        'Patricio Sabatini'
-      ],
       roles: USER_ROLES,
-      teamMembers: []
+      teamMembers: [],
+      usersService: new UsersService(),
+      users: [],
+      isAdding: false
     }
   },
-  mounted() {
-    this.initTooltips()
-  },
-  updated() {
-    this.initTooltips()
+  async mounted() {
+    try {
+      const responseUsers = await this.usersService.getActiveResourcesForCombobox()
+
+      this.users = responseUsers.data
+
+      for (const user of this.users) {
+        const responseHours = await this.usersService.getAvailableHoursForUser(user.id)
+
+        user.availableHours = responseHours.data
+      }
+    } catch (err) {
+      console.log('Error al recuperar los usuarios ', err)
+    }
   },
   methods: {
     addMember() {
+      // Añadir un nuevo integrante con `startDate` por defecto como la fecha de hoy
       this.teamMembers.push({
-        name: '',
+        userId: '',
         role: '',
-        hoursAvailable: 160, // Horas disponibles por defecto
-        hoursAssigned: 0
+        availableHours: 0,
+        hoursAssigned: 0,
+        startDate: new Date().toISOString()
       })
-    },
-    initTooltips() {
-      const tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'))
 
-      tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl)
-      })
+      this.isAdding = true
     },
     removeMember(index) {
       this.teamMembers.splice(index, 1)
+    },
+    updateMemberData(index) {
+      const selectedUser = this.users.find((user) => user.id === this.teamMembers[index].userId)
+
+      if (selectedUser) {
+        this.teamMembers[index].availableHours = selectedUser.availableHours
+      }
+      this.updateData()
+    },
+    updateData() {
+      // Preparar los datos para emitir solo los campos requeridos
+      const formattedMembers = this.teamMembers.map((member) => ({
+        rol: member.role,
+        assignedHours: member.hoursAssigned,
+        idUser: member.userId,
+        startDate: member.startDate
+      }))
+
+      this.$emit('update-data', formattedMembers)
     }
   }
 }
 </script>
-
 <style scoped lang="scss">
 /* fix botones de tabla */
 button.btn.btn-link.btn-m {

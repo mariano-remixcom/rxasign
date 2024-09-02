@@ -2,7 +2,7 @@
   <div class="section-header-primary">Equipo</div>
 
   <!-- Tabla de recursos existentes -->
-  <table v-if="equipo.length > 0" class="table mb-3">
+  <table v-if="equipoLocal.length > 0" class="table mb-3">
     <thead class="table-light">
       <tr>
         <th scope="col">#</th>
@@ -14,43 +14,48 @@
       </tr>
     </thead>
     <tbody class="align-middle">
-      <tr v-for="(miembro, index) in equipo" :key="index">
+      <tr v-for="(miembro, index) in equipoLocal" :key="index">
         <td>{{ index + 1 }}</td>
+        <!-- Recurso -->
         <td v-if="!miembro.editing">
-          {{ miembro.fullName }}
+          {{ miembro.user?.fullName || miembro.fullName }}
         </td>
-        <td v-if="miembro.editing">
+        <td v-else>
           <select v-model="miembro.idUser" class="form-select" @change="fetchAvailableHours(miembro.idUser, miembro)">
             <option v-for="(recurso, recursoIndex) in recursos" :key="recursoIndex" :value="recurso.id">
               {{ recurso.fullName }}
             </option>
           </select>
         </td>
+        <!-- Rol -->
         <td v-if="!miembro.editing">
-          {{ miembro.rolDisplayName }}
+          {{ miembro.rol }}
         </td>
-        <td v-if="miembro.editing">
+        <td v-else>
           <select v-model="miembro.rol" class="form-select">
             <option v-for="(rol, rolIndex) in roles" :key="rolIndex" :value="rol.key">
               {{ rol.displayName }}
             </option>
           </select>
         </td>
+        <!-- Horas Disponibles -->
         <td class="text-center">{{ miembro.availableHours }} hs</td>
+        <!-- Horas Asignadas -->
         <td v-if="!miembro.editing">
           {{ miembro.assignedHours }}
         </td>
-        <td v-if="miembro.editing">
+        <td v-else>
           <input v-model="miembro.assignedHours" class="form-control" type="number" />
         </td>
+        <!-- Acciones -->
         <td class="text-center">
           <button v-if="!miembro.editing" class="btn icon" @click="editResource(miembro)">
-            <i class="bi bi-pencil"></i>
+            <i class="bi bi-pencil-square"></i>
           </button>
           <button v-if="miembro.editing" class="btn icon text-success" @click="saveResource(miembro)">
             <i class="bi bi-check-lg"></i>
           </button>
-          <button class="btn icon text-danger" @click="removeResource(index)">
+          <button class="btn icon text-danger" @click="removeResource(miembro.id)">
             <i class="bi bi-trash"></i>
           </button>
         </td>
@@ -69,6 +74,7 @@
 
 <script>
 import FormatDate from '@/mixins/formatting-text/FormatDate.vue'
+import ResourcesService from '@/services/resources'
 import { USER_ROLES } from '@/constants/UserRoles'
 import { UsersService } from '@/services/users'
 import { ref } from 'vue'
@@ -85,11 +91,10 @@ export default {
       required: true
     }
   },
-  emits: ['addResource', 'removeResource'],
-
+  emits: ['addResource'],
   setup(props, { emit }) {
     const loading = ref(false)
-    const recursos = ref(null)
+    const recursos = ref([])
     const equipoLocal = ref([...props.equipo])
 
     loading.value = true
@@ -97,7 +102,6 @@ export default {
     new UsersService()
       .getActiveResourcesForCombobox()
       .then((response) => {
-        console.log(response)
         recursos.value = response.data
       })
       .finally(() => {
@@ -132,36 +136,73 @@ export default {
 
       equipoLocal.value.push(newMember)
     }
+
+    // Edita el recurso seleccionado
     function editResource(miembro) {
       miembro.editing = true
     }
+
+    // Guarda o agrega el recurso
     function saveResource(miembro) {
-      miembro.editing = false
-      this.$emit('addResource', miembro)
-      console.log(miembro, 'miembro')
+      if (!miembro.id) {
+        addResource(miembro)
+      } else {
+        updateResource(miembro)
+      }
     }
-    function removeResource(index) {
-      equipoLocal.value.splice(index, 1)
-      this.$emit('removeResource', index)
+
+    // Lógica para agregar un recurso
+    function addResource(miembro) {
+      miembro.editing = false
+      emit('addResource', miembro)
+      window.location.reload()
+    }
+
+    // Lógica para actualizar un recurso existente
+    function updateResource(miembro) {
+      new ResourcesService()
+        .updateResource(miembro.id, miembro)
+        .then((response) => {
+          miembro.editing = false
+          console.log('Recurso actualizado:', response.data)
+          fetchAvailableHours(miembro.idUser, miembro)
+        })
+        .catch((error) => {
+          console.error('Error al actualizar recurso:', error)
+        })
+    }
+
+    // Elimina un recurso
+    function removeResource(id) {
+      new ResourcesService()
+        .deleteResource(id)
+        .then((response) => {
+          equipoLocal.value = equipoLocal.value.filter((miembro) => miembro.id !== id)
+          console.log('Recurso eliminado:', response.data)
+        })
+        .catch((error) => {
+          console.error('Error al eliminar recurso:', error)
+        })
     }
 
     return {
       loading,
       recursos,
+      equipoLocal,
       fetchAvailableHours,
       addNewResource,
-      equipoLocal,
       editResource,
       saveResource,
-      removeResource
+      removeResource,
+      addResource
     }
   },
+
   data() {
     return {
       roles: USER_ROLES
     }
-  },
-  methods: {}
+  }
 }
 </script>
 

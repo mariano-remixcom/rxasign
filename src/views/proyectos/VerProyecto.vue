@@ -31,8 +31,7 @@
       <equipo-summary
         :equipo="proyecto.squad.resources"
         :fecha-ultima-edicion="proyecto.squad.updatedAt"
-        @add-resource="onAddResource"
-        @remove-resource="onRemoveResource"
+        @add-resource="addResource"
       />
     </div>
   </div>
@@ -43,6 +42,7 @@ import NavigateBack from '@/mixins/navigation/NavigateBack.vue'
 import ProjectsService from '@/services/projects'
 import ProyectoNoEncontrado from './ProyectoNoEncontrado.vue'
 import ProyectoSummary from '@/components/proyectos/ProyectoSummary.vue'
+import ResourcesService from '@/services/resources'
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
@@ -84,19 +84,35 @@ export default {
     return {
       loading,
       proyecto,
-      error,
       fetchProyectoData
     }
   },
   methods: {
-    onAddResource: function (miembro) {
-      this.proyecto.equipo.miembros.push({ horasDisponibles: 160 })
-      console.log(miembro, 'miembro2')
-      console.log(this.proyecto)
-    },
-    onRemoveResource: function (index) {
-      // this.proyecto.equipo.miembros.splice(index, 1)
+    addResource: function (miembro) {
+      // this.proyecto.equipo.miembros.push({ horasDisponibles: 160 })
+      // console.log(miembro, 'miembro2')
+      // console.log(this.proyecto)
+      const newMember = {
+        rol: miembro.rol,
+        assignedHours: miembro.assignedHours,
+        idSquad: this.proyecto.squad.id,
+        idUser: miembro.idUser,
+        startDate: new Date().toISOString()
+      }
+
+      // console.log(newMember, 'new member')
+      new ResourcesService()
+        .createResource(newMember)
+        .then((response) => {
+          console.log(response, 'recurso creado')
+        })
+        .catch((err) => {
+          this.error = err.response
+        })
     }
+    // onRemoveResource: function (index) {
+    // this.proyecto.equipo.miembros.splice(index, 1)
+    // }
   }
 }
 </script>

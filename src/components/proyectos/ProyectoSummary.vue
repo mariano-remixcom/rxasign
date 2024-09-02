@@ -100,7 +100,6 @@
     <Finalizar v-if="isEnding" :ente="ente" />
     <div v-if="isEditing" class="modal-body-content">
       <ProjectAddForm :project-edit="proyecto" @update-data="updateDataEdit" />
-      <ProjectAddForm :project-edit="proyecto" @update-data="updateDataEdit" />
     </div>
   </Modal>
 </template>
