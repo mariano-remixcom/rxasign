@@ -5,7 +5,7 @@
       <form @submit.prevent="submitForm">
         <div class="mb-3 d-flex flex-row row">
           <div class="d-flex flex-column col-4">
-            <label for="cliente" class="h6 semibold mb-0">Cliente</label>
+            <label for="cliente" class="h6 mb-0">Cliente</label>
             <small>Seleccione un cliente</small>
           </div>
           <div class="col">
@@ -20,7 +20,7 @@
 
         <div class="mb-3 d-flex flex-row row">
           <div class="d-flex flex-column col-4">
-            <label for="proyecto" class="h6 semibold mb-0">Nombre del proyecto</label>
+            <label for="proyecto" class="h6 mb-0">Nombre del proyecto</label>
             <small>Ingrese el nombre del proyecto</small>
           </div>
           <div class="col">
@@ -37,7 +37,7 @@
 
         <div class="mb-3 d-flex flex-row row">
           <div class="d-flex flex-column col-4">
-            <label for="horas" class="h6 semibold mb-0">Horas</label>
+            <label for="horas" class="h6 mb-0">Horas</label>
             <small>Cantidad de horas contratadas por mes</small>
           </div>
           <div class="col">
@@ -61,7 +61,7 @@
 
         <div class="mb-3 d-flex flex-row row">
           <div class="d-flex flex-column col-4">
-            <label for="vigencia" class="h6 semibold mb-0">Vigencia</label>
+            <label for="vigencia" class="h6 mb-0">Vigencia</label>
             <small>Inicio y fin del proyecto. Necesario para la funcionalidad de períodos.</small>
           </div>
           <div class="col">

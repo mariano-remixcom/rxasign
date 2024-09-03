@@ -9,6 +9,7 @@
           <th scope="col">Contrato</th>
           <th scope="col">Asignadas</th>
           <th scope="col">Modificado</th>
+          <th scope="col">Estado</th>
           <th scope="col">Acciones</th>
         </tr>
       </thead>
@@ -33,6 +34,7 @@
           <td v-if="item.squad._count.resources !== 0">{{ item.totalAsignedHours }} hs</td>
           <td v-else>-</td>
           <td>{{ formatDate(item.updatedAt) }}</td>
+          <td><project-state :state-key="item.currentState.currentState" /></td>
           <td>
             <button class="btn btn-link btn-m"><i class="bi bi-clipboard-data"></i></button>
             <button class="btn btn-link btn-m" @click="finishProject"><i class="bi bi-check-circle"></i></button>
@@ -72,6 +74,7 @@ import Finalizar from '@/components/FinalizarModal.vue'
 import FormatDate from '@/mixins/formatting-text/FormatDate.vue'
 import Modal from '@/components/shared/ModalModal.vue'
 import ProjectAddForm from '@/components/ProjectAddForm.vue'
+import ProjectState from './proyectos/ProjectState.vue'
 import ProjectsService from '@/services/projects'
 import ResourcesService from '@/services/resources'
 import { useToaster } from '@/helpers/alerts/toasts/useToaster'
@@ -82,7 +85,8 @@ export default {
     Modal,
     Eliminar,
     Finalizar,
-    ProjectAddForm
+    ProjectAddForm,
+    ProjectState
   },
   mixins: [FormatDate],
   data() {
@@ -112,25 +116,6 @@ export default {
         const response = await this.projectsService.getAllProjects()
 
         this.projects = response.data
-
-        const resourcePromises = this.projects.map(async (project) => {
-          if (project.squad && project.squad.id) {
-            const resourcesResponse = await this.resourcesService.getResourcesBySquad(project.squad.id)
-
-            return {
-              ...project,
-              squad: {
-                ...project.squad,
-                resources: resourcesResponse.data
-              }
-            }
-          }
-
-          return project
-        })
-
-        this.projects = await Promise.all(resourcePromises)
-        console.log(this.projects)
       } catch (err) {
         console.log('Error al obtener los proyectos: ', err)
       }
