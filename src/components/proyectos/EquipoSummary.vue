@@ -1,85 +1,113 @@
-<template v-if="!loading">
-  <div class="section-header-primary">Equipo</div>
+<template>
+  <div v-if="!loading">
+    <div class="section-header-primary">Equipo</div>
 
-  <!-- Tabla de recursos existentes -->
-  <table v-if="equipoLocal.length > 0" class="table mb-3">
-    <thead class="table-light">
-      <tr>
-        <th scope="col">#</th>
-        <th scope="col">Recurso</th>
-        <th scope="col">Rol</th>
-        <th scope="col" class="text-center">Disponibles</th>
-        <th scope="col" class="col-2">Asignadas</th>
-        <th scope="col" class="text-center">Acciones</th>
-      </tr>
-    </thead>
-    <tbody class="align-middle">
-      <tr v-for="(miembro, index) in equipoLocal" :key="index">
-        <td>{{ index + 1 }}</td>
-        <!-- Recurso -->
-        <td v-if="!miembro.editing">
-          {{ miembro.user?.fullName || miembro.fullName }}
-        </td>
-        <td v-else>
-          <select v-model="miembro.idUser" class="form-select" @change="fetchAvailableHours(miembro.idUser, miembro)">
-            <option v-for="(recurso, recursoIndex) in recursos" :key="recursoIndex" :value="recurso.id">
-              {{ recurso.fullName }}
-            </option>
-          </select>
-        </td>
-        <!-- Rol -->
-        <td v-if="!miembro.editing">
-          {{ miembro.rol }}
-        </td>
-        <td v-else>
-          <select v-model="miembro.rol" class="form-select">
-            <option v-for="(rol, rolIndex) in roles" :key="rolIndex" :value="rol.key">
-              {{ rol.displayName }}
-            </option>
-          </select>
-        </td>
-        <!-- Horas Disponibles -->
-        <td class="text-center">{{ miembro.availableHours }} hs</td>
-        <!-- Horas Asignadas -->
-        <td v-if="!miembro.editing">
-          {{ miembro.assignedHours }}
-        </td>
-        <td v-else>
-          <input v-model="miembro.assignedHours" class="form-control" type="number" />
-        </td>
-        <!-- Acciones -->
-        <td class="text-center">
-          <button v-if="!miembro.editing" class="btn icon" @click="editResource(miembro)">
-            <i class="bi bi-pencil-square"></i>
-          </button>
-          <button v-if="miembro.editing" class="btn icon text-success" @click="saveResource(miembro)">
-            <i class="bi bi-check-lg"></i>
-          </button>
-          <button class="btn icon text-danger" @click="removeResource(miembro.id)">
-            <i class="bi bi-trash"></i>
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  <!-- Botón para agregar recurso -->
-  <div class="d-flex flex-row px-3">
-    <button class="btn btn-outline-primary" @click="addNewResource">Agregar recurso</button>
-    <div class="col d-flex flex-row justify-content-end text-gray align-items-center">
-      <i class="bi bi-arrow-repeat"></i>
-      <div class="ms-1">{{ formatDate(fechaUltimaEdicion, 'dateAndTime') }}</div>
+    <!-- Tabla de recursos existentes -->
+    <table v-if="equipoLocal.length > 0" class="table mb-3">
+      <thead class="table-light">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Recurso</th>
+          <th scope="col">Rol</th>
+          <th scope="col" class="text-center">Disponibles</th>
+          <th scope="col" class="col-2">Asignadas</th>
+          <th scope="col" class="text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody class="align-middle">
+        <tr v-for="(miembro, index) in equipoLocal" :key="index">
+          <td>{{ index + 1 }}</td>
+          <!-- Recurso -->
+          <td v-if="!miembro.editing">
+            {{ miembro.user?.fullName || miembro.fullName }}
+          </td>
+          <td v-else>
+            <select v-model="miembro.idUser" class="form-select" @change="fetchAvailableHours(miembro.idUser, miembro)">
+              <option v-for="(recurso, recursoIndex) in recursos" :key="recursoIndex" :value="recurso.id">
+                {{ recurso.fullName }}
+              </option>
+            </select>
+          </td>
+          <!-- Rol -->
+          <td v-if="!miembro.editing">
+            {{ miembro.rol }}
+          </td>
+          <td v-else>
+            <select v-model="miembro.rol" class="form-select">
+              <option v-for="(rol, rolIndex) in roles" :key="rolIndex" :value="rol.key">
+                {{ rol.displayName }}
+              </option>
+            </select>
+          </td>
+          <!-- Horas Disponibles -->
+          <td class="text-center">{{ miembro.availableHours }} hs</td>
+          <!-- Horas Asignadas -->
+          <td v-if="!miembro.editing">
+            {{ miembro.assignedHours }}
+          </td>
+          <td v-else>
+            <input v-model="miembro.assignedHours" class="form-control" type="number" />
+          </td>
+          <!-- Acciones -->
+          <td class="text-center">
+            <button v-if="!miembro.editing" class="btn icon" @click="editResource(miembro)">
+              <i class="bi bi-pencil-square"></i>
+            </button>
+            <button v-if="miembro.editing" class="btn icon text-success" @click="saveResource(miembro)">
+              <i class="bi bi-check-lg"></i>
+            </button>
+            <button class="btn icon text-danger" @click="removeResource(miembro.id)">
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <!-- Botón para agregar recurso -->
+    <div class="d-flex flex-row px-3">
+      <button class="btn btn-outline-primary" @click="addNewResource">Agregar recurso</button>
+      <div class="col d-flex flex-row justify-content-end text-gray align-items-center">
+        <i class="bi bi-arrow-repeat"></i>
+        <div class="ms-1">{{ formatDate(fechaUltimaEdicion, 'dateAndTime') }}</div>
+      </div>
     </div>
+    <ConfirmModal
+      :is-visible="isVisibleConfirm"
+      message="¿Estás seguro que deseas guardar los cambios?"
+      @close="
+        () => {
+          isVisibleConfirm = false
+        }
+      "
+      @confirm="updateResource"
+    />
+
+    <DeleteModal
+      :is-visible="showModalDelete"
+      message="¿Estás seguro que deseas eliminar este recurso?"
+      @close="
+        () => {
+          showModalDelete = false
+        }
+      "
+      @delete="confirmRemoveResource"
+    />
   </div>
 </template>
 
 <script>
+import ConfirmModal from '@/components/shared/ConfirmModal.vue'
+import DeleteModal from '@/components/shared/DeleteModal.vue'
 import FormatDate from '@/mixins/formatting-text/FormatDate.vue'
 import ResourcesService from '@/services/resources'
 import { USER_ROLES } from '@/constants/UserRoles'
 import { UsersService } from '@/services/users'
-import { ref } from 'vue'
 
 export default {
+  components: {
+    ConfirmModal,
+    DeleteModal
+  },
   mixins: [FormatDate],
   props: {
     equipo: {
@@ -89,27 +117,42 @@ export default {
     fechaUltimaEdicion: {
       type: String,
       required: true
+    },
+    idSquad: {
+      type: Number,
+      required: true
     }
   },
-  emits: ['addResource'],
-  setup(props, { emit }) {
-    const loading = ref(false)
-    const recursos = ref([])
-    const equipoLocal = ref([...props.equipo])
-
-    loading.value = true
-
-    new UsersService()
-      .getActiveResourcesForCombobox()
-      .then((response) => {
-        recursos.value = response.data
-      })
-      .finally(() => {
-        loading.value = false
-      })
-
-    // Obtiene las horas disponibles para el usuario seleccionado
-    function fetchAvailableHours(id, miembro) {
+  data() {
+    return {
+      loading: false,
+      recursos: [],
+      equipoLocal: [...this.equipo],
+      currentResource: null,
+      isVisibleConfirm: false,
+      showModalDelete: false,
+      roles: USER_ROLES
+    }
+  },
+  mounted() {
+    this.getResources()
+  },
+  methods: {
+    getResources() {
+      this.loading = true
+      new UsersService()
+        .getActiveResourcesForCombobox()
+        .then((response) => {
+          this.recursos = response.data
+        })
+        .catch((error) => {
+          console.error('Error al obtener los recursos:', error)
+        })
+        .finally(() => {
+          this.loading = false
+        })
+    },
+    fetchAvailableHours(id, miembro) {
       if (id) {
         new UsersService()
           .getAvailableHoursForUser(id)
@@ -120,10 +163,8 @@ export default {
             console.error('Error al obtener las horas disponibles:', error)
           })
       }
-    }
-
-    // Agrega un nuevo recurso en blanco y lo pone en modo de edición
-    function addNewResource() {
+    },
+    addNewResource() {
       const newMember = {
         idUser: '',
         fullName: '',
@@ -134,73 +175,76 @@ export default {
         editing: true
       }
 
-      equipoLocal.value.push(newMember)
-    }
-
-    // Edita el recurso seleccionado
-    function editResource(miembro) {
+      this.equipoLocal.push(newMember)
+    },
+    editResource(miembro) {
       miembro.editing = true
-    }
-
-    // Guarda o agrega el recurso
-    function saveResource(miembro) {
+    },
+    saveResource(miembro) {
       if (!miembro.id) {
-        addResource(miembro)
+        this.addResource(miembro)
       } else {
-        updateResource(miembro)
+        this.currentResource = miembro
+        this.isVisibleConfirm = true
       }
-    }
-
-    // Lógica para agregar un recurso
-    function addResource(miembro) {
+    },
+    addResource(miembro) {
       miembro.editing = false
-      emit('addResource', miembro)
-      window.location.reload()
-    }
+      const newMember = {
+        rol: miembro.rol,
+        assignedHours: miembro.assignedHours,
+        idSquad: this.idSquad,
+        idUser: miembro.idUser,
+        startDate: new Date().toISOString()
+      }
 
-    // Lógica para actualizar un recurso existente
-    function updateResource(miembro) {
       new ResourcesService()
-        .updateResource(miembro.id, miembro)
+        .createResource(newMember)
         .then((response) => {
-          miembro.editing = false
+          console.log(response, 'recurso creado')
+          const recursoCreado = response.data
+          const recursoEncontrado = this.recursos.find((recurso) => recurso.id === miembro.idUser)
+
+          if (recursoEncontrado) {
+            miembro.fullName = recursoEncontrado.fullName
+            miembro.id = recursoCreado.id
+            this.equipoLocal.push(miembro)
+          }
+        })
+        .catch((error) => {
+          console.error('Error al agregar recurso:', error)
+        })
+    },
+    updateResource() {
+      new ResourcesService()
+        .updateResource(this.currentResource.id, this.currentResource)
+        .then((response) => {
+          this.isVisibleConfirm = false
           console.log('Recurso actualizado:', response.data)
-          fetchAvailableHours(miembro.idUser, miembro)
+          this.fetchAvailableHours(this.currentResource.idUser, this.currentResource)
+          this.currentResource.editing = false
+          this.currentResource = ''
         })
         .catch((error) => {
           console.error('Error al actualizar recurso:', error)
         })
-    }
-
-    // Elimina un recurso
-    function removeResource(id) {
+    },
+    removeResource(id) {
+      this.currentResource = id
+      this.showModalDelete = true
+    },
+    confirmRemoveResource() {
       new ResourcesService()
-        .deleteResource(id)
+        .deleteResource(this.currentResource)
         .then((response) => {
-          equipoLocal.value = equipoLocal.value.filter((miembro) => miembro.id !== id)
+          this.equipoLocal = this.equipoLocal.filter((miembro) => miembro.id !== this.currentResource)
           console.log('Recurso eliminado:', response.data)
+          this.showModalDelete = false
+          this.currentResource = ''
         })
         .catch((error) => {
           console.error('Error al eliminar recurso:', error)
         })
-    }
-
-    return {
-      loading,
-      recursos,
-      equipoLocal,
-      fetchAvailableHours,
-      addNewResource,
-      editResource,
-      saveResource,
-      removeResource,
-      addResource
-    }
-  },
-
-  data() {
-    return {
-      roles: USER_ROLES
     }
   }
 }

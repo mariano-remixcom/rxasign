@@ -85,7 +85,19 @@
       ></button>
     </div>
   </div>
-  <Modal
+  <EditModal
+    :is-visible="showModal"
+    :large="large"
+    :project-edit="projectEdit"
+    @updateDataEdit="updateDataEdit"
+    @close="
+      () => {
+        ;(showModal = false), (large = false)
+      }
+    "
+    @save="saveChanges"
+  />
+  <!-- <Modal
     :is-visible="showModal"
     :title="title"
     :large="large"
@@ -101,23 +113,21 @@
     <div v-if="isEditing" class="modal-body-content">
       <ProjectAddForm :project-edit="proyecto" @update-data="updateDataEdit" />
     </div>
-  </Modal>
+  </Modal> -->
 </template>
 <script>
 import FieldWithLabel from './FieldWithLabel.vue'
-import Finalizar from '@/components/FinalizarModal.vue'
+// import Finalizar from '@/components/FinalizarModal.vue'
+import EditModal from '@/components/proyectos/EditProjectModal.vue'
 import FormatDate from '@/mixins/formatting-text/FormatDate.vue'
-import Modal from '@/components/shared/ModalModal.vue'
-import ProjectAddForm from '@/components/ProjectAddForm.vue'
 import ProjectsService from '@/services/projects'
 import moment from 'moment'
 
 export default {
   components: {
     FieldWithLabel,
-    Finalizar,
-    Modal,
-    ProjectAddForm
+    EditModal
+    // Finalizar,
   },
   mixins: [FormatDate],
   props: {
@@ -131,10 +141,6 @@ export default {
     return {
       projectsService: new ProjectsService(),
       showModal: false,
-      isEnding: false,
-      title: '',
-      ente: '',
-      isEditing: false,
       large: false,
       editForm: {
         id: 0,
@@ -145,7 +151,8 @@ export default {
         endDate: ''
       },
       toastContent: '',
-      showToast: false
+      showToast: false,
+      projectEdit: {}
     }
   },
   computed: {
@@ -160,52 +167,51 @@ export default {
     capitalizeFirstLetter: function (value) {
       return value.charAt(0).toUpperCase() + value.slice(1)
     },
-    finishProject() {
-      this.showModal = true
-      this.isEnding = true
-      this.title = 'Finalizar proyecto'
-      this.ente = 'proyecto'
-    },
+    // finishProject() {
+    //   this.showModal = true
+    //   this.isEnding = true
+    //   this.title = 'Finalizar proyecto'
+    //   this.ente = 'proyecto'
+    // },
     editProject() {
       this.showModal = true
-      this.isEditing = true
-      this.title = 'Editar proyecto'
       this.large = true
+      this.projectEdit = this.proyecto
     },
     updateDataEdit(updatedProject) {
       this.editForm = updatedProject
     },
     async saveChanges() {
-      if (this.isEditing) {
-        try {
-          const response = await new ProjectsService().updateProject(this.editForm.id, {
-            name: this.editForm.name,
-            monthlyContractedHours: this.editForm.monthlyContractedHours,
-            startDate: new Date(this.editForm.startDate),
-            endDate: this.editForm.endDate ? new Date(this.editForm.endDate) : null,
-            idClient: this.editForm.idClient
-          })
+      // if (this.isEditing) {
+      try {
+        const response = await new ProjectsService().updateProject(this.editForm.id, {
+          name: this.editForm.name,
+          monthlyContractedHours: this.editForm.monthlyContractedHours,
+          startDate: new Date(this.editForm.startDate),
+          endDate: this.editForm.endDate ? new Date(this.editForm.endDate) : null,
+          idClient: this.editForm.idClient
+        })
 
-          console.log(response)
-          this.showModal = false
-          this.showToast = true
-          console.log(this.showToast)
-          this.$emit('fetch-project', this.editForm.id)
-          this.toastContent = 'Los cambios se guardaron exitosamente'
-          setTimeout(() => {
-            this.showToast = false
-          }, 3000) // Oculta el toast después de 3 segundos
-        } catch (err) {
-          this.showToast = true
-          this.toastContent = 'Se produjo un error al intentar editar el proyecto'
-          setTimeout(() => {
-            this.showToast = false
-          }, 3000)
-          console.log('Error al editar proyecto: ', err)
-        }
-        this.isEditing = false
-        this.large = false
+        console.log(response)
+        this.showModal = false
+        this.showToast = true
+        console.log(this.showToast)
+        this.$emit('fetch-project', this.editForm.id)
+        this.toastContent = 'Los cambios se guardaron exitosamente'
+        setTimeout(() => {
+          this.showToast = false
+        }, 3000) // Oculta el toast después de 3 segundos
+      } catch (err) {
+        this.showToast = true
+        this.toastContent = 'Se produjo un error al intentar editar el proyecto'
+        setTimeout(() => {
+          this.showToast = false
+        }, 3000)
+        console.log('Error al editar proyecto: ', err)
       }
+      // this.isEditing = false
+      this.large = false
+      // }
     }
   }
 }

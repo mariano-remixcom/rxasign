@@ -43,35 +43,35 @@
       </tbody>
     </table>
   </div>
-  <Modal
-    :is-visible="showModal"
-    :title="title"
+  <EditModal
+    :is-visible="showModalEdit"
     :large="large"
-    :is-editing="isEditing"
-    :is-deleting="isDeleting"
+    :project-edit="projectEdit"
+    @updateDataEdit="updateDataEdit"
     @close="
       () => {
-        ;(showModal = false), (isDeleting = false), (isEnding = false), (isEditing = false), (large = false)
+        ;(showModalEdit = false), (large = false)
       }
     "
     @save="saveChanges"
+  />
+  <DeleteModal
+    :is-visible="showModalDelete"
+    message="¿Estás seguro que deseas eliminar este proyecto?"
+    @close="
+      () => {
+        showModalDelete = false
+      }
+    "
     @delete="deleteOk"
-  >
-    <Eliminar v-if="isDeleting" :ente="ente" />
-    <Finalizar v-if="isEnding" :ente="ente" />
-    <div v-if="isEditing" class="modal-body-content">
-      <ProjectAddForm :project-edit="projectEdit" @update-data="updateDataEdit" />
-    </div>
-  </Modal>
+  />
 </template>
 
 <script>
 import ClientsService from '@/services/clients'
-import Eliminar from '@/components/EliminarModal.vue'
-import Finalizar from '@/components/FinalizarModal.vue'
+import DeleteModal from '@/components/shared/DeleteModal.vue'
+import EditModal from '@/components/proyectos/EditProjectModal.vue'
 import FormatDate from '@/mixins/formatting-text/FormatDate.vue'
-import Modal from '@/components/shared/ModalModal.vue'
-import ProjectAddForm from '@/components/ProjectAddForm.vue'
 import ProjectsService from '@/services/projects'
 import ResourcesService from '@/services/resources'
 import { useToaster } from '@/helpers/alerts/toasts/useToaster'
@@ -79,10 +79,8 @@ import { useToaster } from '@/helpers/alerts/toasts/useToaster'
 export default {
   name: 'ProyectosTable',
   components: {
-    Modal,
-    Eliminar,
-    Finalizar,
-    ProjectAddForm
+    EditModal,
+    DeleteModal
   },
   mixins: [FormatDate],
   data() {
@@ -90,17 +88,15 @@ export default {
       projectsService: new ProjectsService(),
       clientsService: new ClientsService(),
       resourcesService: new ResourcesService(),
-      showModal: false,
-      isDeleting: false,
-      isEnding: false,
       title: '',
-      ente: '',
-      isEditing: false,
       large: false,
       projectId: null,
       projects: [],
       client: null,
-      idProjectToDelete: null
+      idProjectToDelete: null,
+      projectEdit: {},
+      showModalEdit: false,
+      showModalDelete: false
     }
   },
   async mounted() {
@@ -136,10 +132,7 @@ export default {
       }
     },
     async deleteProject(id) {
-      this.showModal = true
-      this.isDeleting = true
-      this.title = 'Eliminar proyecto'
-      this.ente = 'proyecto'
+      this.showModalDelete = true
       this.idProjectToDelete = id
     },
     showSuccessToast(message) {
@@ -158,8 +151,7 @@ export default {
 
         console.log(response)
         this.idProjectToDelete = null
-        this.showModal = false
-        this.isDeleting = false
+        this.showModalDelete = false
         this.getProjects()
         this.showSuccessToast('El proyecto se eliminó exitosamente')
       } catch (err) {
@@ -175,9 +167,7 @@ export default {
       this.ente = 'proyecto'
     },
     editProject(project) {
-      this.showModal = true
-      this.isEditing = true
-      this.title = 'Editar proyecto'
+      this.showModalEdit = true
       this.large = true
       this.projectEdit = project
     },
@@ -186,30 +176,30 @@ export default {
     },
     updateDataEdit(updatedProject) {
       this.project = updatedProject
+      console.log(this.project)
     },
     async saveChanges() {
-      if (this.isEditing) {
-        try {
-          const response = await this.projectsService.updateProject(this.project.id, {
-            name: this.project.name,
-            monthlyContractedHours: this.project.monthlyContractedHours,
-            startDate: new Date(this.project.startDate),
-            endDate: this.project.endDate ? new Date(this.project.endDate) : null,
-            idClient: this.project.idClient
-          })
+      // if (this.isEditing) {
+      try {
+        const response = await this.projectsService.updateProject(this.project.id, {
+          name: this.project.name,
+          monthlyContractedHours: this.project.monthlyContractedHours,
+          startDate: new Date(this.project.startDate),
+          endDate: this.project.endDate ? new Date(this.project.endDate) : null,
+          idClient: this.project.idClient
+        })
 
-          console.log(response)
-          this.getProjects()
-          this.showModal = false
-          this.showSuccessToast('Los cambios se guardaron exitosamente')
-        } catch (err) {
-          this.showErrorToast('Se produjo un error al intentar editar el proyecto')
-          console.log('Error al editar proyecto: ', err)
-        }
-        this.isEditing = false
-        this.large = false
+        console.log(response)
+        this.getProjects()
+        this.showModalEdit = false
+        this.showSuccessToast('Los cambios se guardaron exitosamente')
+      } catch (err) {
+        this.showErrorToast('Se produjo un error al intentar editar el proyecto')
+        console.log('Error al editar proyecto: ', err)
       }
+      this.large = false
     }
+    // }
   }
 }
 </script>

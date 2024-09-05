@@ -1,21 +1,22 @@
 <template>
-  <transition name="modal">
-    <div v-if="isVisible" class="modal-overlay">
-      <div class="modal-content modal-small">
-        <div class="modal-header">
-          <h4 class="text-16 mb-0">Confirmar</h4>
-          <button class="modal-close" @click="cancel">×</button>
-        </div>
-        <div class="modal-body">
-          <p>¿Estás seguro de que quieres guardar los cambios?</p>
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-secondary me-2" @click="cancel">Cancelar</button>
-          <button class="btn btn-primary" @click="confirm">Confirmar</button>
+  <div v-if="isVisible" class="modal-overlay">
+    <div :class="['modal-content', { 'modal-large': large }]">
+      <header class="modal-header">
+        <h4 class="modal-title">{{ title }}</h4>
+        <button class="modal-close" @click="$emit('close')">&times;</button>
+      </header>
+      <div class="modal-body">
+        <div class="modal-body-content">
+          <slot></slot>
+          <!-- Slot para contenido personalizado -->
         </div>
       </div>
+      <footer class="modal-footer">
+        <button type="button" class="btn btn-secondary me-2" @click="$emit('close')">Cancelar</button>
+        <button type="button" class="btn btn-primary" @click="handleConfirm">{{ confirmText }}</button>
+      </footer>
     </div>
-  </transition>
+  </div>
 </template>
 
 <script>
@@ -24,15 +25,27 @@ export default {
     isVisible: {
       type: Boolean,
       default: false
+    },
+    title: {
+      type: String,
+      default: ''
+    },
+    confirmText: {
+      type: String,
+      default: 'Confirmar'
+    },
+    large: {
+      type: Boolean,
+      default: false
     }
   },
-  emits: ['confirm', 'cancel'],
+  emits: ['close', 'confirm'],
   methods: {
-    confirm() {
-      this.$emit('confirm')
+    handleClose() {
+      this.$emit('close')
     },
-    cancel() {
-      this.$emit('cancel')
+    handleConfirm() {
+      this.$emit('confirm')
     }
   }
 }
@@ -62,7 +75,7 @@ export default {
   max-width: 500px;
 }
 .modal-large {
-  max-width: 800px;
+  max-width: 1000px;
 }
 
 .modal-header {
