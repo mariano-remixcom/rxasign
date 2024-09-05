@@ -1,12 +1,14 @@
 export const PROJECT_STATES = [
   {
     key: 'Draft',
+    isInitialState: true,
     displayName: 'Borrador',
     color: 'gray-600',
     icon: 'check-circle-fill'
   },
   {
     key: 'Active',
+    isInitialState: true,
     displayName: 'Activo',
     color: 'success',
     icon: 'circle-fill'
