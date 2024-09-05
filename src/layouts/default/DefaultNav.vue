@@ -3,7 +3,11 @@
     <div class="container d-flex justify-content-between align-items-center">
       <!-- Sección de la izquierda: Marca y enlaces de navegación -->
       <div class="d-flex">
-        <AsignacionesConLogo @click="collapseNavbar" />
+        <!-- <AsignacionesConLogo @click="collapseNavbar" /> -->
+        <router-link to="/" class="navbar-brand" @click="collapseNavbar">
+          <img src="@/assets/logoAsignaciones.svg" alt="Logo de la app" />
+          <div class="d-flex flex-row"></div>
+        </router-link>
         <button
           :class="['navbar-toggler', !navbarExpanded && 'collapsed']"
           type="button"
@@ -54,7 +58,7 @@
 // const collapseNavbar = () => {
 //   navbarExpanded.value = false
 // }
-import AsignacionesConLogo from './Brand.vue'
+// import AsignacionesConLogo from './Brand.vue'
 import { ref } from 'vue'
 // import { useRouter } from 'vue-router';
 

@@ -75,7 +75,7 @@
     </div>
   </div>
 
-  <Modal
+  <!-- <Modal
     :is-visible="showModal"
     :title="title"
     :large="large"
@@ -86,34 +86,34 @@
     "
   >
     <AgregarUsuario v-if="isAdding" />
-  </Modal>
+  </Modal> -->
 </template>
 
 <script>
-import AgregarUsuario from '@/components/AgregarUsuario.vue'
-import Modal from '@/components/shared/ModalModal.vue'
+// import AgregarUsuario from '@/components/AgregarUsuario.vue'
+// import Modal from '@/components/shared/ModalModal.vue'
 
 export default {
   name: 'DashboardAsignaciones',
   components: {
-    Modal,
-    AgregarUsuario
+    // Modal,
+    // AgregarUsuario
   },
   data() {
     return {
-      isAdding: false,
-      title: '',
-      showModal: false,
-      large: false
+      // isAdding: false,
+      // title: '',
+      // showModal: false,
+      // large: false
     }
   },
   methods: {
-    addUser() {
-      this.showModal = true
-      this.isAdding = true
-      this.title = 'Agregar usuario'
-      this.large = true
-    }
+    // addUser() {
+    //   this.showModal = true
+    //   this.isAdding = true
+    //   this.title = 'Agregar usuario'
+    //   this.large = true
+    // }
   }
 }
 </script>
