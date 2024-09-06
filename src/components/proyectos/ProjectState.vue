@@ -4,6 +4,7 @@
     <div class="h6 mb-0" :class="`text-${state.color}`">{{ state.displayName }}</div>
   </div>
 </template>
+
 <script>
 import { PROJECT_STATES } from '@/constants/ProjectStates'
 import { ref, watch } from 'vue'
@@ -28,7 +29,10 @@ export default {
 
     setState(props.stateKey)
 
-    watch(props.stateKey, setState)
+    watch(
+      () => props.stateKey,
+      (newKey) => setState(newKey)
+    )
 
     return { state }
   }

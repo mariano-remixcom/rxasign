@@ -53,7 +53,8 @@ export default {
           startDate: new Date(this.project.startDate),
           endDate: this.project.endDate ? new Date(this.project.endDate) : null,
           idClient: this.project.idClient,
-          teamMembers: this.teamMembers
+          teamMembers: this.teamMembers,
+          state: this.project.state
         })
 
         console.log(response)

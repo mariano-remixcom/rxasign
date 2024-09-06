@@ -4,7 +4,7 @@ export const PROJECT_STATES = [
     isInitialState: true,
     displayName: 'Borrador',
     color: 'gray-600',
-    icon: 'check-circle-fill'
+    icon: 'bi bi-clock'
   },
   {
     key: 'Active',

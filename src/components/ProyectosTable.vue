@@ -116,6 +116,7 @@ export default {
         const response = await this.projectsService.getAllProjects()
 
         this.projects = response.data
+        console.log(this.projects)
       } catch (err) {
         console.log('Error al obtener los proyectos: ', err)
       }
@@ -171,6 +172,7 @@ export default {
     },
     updateDataEdit(updatedProject) {
       this.project = updatedProject
+      console.log(this.project)
     },
     async saveChanges() {
       if (this.isEditing) {
@@ -180,7 +182,8 @@ export default {
             monthlyContractedHours: this.project.monthlyContractedHours,
             startDate: new Date(this.project.startDate),
             endDate: this.project.endDate ? new Date(this.project.endDate) : null,
-            idClient: this.project.idClient
+            idClient: this.project.idClient,
+            state: this.project.state
           })
 
           console.log(response)

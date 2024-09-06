@@ -179,7 +179,7 @@ export default {
       this.project.idClient = this.projectEdit.client.id
       this.project.startDate = this.formatDate(this.projectEdit.startDate)
       this.project.endDate = this.projectEdit.endDate ? this.formatDate(this.projectEdit.endDate) : null
-      this.project.state = this.projectEdit.state
+      this.project.state = this.projectEdit.stateHistory.at(-1).currentState
     } else {
       this.estados = PROJECT_STATES.filter((estado) => estado.isInitialState)
     }
