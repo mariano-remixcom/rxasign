@@ -5,7 +5,7 @@
       <form @submit.prevent="submitForm">
         <div class="mb-3 d-flex flex-row row">
           <div class="d-flex flex-column col-4">
-            <label for="cliente" class="h6 semibold mb-0">Cliente</label>
+            <label for="cliente" class="h6 mb-0">Cliente</label>
             <small>Seleccione un cliente</small>
           </div>
           <div class="col">
@@ -20,7 +20,7 @@
 
         <div class="mb-3 d-flex flex-row row">
           <div class="d-flex flex-column col-4">
-            <label for="proyecto" class="h6 semibold mb-0">Nombre del proyecto</label>
+            <label for="proyecto" class="h6 mb-0">Nombre del proyecto</label>
             <small>Ingrese el nombre del proyecto</small>
           </div>
           <div class="col">
@@ -37,7 +37,7 @@
 
         <div class="mb-3 d-flex flex-row row">
           <div class="d-flex flex-column col-4">
-            <label for="horas" class="h6 semibold mb-0">Horas</label>
+            <label for="horas" class="h6 mb-0">Horas</label>
             <small>Cantidad de horas contratadas por mes</small>
           </div>
           <div class="col">
@@ -61,7 +61,7 @@
 
         <div class="mb-3 d-flex flex-row row">
           <div class="d-flex flex-column col-4">
-            <label for="vigencia" class="h6 semibold mb-0">Vigencia</label>
+            <label for="vigencia" class="h6 mb-0">Vigencia</label>
             <small>Inicio y fin del proyecto. Necesario para la funcionalidad de períodos.</small>
           </div>
           <div class="col">
@@ -91,6 +91,30 @@
             </div>
           </div>
         </div>
+        <div class="mb-3 d-flex flex-row row">
+          <div class="d-flex flex-column col-4">
+            <label for="estado" class="h6 mb-0">Estado</label>
+            <small>Estado actual del proyecto.</small>
+          </div>
+          <div class="col">
+            <div class="row">
+              <div class="col">
+                <select id="state" v-model="project.state" class="form-select" required @change="updateData">
+                  <option
+                    v-for="state in estados"
+                    :key="state.key"
+                    :value="state.key"
+                    :selected="state.key === project.state"
+                    data-icon="bi bi-check-circle-fill"
+                  >
+                    <project-state :state-key="state.key" />
+                  </option>
+                </select>
+              </div>
+              <div class="col"></div>
+            </div>
+          </div>
+        </div>
       </form>
     </div>
   </div>
@@ -98,11 +122,16 @@
 
 <script>
 import ClientsService from '@/services/clients'
+import ProjectState from './proyectos/ProjectState.vue'
 import ProjectsService from '@/services/projects'
 import moment from 'moment'
+import { PROJECT_STATES } from '@/constants/ProjectStates'
 
 export default {
   name: 'ProjectAddForm',
+  components: {
+    ProjectState
+  },
   props: {
     projectEdit: {
       type: Object,
@@ -122,10 +151,12 @@ export default {
         name: '',
         monthlyContractedHours: 0,
         startDate: '',
-        endDate: ''
+        endDate: '',
+        state: 'Draft'
       },
       projectsService: new ProjectsService(),
-      clientsService: new ClientsService()
+      clientsService: new ClientsService(),
+      estados: PROJECT_STATES
     }
   },
   computed: {
@@ -148,6 +179,9 @@ export default {
       this.project.idClient = this.projectEdit.client.id
       this.project.startDate = this.formatDate(this.projectEdit.startDate)
       this.project.endDate = this.projectEdit.endDate ? this.formatDate(this.projectEdit.endDate) : null
+      this.project.state = this.projectEdit.stateHistory.at(-1).currentState
+    } else {
+      this.estados = PROJECT_STATES.filter((estado) => estado.isInitialState)
     }
     this.getClients()
   },

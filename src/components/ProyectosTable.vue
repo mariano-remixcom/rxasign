@@ -9,6 +9,7 @@
           <th scope="col">Contrato</th>
           <th scope="col">Asignadas</th>
           <th scope="col">Modificado</th>
+          <th scope="col">Estado</th>
           <th scope="col">Acciones</th>
         </tr>
       </thead>
@@ -33,6 +34,7 @@
           <td v-if="item.squad._count.resources !== 0">{{ item.totalAsignedHours }} hs</td>
           <td v-else>-</td>
           <td>{{ formatDate(item.updatedAt) }}</td>
+          <td><project-state :state-key="item.currentState.currentState" /></td>
           <td>
             <button class="btn btn-link btn-m"><i class="bi bi-clipboard-data"></i></button>
             <button class="btn btn-link btn-m" @click="finishProject"><i class="bi bi-check-circle"></i></button>
@@ -108,24 +110,6 @@ export default {
         const response = await this.projectsService.getAllProjects()
 
         this.projects = response.data
-
-        const resourcePromises = this.projects.map(async (project) => {
-          if (project.squad && project.squad.id) {
-            const resourcesResponse = await this.resourcesService.getResourcesBySquad(project.squad.id)
-
-            return {
-              ...project,
-              squad: {
-                ...project.squad,
-                resources: resourcesResponse.data
-              }
-            }
-          }
-
-          return project
-        })
-
-        this.projects = await Promise.all(resourcePromises)
         console.log(this.projects)
       } catch (err) {
         console.log('Error al obtener los proyectos: ', err)
@@ -179,27 +163,29 @@ export default {
       console.log(this.project)
     },
     async saveChanges() {
-      // if (this.isEditing) {
-      try {
-        const response = await this.projectsService.updateProject(this.project.id, {
-          name: this.project.name,
-          monthlyContractedHours: this.project.monthlyContractedHours,
-          startDate: new Date(this.project.startDate),
-          endDate: this.project.endDate ? new Date(this.project.endDate) : null,
-          idClient: this.project.idClient
-        })
+      if (this.isEditing) {
+        try {
+          const response = await this.projectsService.updateProject(this.project.id, {
+            name: this.project.name,
+            monthlyContractedHours: this.project.monthlyContractedHours,
+            startDate: new Date(this.project.startDate),
+            endDate: this.project.endDate ? new Date(this.project.endDate) : null,
+            idClient: this.project.idClient,
+            state: this.project.state
+          })
 
-        console.log(response)
-        this.getProjects()
-        this.showModalEdit = false
-        this.showSuccessToast('Los cambios se guardaron exitosamente')
-      } catch (err) {
-        this.showErrorToast('Se produjo un error al intentar editar el proyecto')
-        console.log('Error al editar proyecto: ', err)
+          console.log(response)
+          this.getProjects()
+          this.showModalEdit = false
+          this.showSuccessToast('Los cambios se guardaron exitosamente')
+        } catch (err) {
+          this.showErrorToast('Se produjo un error al intentar editar el proyecto')
+          console.log('Error al editar proyecto: ', err)
+        }
+        this.large = false
       }
-      this.large = false
+      // }
     }
-    // }
   }
 }
 </script>
