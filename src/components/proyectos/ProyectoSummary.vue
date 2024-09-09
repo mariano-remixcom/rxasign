@@ -5,6 +5,8 @@
       <field-with-label label="Cliente" :value="proyecto.client.name" />
       <field-with-label label="Proyecto" :value="proyecto.name" />
       <field-with-label label="Cantidad de horas contratadas por mes" :value="`${proyecto.monthlyContractedHours} hs`" />
+      <field-with-label label="Estado" />
+      <project-state :state-key="proyecto.currentState.currentState" />
     </div>
     <div class="col">
       <field-with-label label="Período actual" :value="capitalizeFirstLetter(formatDate(new Date(), 'monthAndYear'))" />
@@ -97,37 +99,20 @@
     "
     @save="saveChanges"
   />
-  <!-- <Modal
-    :is-visible="showModal"
-    :title="title"
-    :large="large"
-    :is-editing="isEditing"
-    @close="
-      () => {
-        ;(showModal = false), (isEnding = false), (isEditing = false), (large = false)
-      }
-    "
-    @save="saveChanges"
-  >
-    <Finalizar v-if="isEnding" :ente="ente" />
-    <div v-if="isEditing" class="modal-body-content">
-      <ProjectAddForm :project-edit="proyecto" @update-data="updateDataEdit" />
-    </div>
-  </Modal> -->
 </template>
 <script>
-import FieldWithLabel from './FieldWithLabel.vue'
-// import Finalizar from '@/components/FinalizarModal.vue'
 import EditModal from '@/components/proyectos/EditProjectModal.vue'
+import FieldWithLabel from './FieldWithLabel.vue'
 import FormatDate from '@/mixins/formatting-text/FormatDate.vue'
+import ProjectState from '@/components/proyectos/ProjectState.vue'
 import ProjectsService from '@/services/projects'
 import moment from 'moment'
 
 export default {
   components: {
     FieldWithLabel,
-    EditModal
-    // Finalizar,
+    EditModal,
+    ProjectState
   },
   mixins: [FormatDate],
   props: {
@@ -165,6 +150,8 @@ export default {
   },
   methods: {
     capitalizeFirstLetter: function (value) {
+      console.log(this.proyecto)
+
       return value.charAt(0).toUpperCase() + value.slice(1)
     },
     // finishProject() {
@@ -182,7 +169,6 @@ export default {
       this.editForm = updatedProject
     },
     async saveChanges() {
-      // if (this.isEditing) {
       try {
         const response = await new ProjectsService().updateProject(this.editForm.id, {
           name: this.editForm.name,
@@ -210,9 +196,7 @@ export default {
         }, 3000)
         console.log('Error al editar proyecto: ', err)
       }
-      // this.isEditing = false
       this.large = false
-      // }
     }
   }
 }
