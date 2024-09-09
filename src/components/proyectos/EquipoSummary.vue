@@ -208,7 +208,7 @@ export default {
           if (recursoEncontrado) {
             miembro.fullName = recursoEncontrado.fullName
             miembro.id = recursoCreado.id
-            this.equipoLocal.push(miembro)
+            // this.equipoLocal.push(miembro)
           }
         })
         .catch((error) => {

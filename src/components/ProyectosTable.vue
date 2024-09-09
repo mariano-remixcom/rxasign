@@ -74,6 +74,7 @@ import ClientsService from '@/services/clients'
 import DeleteModal from '@/components/shared/DeleteModal.vue'
 import EditModal from '@/components/proyectos/EditProjectModal.vue'
 import FormatDate from '@/mixins/formatting-text/FormatDate.vue'
+import ProjectState from '@/components/proyectos/ProjectState.vue'
 import ProjectsService from '@/services/projects'
 import ResourcesService from '@/services/resources'
 import { useToaster } from '@/helpers/alerts/toasts/useToaster'
@@ -82,7 +83,8 @@ export default {
   name: 'ProyectosTable',
   components: {
     EditModal,
-    DeleteModal
+    DeleteModal,
+    ProjectState
   },
   mixins: [FormatDate],
   data() {
@@ -163,29 +165,27 @@ export default {
       console.log(this.project)
     },
     async saveChanges() {
-      if (this.isEditing) {
-        try {
-          const response = await this.projectsService.updateProject(this.project.id, {
-            name: this.project.name,
-            monthlyContractedHours: this.project.monthlyContractedHours,
-            startDate: new Date(this.project.startDate),
-            endDate: this.project.endDate ? new Date(this.project.endDate) : null,
-            idClient: this.project.idClient,
-            state: this.project.state
-          })
+      try {
+        const response = await this.projectsService.updateProject(this.project.id, {
+          name: this.project.name,
+          monthlyContractedHours: this.project.monthlyContractedHours,
+          startDate: new Date(this.project.startDate),
+          endDate: this.project.endDate ? new Date(this.project.endDate) : null,
+          idClient: this.project.idClient,
+          state: this.project.state
+        })
 
-          console.log(response)
-          this.getProjects()
-          this.showModalEdit = false
-          this.showSuccessToast('Los cambios se guardaron exitosamente')
-        } catch (err) {
-          this.showErrorToast('Se produjo un error al intentar editar el proyecto')
-          console.log('Error al editar proyecto: ', err)
-        }
-        this.large = false
+        console.log(response)
+        this.getProjects()
+        this.showModalEdit = false
+        this.showSuccessToast('Los cambios se guardaron exitosamente')
+      } catch (err) {
+        this.showErrorToast('Se produjo un error al intentar editar el proyecto')
+        console.log('Error al editar proyecto: ', err)
       }
-      // }
+      this.large = false
     }
+    // }
   }
 }
 </script>

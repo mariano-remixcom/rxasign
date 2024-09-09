@@ -189,7 +189,8 @@ export default {
           monthlyContractedHours: this.editForm.monthlyContractedHours,
           startDate: new Date(this.editForm.startDate),
           endDate: this.editForm.endDate ? new Date(this.editForm.endDate) : null,
-          idClient: this.editForm.idClient
+          idClient: this.editForm.idClient,
+          state: this.editForm.state
         })
 
         console.log(response)

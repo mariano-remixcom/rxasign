@@ -202,6 +202,7 @@ export default {
     },
     updateData() {
       this.$emit('update-data', this.project)
+      console.log(this.project)
     }
     // submitForm() {
     //   // Emitir el formulario completo al componente padre
