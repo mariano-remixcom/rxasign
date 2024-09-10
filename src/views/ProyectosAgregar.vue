@@ -12,14 +12,14 @@
           <router-link to="/">
             <button class="btn btn-soft-primary">Cancelar</button>
           </router-link>
-          <button class="btn btn-primary" @click="addProject">Guardar</button>
+          <button class="btn btn-primary" @click="submitForm">Guardar</button>
         </div>
         <!-- Acciones fin -->
       </div>
     </div>
     <div>
       <div class="d-flex flex-column">
-        <ProjectAddForm @update-data="onUpdateDataProject" />
+        <ProjectAddForm ref="ProjectAddForm" @update-data="onUpdateDataProject" @add-project="addProject" />
         <ProjectAddTeam @update-data="onUpdateDataTeam" />
       </div>
     </div>
@@ -45,6 +45,13 @@ export default {
     }
   },
   methods: {
+    submitForm() {
+      if (this.$refs.ProjectAddForm && typeof this.$refs.ProjectAddForm.submitForm === 'function') {
+        this.$refs.ProjectAddForm.submitForm()
+      } else {
+        console.error('El método submitForm no está definido en ProjectAddForm')
+      }
+    },
     async addProject() {
       try {
         const response = await new ProjectsService().createProject({

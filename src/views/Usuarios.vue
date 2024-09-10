@@ -27,14 +27,12 @@
 
 <script>
 import AgregarUsuario from '@/components/AgregarUsuario.vue'
-import Modal from '@/components/shared/ModalModal.vue'
 import UsuariosTable from '@/components/UsuariosTable.vue'
 
 export default {
   name: 'App',
   components: {
     UsuariosTable,
-    Modal,
     AgregarUsuario
   },
   data() {

@@ -9,12 +9,20 @@
             <small>Seleccione un cliente</small>
           </div>
           <div class="col">
-            <select id="cliente" v-model="project.idClient" class="form-select" required @change="updateData">
+            <select
+              id="cliente"
+              v-model="project.idClient"
+              class="form-select"
+              required
+              @change="updateData"
+              @blur="v$.project.idClient.$touch"
+            >
               <option value="none" disabled :selected="!project">Seleccione un cliente</option>
               <option v-for="option in clients" :key="option" :value="option.id" :selected="option.id === project?.idClient">
                 {{ option.name }}
               </option>
             </select>
+            <div v-if="v$.project.idClient.$error" class="text-danger">El cliente es requerido</div>
           </div>
         </div>
 
@@ -31,7 +39,9 @@
               class="form-control bg-white"
               required
               @input="updateData"
+              @blur="v$.project.name.$touch"
             />
+            <div v-if="v$.project.name.$error" class="text-danger">El nombre de proyecto es requerido</div>
           </div>
         </div>
 
@@ -50,11 +60,15 @@
                 min="0"
                 required
                 @change="updateData"
+                @blur="v$.project.monthlyContractedHours.$touch"
               />
               <span class="input-group-text">
-                <input type="checkbox" class="me-1" />
+                <input v-model="contratoAbierto" type="checkbox" class="me-1" />
                 Contrato abierto
               </span>
+            </div>
+            <div v-if="v$.project.monthlyContractedHours.$error" class="text-danger">
+              La horas contratadas son requeridas y deben ser mayor a 0
             </div>
           </div>
         </div>
@@ -75,7 +89,9 @@
                   placeholder="Desde"
                   required
                   @change="updateData"
+                  @blur="v$.project.startDate.$touch"
                 />
+                <div v-if="v$.project.startDate.$error" class="text-danger">La fecha de inicio del proyecto es requerida</div>
               </div>
               <div class="col">
                 <input
@@ -86,7 +102,11 @@
                   placeholder="Hasta"
                   required
                   @change="updateData"
+                  @blur="v$.project.endDate.$touch"
                 />
+                <div v-if="v$.project.endDate.$error" class="text-danger">
+                  La fecha de fin debe ser posterior a la fecha de inicio
+                </div>
               </div>
             </div>
           </div>
@@ -126,6 +146,8 @@ import ProjectState from './proyectos/ProjectState.vue'
 import ProjectsService from '@/services/projects'
 import moment from 'moment'
 import { PROJECT_STATES } from '@/constants/ProjectStates'
+import { helpers, minValue, required } from '@vuelidate/validators'
+import { useVuelidate } from '@vuelidate/core'
 
 export default {
   name: 'ProjectAddForm',
@@ -138,7 +160,12 @@ export default {
       default: null
     }
   },
-  emits: ['update-data'],
+  emits: ['update-data', 'add-project'],
+  setup() {
+    return {
+      v$: useVuelidate()
+    }
+  },
   data() {
     return {
       idClient: '',
@@ -149,7 +176,7 @@ export default {
         id: 0,
         idClient: '',
         name: '',
-        monthlyContractedHours: 0,
+        monthlyContractedHours: '',
         startDate: '',
         endDate: '',
         state: 'Draft'
@@ -157,6 +184,33 @@ export default {
       projectsService: new ProjectsService(),
       clientsService: new ClientsService(),
       estados: PROJECT_STATES
+    }
+  },
+  validations() {
+    return {
+      project: {
+        idClient: { required },
+        name: { required },
+        monthlyContractedHours: {
+          required,
+          minValue: minValue(1)
+        },
+        startDate: { required },
+        endDate: {
+          required: false,
+          isAfterStartDate: helpers.withMessage(
+            'La fecha de fin debe ser posterior a la fecha de inicio',
+            (value, { startDate }) => {
+              // Si endDate está vacío o no está presente, la validación pasa.
+              // Si endDate está presente, debe ser mayor que startDate.
+              if (!value) return true
+              if (!startDate) return false // Si startDate no está definido, la comparación no es válida.
+
+              return new Date(value) > new Date(startDate)
+            }
+          )
+        }
+      }
     }
   },
   computed: {
@@ -203,11 +257,16 @@ export default {
     updateData() {
       this.$emit('update-data', this.project)
       console.log(this.project)
+    },
+    async submitForm() {
+      const isFormCorrect = await this.v$.$validate()
+
+      if (!isFormCorrect) {
+        return
+      }
+
+      this.$emit('add-project', this.project)
     }
-    // submitForm() {
-    //   // Emitir el formulario completo al componente padre
-    //   this.$emit('submit', this.form)
-    // }
   }
 }
 </script>
