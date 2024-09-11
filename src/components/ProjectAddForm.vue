@@ -264,8 +264,11 @@ export default {
       if (!isFormCorrect) {
         return
       }
-
-      this.$emit('add-project', this.project)
+      if (this.projectEdit) {
+        this.$emit('save-changes')
+      } else {
+        this.$emit('add-project', this.project)
+      }
     }
   }
 }

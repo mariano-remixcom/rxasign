@@ -8,7 +8,12 @@
     @confirm="handleSave"
   >
     <div class="modal-body-content">
-      <ProjectAddForm :project-edit="projectEdit" @update-data="updateDataEdit" />
+      <ProjectAddForm
+        ref="ProjectAddForm"
+        :project-edit="projectEdit"
+        @update-data="updateDataEdit"
+        @save-changes="saveChanges"
+      />
     </div>
     <ConfirmModal
       :is-visible="isVisibleConfirm"
@@ -52,6 +57,15 @@ export default {
       this.isVisibleConfirm = true
     },
     confirmChanges() {
+      if (this.$refs.ProjectAddForm && typeof this.$refs.ProjectAddForm.submitForm === 'function') {
+        this.$refs.ProjectAddForm.submitForm()
+      } else {
+        console.error('El método submitForm no está definido en ProjectAddForm')
+      }
+      //
+      //
+    },
+    saveChanges() {
       this.$emit('save')
       this.isVisibleConfirm = false
     }
