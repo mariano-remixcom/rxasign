@@ -27,6 +27,11 @@
                 {{ recurso.fullName }}
               </option>
             </select>
+            <div v-if="miembro.showErrors">
+              <div v-for="error in v$.equipoLocal.$each.$response.$errors[index].idUser" :key="error" class="text-danger">
+                Debe seleccionar un recurso.
+              </div>
+            </div>
           </td>
           <!-- Rol -->
           <td v-if="!miembro.editing">
@@ -38,6 +43,11 @@
                 {{ rol.displayName }}
               </option>
             </select>
+            <div v-if="miembro.showErrors">
+              <div v-for="error in v$.equipoLocal.$each.$response.$errors[index].rol" :key="error" class="text-danger">
+                El rol es requerido.
+              </div>
+            </div>
           </td>
           <!-- Horas Disponibles -->
           <td class="text-center">{{ miembro.availableHours }} hs</td>
@@ -47,6 +57,15 @@
           </td>
           <td v-else>
             <input v-model="miembro.assignedHours" class="form-control" type="number" />
+            <div v-if="miembro.showErrors">
+              <div
+                v-for="error in v$.equipoLocal.$each.$response.$errors[index].assignedHours"
+                :key="error"
+                class="text-danger"
+              >
+                La asignación horaria es requerida.
+              </div>
+            </div>
           </td>
           <!-- Acciones -->
           <td class="text-center">
@@ -102,6 +121,8 @@ import FormatDate from '@/mixins/formatting-text/FormatDate.vue'
 import ResourcesService from '@/services/resources'
 import { USER_ROLES } from '@/constants/UserRoles'
 import { UsersService } from '@/services/users'
+import { helpers, minValue, required } from '@vuelidate/validators'
+import { useVuelidate } from '@vuelidate/core'
 
 export default {
   components: {
@@ -123,11 +144,27 @@ export default {
       required: true
     }
   },
+  setup() {
+    return {
+      v$: useVuelidate()
+    }
+  },
+  validations() {
+    return {
+      equipoLocal: {
+        $each: helpers.forEach({
+          idUser: { required },
+          rol: { required },
+          assignedHours: { required, minValue: minValue(1) }
+        })
+      }
+    }
+  },
   data() {
     return {
       loading: false,
       recursos: [],
-      equipoLocal: [...this.equipo],
+      equipoLocal: [...this.equipo].map((miembro) => ({ ...miembro, showErrors: false })),
       currentResource: null,
       isVisibleConfirm: false,
       showModalDelete: false,
@@ -171,20 +208,31 @@ export default {
         rol: '',
         rolDisplayName: '',
         availableHours: 0,
-        assignedHours: 0,
-        editing: true
+        assignedHours: '',
+        editing: true,
+        showErrors: false
       }
 
       this.equipoLocal.push(newMember)
     },
     editResource(miembro) {
       miembro.editing = true
+      miembro.showErrors = false
     },
-    saveResource(miembro) {
+    async saveResource(miembro) {
+      this.currentResource = miembro
+      const isFormCorrect = await this.v$.$validate()
+
+      if (!isFormCorrect) {
+        miembro.showErrors = true
+
+        return
+      }
+      miembro.showErrors = false
+
       if (!miembro.id) {
         this.addResource(miembro)
       } else {
-        this.currentResource = miembro
         this.isVisibleConfirm = true
       }
     },
@@ -223,6 +271,7 @@ export default {
           console.log('Recurso actualizado:', response.data)
           this.fetchAvailableHours(this.currentResource.idUser, this.currentResource)
           this.currentResource.editing = false
+          this.currentResource.showErrors = false
           this.currentResource = ''
         })
         .catch((error) => {
