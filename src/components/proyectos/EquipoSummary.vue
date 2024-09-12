@@ -50,7 +50,9 @@
             </div>
           </td>
           <!-- Horas Disponibles -->
-          <td class="text-center">{{ miembro.availableHours }} hs</td>
+          <td :class="['text-center', { negative: isNegative(miembro.availableHours, miembro.assignedHours) }]">
+            {{ miembro.availableHours - miembro.assignedHours }} hs
+          </td>
           <!-- Horas Asignadas -->
           <td v-if="!miembro.editing">
             {{ miembro.assignedHours }}
@@ -294,6 +296,9 @@ export default {
         .catch((error) => {
           console.error('Error al eliminar recurso:', error)
         })
+    },
+    isNegative(availableHours, hoursAssigned) {
+      return availableHours - hoursAssigned < 0
     }
   }
 }
@@ -386,5 +391,9 @@ input[type='number'] {
   text-align: right;
   color: #aaa;
   font-size: 12px;
+}
+.negative {
+  color: red !important; /* Utilizamos !important para evitar conflictos de estilos */
+  font-weight: bold;
 }
 </style>

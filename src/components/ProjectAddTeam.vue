@@ -12,9 +12,9 @@
           <tr>
             <th scope="col">Nombre</th>
             <th scope="col">Rol</th>
-            <th scope="col">Disponibles</th>
-            <th scope="col">Asignadas (hs)</th>
-            <th scope="col">Acciones</th>
+            <th scope="col" class="text-center">Disponibles</th>
+            <th scope="col" class="text-center">Asignadas (hs)</th>
+            <th scope="col" class="text-center">Acciones</th>
           </tr>
         </thead>
         <tbody class="align-middle">
@@ -39,7 +39,9 @@
                 </div>
               </div>
             </td>
-            <td>{{ member.availableHours - member.hoursAssigned }} hs</td>
+            <td :class="['text-center', { negative: isNegative(member.availableHours, member.hoursAssigned) }]">
+              {{ member.availableHours - member.hoursAssigned }} hs
+            </td>
             <td>
               <input
                 v-model="member.hoursAssigned"
@@ -59,7 +61,7 @@
                 </div>
               </div>
             </td>
-            <td>
+            <td class="text-center">
               <button class="btn btn-link btn-m" @click="removeMember(index)"><i class="bi bi-trash"></i></button>
             </td>
           </tr>
@@ -164,6 +166,9 @@ export default {
       if (!isFormCorrect) {
         return false
       }
+    },
+    isNegative(availableHours, hoursAssigned) {
+      return availableHours - hoursAssigned < 0
     }
   }
 }
@@ -174,5 +179,9 @@ button.btn.btn-link.btn-m {
   color: $blue;
   --bs-btn-padding-x: 0.2rem;
   --bs-btn-padding-y: 0;
+}
+.negative {
+  color: red !important; /* Utilizamos !important para evitar conflictos de estilos */
+  font-weight: bold;
 }
 </style>
