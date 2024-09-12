@@ -2,8 +2,10 @@
   <nav class="navbar navbar-expand-md navbar-dark bg-primary fixed-top">
     <div class="container d-flex justify-content-between align-items-center">
       <!-- Marca y enlaces de navegación -->
-      <AsignacionesConLogo @click="collapseNavbar" />
-
+      <router-link to="/" class="navbar-brand" @click="collapseNavbar">
+        <img src="@/assets/logoAsignaciones.svg" alt="Logo de la app" />
+        <div class="d-flex flex-row"></div>
+      </router-link>
       <!-- Sección de login del usuario -->
       <div class="d-flex align-items-center">
         <span class="navbar-text text-white me-2">Hola, Mariano</span>
@@ -14,7 +16,6 @@
 </template>
 
 <script setup>
-import AsignacionesConLogo from '../default/Brand.vue'
 import { ref } from 'vue'
 
 const navbarExpanded = ref(false)
