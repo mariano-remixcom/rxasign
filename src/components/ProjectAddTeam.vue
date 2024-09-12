@@ -23,11 +23,21 @@
               <select v-model="member.userId" class="form-select" @change="updateMemberData(index)">
                 <option v-for="user in users" :key="user.id" :value="user.id">{{ user.fullName }}</option>
               </select>
+              <div v-if="changed">
+                <div v-for="error in v$.teamMembers.$each.$response.$errors[index].userId" :key="error" class="text-danger">
+                  Debe seleccionar un recurso.
+                </div>
+              </div>
             </td>
             <td>
               <select v-model="member.role" class="form-select" @change="updateData">
                 <option v-for="role in roles" :key="role.key" :value="role.key">{{ role.displayName }}</option>
               </select>
+              <div v-if="changed">
+                <div v-for="error in v$.teamMembers.$each.$response.$errors[index].role" :key="error" class="text-danger">
+                  El rol es requerido.
+                </div>
+              </div>
             </td>
             <td>{{ member.availableHours - member.hoursAssigned }} hs</td>
             <td>
@@ -39,6 +49,15 @@
                 :max="member.availableHours"
                 @input="updateData"
               />
+              <div v-if="changed">
+                <div
+                  v-for="error in v$.teamMembers.$each.$response.$errors[index].hoursAssigned"
+                  :key="error"
+                  class="text-danger"
+                >
+                  La asignación horaria es requerida.
+                </div>
+              </div>
             </td>
             <td>
               <button class="btn btn-link btn-m" @click="removeMember(index)"><i class="bi bi-trash"></i></button>
@@ -56,16 +75,36 @@
 <script>
 import { USER_ROLES } from '@/constants/UserRoles'
 import { UsersService } from '@/services/users'
+import { helpers, minValue, required } from '@vuelidate/validators'
+import { useVuelidate } from '@vuelidate/core'
 
 export default {
   name: 'ProjectAddTeam',
+  emits: ['update-data'],
+  setup() {
+    return {
+      v$: useVuelidate()
+    }
+  },
   data() {
     return {
       roles: USER_ROLES,
       teamMembers: [],
       usersService: new UsersService(),
       users: [],
-      isAdding: false
+      isAdding: false,
+      changed: false
+    }
+  },
+  validations() {
+    return {
+      teamMembers: {
+        $each: helpers.forEach({
+          userId: { required },
+          role: { required },
+          hoursAssigned: { required, minValue: minValue(1) }
+        })
+      }
     }
   },
   async mounted() {
@@ -73,7 +112,6 @@ export default {
       const responseUsers = await this.usersService.getActiveResourcesForCombobox()
 
       this.users = responseUsers.data
-
       for (const user of this.users) {
         const responseHours = await this.usersService.getAvailableHoursForUser(user.id)
 
@@ -87,10 +125,10 @@ export default {
     addMember() {
       // Añadir un nuevo integrante con `startDate` por defecto como la fecha de hoy
       this.teamMembers.push({
-        userId: '',
-        role: '',
+        userId: null,
+        role: null,
         availableHours: 0,
-        hoursAssigned: 0,
+        hoursAssigned: null,
         startDate: new Date().toISOString()
       })
 
@@ -116,7 +154,16 @@ export default {
         startDate: member.startDate
       }))
 
+      console.log(formattedMembers)
       this.$emit('update-data', formattedMembers)
+    },
+    async submitForm() {
+      this.changed = true
+      const isFormCorrect = await this.v$.$validate()
+
+      if (!isFormCorrect) {
+        return false
+      }
     }
   }
 }

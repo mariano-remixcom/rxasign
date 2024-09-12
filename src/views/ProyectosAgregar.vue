@@ -19,8 +19,8 @@
     </div>
     <div>
       <div class="d-flex flex-column">
-        <ProjectAddForm ref="ProjectAddForm" @update-data="onUpdateDataProject" @add-project="addProject" />
-        <ProjectAddTeam @update-data="onUpdateDataTeam" />
+        <ProjectAddForm ref="projectAddForm" @update-data="onUpdateDataProject" @add-project="addProject" />
+        <ProjectAddTeam ref="projectAddTeam" @update-data="onUpdateDataTeam" />
       </div>
     </div>
   </div>
@@ -46,12 +46,14 @@ export default {
   },
   methods: {
     submitForm() {
-      if (this.$refs.ProjectAddForm && typeof this.$refs.ProjectAddForm.submitForm === 'function') {
-        this.$refs.ProjectAddForm.submitForm()
+      if (this.teamMembers.length !== 0) {
+        this.$refs.projectAddForm.submitForm()
+        this.$refs.projectAddTeam.submitForm()
       } else {
-        console.error('El método submitForm no está definido en ProjectAddForm')
+        this.$refs.projectAddForm.submitForm()
       }
     },
+
     async addProject() {
       try {
         const response = await new ProjectsService().createProject({
@@ -64,7 +66,6 @@ export default {
           state: this.project.state
         })
 
-        console.log(response)
         if (response.status === 201) {
           this.$router.push({ name: 'Proyectos', params: { status: 'success' } })
         }

@@ -22,7 +22,7 @@
                 {{ option.name }}
               </option>
             </select>
-            <div v-if="v$.project.idClient.$error" class="text-danger">El cliente es requerido</div>
+            <div v-if="v$.project.idClient.$error" class="text-danger">El cliente es requerido.</div>
           </div>
         </div>
 
@@ -41,7 +41,7 @@
               @input="updateData"
               @blur="v$.project.name.$touch"
             />
-            <div v-if="v$.project.name.$error" class="text-danger">El nombre de proyecto es requerido</div>
+            <div v-if="v$.project.name.$error" class="text-danger">El nombre de proyecto es requerido.</div>
           </div>
         </div>
 
@@ -68,7 +68,7 @@
               </span>
             </div>
             <div v-if="v$.project.monthlyContractedHours.$error" class="text-danger">
-              La horas contratadas son requeridas y deben ser mayor a 0
+              La horas contratadas son requeridas y deben ser mayor a 0.
             </div>
           </div>
         </div>
@@ -105,7 +105,7 @@
                   @blur="v$.project.endDate.$touch"
                 />
                 <div v-if="v$.project.endDate.$error" class="text-danger">
-                  La fecha de fin debe ser posterior a la fecha de inicio
+                  La fecha de fin debe ser posterior a la fecha de inicio.
                 </div>
               </div>
             </div>
@@ -160,7 +160,7 @@ export default {
       default: null
     }
   },
-  emits: ['update-data', 'add-project'],
+  emits: ['update-data', 'add-project', 'save-changes'],
   setup() {
     return {
       v$: useVuelidate()

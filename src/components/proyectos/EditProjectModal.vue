@@ -62,8 +62,6 @@ export default {
       } else {
         console.error('El método submitForm no está definido en ProjectAddForm')
       }
-      //
-      //
     },
     saveChanges() {
       this.$emit('save')
