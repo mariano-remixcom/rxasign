@@ -54,18 +54,14 @@ export default {
       this.$emit('close')
     },
     handleSave() {
-      this.isVisibleConfirm = true
+      this.$refs.ProjectAddForm.submitForm()
     },
     confirmChanges() {
-      if (this.$refs.ProjectAddForm && typeof this.$refs.ProjectAddForm.submitForm === 'function') {
-        this.$refs.ProjectAddForm.submitForm()
-      } else {
-        console.error('El método submitForm no está definido en ProjectAddForm')
-      }
-    },
-    saveChanges() {
       this.$emit('save')
       this.isVisibleConfirm = false
+    },
+    saveChanges() {
+      this.isVisibleConfirm = true
     }
   }
 }

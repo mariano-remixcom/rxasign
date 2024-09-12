@@ -162,7 +162,7 @@ export default {
     },
     updateDataEdit(updatedProject) {
       this.project = updatedProject
-      console.log(this.project)
+      // console.log(this.project)
     },
     async saveChanges() {
       try {
