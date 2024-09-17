@@ -35,13 +35,30 @@
               </select>
               <div v-if="changed">
                 <div v-for="error in v$.teamMembers.$each.$response.$errors[index].role" :key="error" class="text-danger">
-                  El rol es requerido.
+                  Debe seleccionar un rol.
                 </div>
               </div>
+              <div v-if="duplicateRolesError" class="text-danger">Este usuario ya tiene asignado este rol.</div>
             </td>
-            <td :class="['text-center', { negative: isNegative(member.availableHours, member.hoursAssigned) }]">
-              {{ member.availableHours - member.hoursAssigned }} hs
+            <td
+              v-if="!isUserIdInTeamMembers"
+              :class="[
+                'text-center',
+                { 'text-danger font-weight-bold': isNegative(getAvailableHoursForUser(member.userId), member.hoursAssigned) }
+              ]"
+            >
+              {{ getAvailableHoursForUser(member.userId) - member.hoursAssigned }} hs
             </td>
+            <td
+              v-if="isUserIdInTeamMembers"
+              :class="[
+                'text-center',
+                { 'text-danger font-weight-bold': isNegative(calculateAvailableHours(member.userId), member.hoursAssigned) }
+              ]"
+            >
+              {{ calculateAvailableHours(member.userId) }} hs
+            </td>
+
             <td>
               <input
                 v-model="member.hoursAssigned"
@@ -95,7 +112,10 @@ export default {
       usersService: new UsersService(),
       users: [],
       isAdding: false,
-      changed: false
+      changed: false,
+      availableHoursMap: {},
+      duplicateRolesError: false,
+      isUserIdInTeamMembers: false
     }
   },
   validations() {
@@ -103,7 +123,9 @@ export default {
       teamMembers: {
         $each: helpers.forEach({
           userId: { required },
-          role: { required },
+          role: {
+            required
+          },
           hoursAssigned: { required, minValue: minValue(1) }
         })
       }
@@ -114,16 +136,42 @@ export default {
       const responseUsers = await this.usersService.getActiveResourcesForCombobox()
 
       this.users = responseUsers.data
-      for (const user of this.users) {
-        const responseHours = await this.usersService.getAvailableHoursForUser(user.id)
-
-        user.availableHours = responseHours.data
-      }
+      console.log(this.users)
+      this.users.forEach((user) => {
+        if (user.id) {
+          this.fetchAvailableHours(user.id)
+        }
+      })
     } catch (err) {
       console.log('Error al recuperar los usuarios ', err)
     }
   },
+
   methods: {
+    calculateAvailableHours(userId) {
+      const totalHours = this.getAvailableHoursForUser(userId)
+
+      const previousAssignments = this.teamMembers
+        .filter((member) => member.userId === userId)
+        .reduce((acc, member) => acc + (member.hoursAssigned || 0), 0)
+
+      return totalHours - previousAssignments
+    },
+    async fetchAvailableHours(id) {
+      if (id) {
+        try {
+          const response = await this.usersService.getAvailableHoursForUser(id)
+
+          this.availableHoursMap[id] = response.data
+          console.log(`Available hours for user ID ${id}:`, response.data)
+        } catch (error) {
+          console.error('Error al obtener las horas disponibles:', error)
+        }
+      }
+    },
+    getAvailableHoursForUser(id) {
+      return this.availableHoursMap[id] || 0 // Devuelve 0 si no hay datos disponibles aún
+    },
     addMember() {
       // Añadir un nuevo integrante con `startDate` por defecto como la fecha de hoy
       this.teamMembers.push({
@@ -139,16 +187,32 @@ export default {
     removeMember(index) {
       this.teamMembers.splice(index, 1)
     },
-    updateMemberData(index) {
-      const selectedUser = this.users.find((user) => user.id === this.teamMembers[index].userId)
+    async updateMemberData(index) {
+      const selectedUserId = this.teamMembers[index].userId
+
+      // Verificar si el usuario ya está en los miembros del equipo
+      this.isUserIdInTeamMembers = this.teamMembers.some(
+        (member) => member.userId === selectedUserId && member !== this.teamMembers[index]
+      )
+
+      const selectedUser = this.users.find((user) => user.id === selectedUserId)
 
       if (selectedUser) {
-        this.teamMembers[index].availableHours = selectedUser.availableHours
+        await this.fetchAvailableHours(selectedUser.id)
+        // Recalcular horas disponibles para todos los miembros y actualizar el miembro actual
+        this.teamMembers[index].availableHours = this.calculateAvailableHours(selectedUser.id)
+        this.updateData(index) // Asegúrate de revalidar después de actualizar los datos
+      } else {
+        this.updateData(index) // Si no hay usuario seleccionado, también actualiza
       }
-      this.updateData()
     },
-    updateData() {
-      // Preparar los datos para emitir solo los campos requeridos
+    async updateData() {
+      if (!this.checkDuplicateRoles()) {
+        return
+      }
+      this.changed = false
+      this.duplicateRolesError = false
+
       const formattedMembers = this.teamMembers.map((member) => ({
         rol: member.role,
         assignedHours: member.hoursAssigned,
@@ -156,17 +220,36 @@ export default {
         startDate: member.startDate
       }))
 
-      console.log(formattedMembers)
       this.$emit('update-data', formattedMembers)
     },
     async submitForm() {
-      this.changed = true
+      if (this.teamMembers.length === 0) {
+        return true
+      }
+
       const isFormCorrect = await this.v$.$validate()
 
-      if (!isFormCorrect) {
+      const areRolesUnique = this.checkDuplicateRoles()
+
+      this.changed = !isFormCorrect
+      this.duplicateRolesError = !areRolesUnique
+
+      if (this.changed || this.duplicateRolesError) {
         return false
       }
+
+      return true
     },
+
+    checkDuplicateRoles() {
+      const roles = this.teamMembers.map((member) => member.role)
+      const uniqueRoles = new Set(roles)
+
+      this.duplicateRoleError = roles.length !== uniqueRoles.size
+
+      return !this.duplicateRoleError
+    },
+
     isNegative(availableHours, hoursAssigned) {
       return availableHours - hoursAssigned < 0
     }

@@ -262,12 +262,12 @@ export default {
       const isFormCorrect = await this.v$.$validate()
 
       if (!isFormCorrect) {
-        return
+        return false
       }
       if (this.projectEdit) {
         this.$emit('save-changes')
       } else {
-        this.$emit('add-project', this.project)
+        return true
       }
     }
   }

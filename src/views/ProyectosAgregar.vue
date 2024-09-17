@@ -19,7 +19,7 @@
     </div>
     <div>
       <div class="d-flex flex-column">
-        <ProjectAddForm ref="projectAddForm" @update-data="onUpdateDataProject" @add-project="addProject" />
+        <ProjectAddForm ref="projectAddForm" @update-data="onUpdateDataProject" />
         <ProjectAddTeam ref="projectAddTeam" @update-data="onUpdateDataTeam" />
       </div>
     </div>
@@ -45,12 +45,15 @@ export default {
     }
   },
   methods: {
-    submitForm() {
-      if (this.teamMembers.length !== 0) {
-        this.$refs.projectAddForm.submitForm()
-        this.$refs.projectAddTeam.submitForm()
-      } else {
-        this.$refs.projectAddForm.submitForm()
+    async submitForm() {
+      const formProject = this.$refs.projectAddForm
+      const formTeam = this.$refs.projectAddTeam
+
+      const formProjectValid = await formProject.submitForm()
+      const formTeamValid = await formTeam.submitForm()
+
+      if (formProjectValid && formTeamValid) {
+        this.addProject()
       }
     },
 

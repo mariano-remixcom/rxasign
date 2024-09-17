@@ -27,6 +27,7 @@
                 {{ recurso.fullName }}
               </option>
             </select>
+
             <div v-if="miembro.showErrors">
               <div v-for="error in v$.equipoLocal.$each.$response.$errors[index].idUser" :key="error" class="text-danger">
                 Debe seleccionar un recurso.
@@ -43,16 +44,27 @@
                 {{ rol.displayName }}
               </option>
             </select>
+
             <div v-if="miembro.showErrors">
               <div v-for="error in v$.equipoLocal.$each.$response.$errors[index].rol" :key="error" class="text-danger">
-                El rol es requerido.
+                <div class="error-msg">{{ error.$message }}</div>
               </div>
             </div>
           </td>
           <!-- Horas Disponibles -->
-          <td :class="['text-center', { negative: isNegative(miembro.availableHours, miembro.assignedHours) }]">
-            {{ miembro.availableHours - miembro.assignedHours }} hs
+          <td
+            v-if="!miembro.adding"
+            :class="['text-center', { negative: isNegative(getAvailableHoursForUser(miembro.idUser), miembro.assignedHours) }]"
+          >
+            {{ getAvailableHoursForUser(miembro.idUser) }} hs
           </td>
+          <td
+            v-else
+            :class="['text-center', { negative: isNegative(getAvailableHoursForUser(miembro.idUser), miembro.assignedHours) }]"
+          >
+            {{ getAvailableHoursForUser(miembro.idUser) - miembro.assignedHours }} hs
+          </td>
+
           <!-- Horas Asignadas -->
           <td v-if="!miembro.editing">
             {{ miembro.assignedHours }}
@@ -155,8 +167,15 @@ export default {
     return {
       equipoLocal: {
         $each: helpers.forEach({
-          idUser: { required },
-          rol: { required },
+          idUser: {
+            required
+          },
+          rol: {
+            required: helpers.withMessage('El rol es requerido.', required),
+            duplicatedRole: helpers.withMessage('Este usuario ya tiene asignado este rol.', (value, parent, index) =>
+              this.checkDuplicateRole(parent.idUser, index)
+            )
+          },
           assignedHours: { required, minValue: minValue(1) }
         })
       }
@@ -170,11 +189,17 @@ export default {
       currentResource: null,
       isVisibleConfirm: false,
       showModalDelete: false,
-      roles: USER_ROLES
+      roles: USER_ROLES,
+      availableHoursMap: {}
     }
   },
   mounted() {
     this.getResources()
+    this.equipoLocal.forEach((miembro) => {
+      if (miembro.idUser) {
+        this.fetchAvailableHours(miembro.idUser)
+      }
+    })
   },
   methods: {
     getResources() {
@@ -191,18 +216,24 @@ export default {
           this.loading = false
         })
     },
-    fetchAvailableHours(id, miembro) {
+    fetchAvailableHours(id) {
       if (id) {
         new UsersService()
           .getAvailableHoursForUser(id)
           .then((response) => {
-            miembro.availableHours = response.data
+            this.availableHoursMap[id] = response.data
+            console.log(`Available hours for user ID ${id}:`, response.data)
           })
           .catch((error) => {
             console.error('Error al obtener las horas disponibles:', error)
           })
       }
     },
+
+    getAvailableHoursForUser(id) {
+      return this.availableHoursMap[id] || 0 // Devuelve 0 si no hay datos disponibles aún
+    },
+
     addNewResource() {
       const newMember = {
         idUser: '',
@@ -212,7 +243,8 @@ export default {
         availableHours: 0,
         assignedHours: '',
         editing: true,
-        showErrors: false
+        showErrors: false,
+        adding: true
       }
 
       this.equipoLocal.push(newMember)
@@ -238,8 +270,14 @@ export default {
         this.isVisibleConfirm = true
       }
     },
+    checkDuplicateRole(idUser, index) {
+      const user = this.equipoLocal[index]
+
+      return !this.equipoLocal.some((miembro, i) => miembro.idUser === idUser && miembro.rol === user.rol && i !== index)
+    },
     addResource(miembro) {
       miembro.editing = false
+      miembro.adding = false
       const newMember = {
         rol: miembro.rol,
         assignedHours: miembro.assignedHours,
@@ -258,6 +296,7 @@ export default {
           if (recursoEncontrado) {
             miembro.fullName = recursoEncontrado.fullName
             miembro.id = recursoCreado.id
+            this.fetchAvailableHours(miembro.idUser)
             // this.equipoLocal.push(miembro)
           }
         })
@@ -271,7 +310,8 @@ export default {
         .then((response) => {
           this.isVisibleConfirm = false
           console.log('Recurso actualizado:', response.data)
-          this.fetchAvailableHours(this.currentResource.idUser, this.currentResource)
+          // this.getAvailableHoursForUser(this.currentResource.id)
+          this.fetchAvailableHours(this.currentResource.idUser)
           this.currentResource.editing = false
           this.currentResource.showErrors = false
           this.currentResource = ''
@@ -281,14 +321,19 @@ export default {
         })
     },
     removeResource(id) {
-      this.currentResource = id
       this.showModalDelete = true
+      this.currentResource = id
     },
     confirmRemoveResource() {
       new ResourcesService()
         .deleteResource(this.currentResource)
         .then((response) => {
           this.equipoLocal = this.equipoLocal.filter((miembro) => miembro.id !== this.currentResource)
+          this.equipoLocal.forEach((miembro) => {
+            if (miembro.idUser) {
+              this.fetchAvailableHours(miembro.idUser, miembro)
+            }
+          })
           console.log('Recurso eliminado:', response.data)
           this.showModalDelete = false
           this.currentResource = ''
@@ -297,8 +342,8 @@ export default {
           console.error('Error al eliminar recurso:', error)
         })
     },
-    isNegative(availableHours, hoursAssigned) {
-      return availableHours - hoursAssigned < 0
+    isNegative(available, assigned) {
+      return available - assigned < 0
     }
   }
 }
