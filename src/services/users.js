@@ -8,4 +8,8 @@ export class UsersService {
   getAvailableHoursForUser(id) {
     return api().get(`/users/available-hours/${id}`)
   }
+
+  getUserById(id) {
+    return api().get(`/users/${id}`)
+  }
 }

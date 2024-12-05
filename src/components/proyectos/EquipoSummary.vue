@@ -208,6 +208,7 @@ export default {
         .getActiveResourcesForCombobox()
         .then((response) => {
           this.recursos = response.data
+          console.log(this.recursos, 'recursos')
         })
         .catch((error) => {
           console.error('Error al obtener los recursos:', error)
@@ -255,6 +256,7 @@ export default {
     },
     async saveResource(miembro) {
       this.currentResource = miembro
+      console.log(this.currentResource, 'current')
       const isFormCorrect = await this.v$.$validate()
 
       if (!isFormCorrect) {
@@ -262,6 +264,7 @@ export default {
 
         return
       }
+
       miembro.showErrors = false
 
       if (!miembro.id) {
@@ -304,21 +307,24 @@ export default {
           console.error('Error al agregar recurso:', error)
         })
     },
-    updateResource() {
-      new ResourcesService()
-        .updateResource(this.currentResource.id, this.currentResource)
-        .then((response) => {
-          this.isVisibleConfirm = false
-          console.log('Recurso actualizado:', response.data)
-          // this.getAvailableHoursForUser(this.currentResource.id)
-          this.fetchAvailableHours(this.currentResource.idUser)
-          this.currentResource.editing = false
-          this.currentResource.showErrors = false
-          this.currentResource = ''
-        })
-        .catch((error) => {
-          console.error('Error al actualizar recurso:', error)
-        })
+    async updateResource() {
+      try {
+        const response = await new UsersService().getUserById(this.currentResource.idUser)
+
+        this.currentResource.user = response.data
+        // console.log(`User ${this.currentResource.userId}:`, response.data)
+
+        await new ResourcesService().updateResource(this.currentResource.id, this.currentResource)
+        this.isVisibleConfirm = false
+        // console.log('Recurso actualizado:', updateResponse.data)
+        await this.fetchAvailableHours(this.currentResource.idUser)
+
+        this.currentResource.editing = false
+        this.currentResource.showErrors = false
+        this.currentResource = null
+      } catch (error) {
+        console.error('Error al actualizar el recurso o al obtener el usuario:', error)
+      }
     },
     removeResource(id) {
       this.showModalDelete = true
