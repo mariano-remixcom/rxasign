@@ -142,9 +142,9 @@
 
 <script>
 import ClientsService from '@/services/clients'
+import FormatDate from '@/mixins/formatting-text/FormatDate.vue'
 import ProjectState from './proyectos/ProjectState.vue'
 import ProjectsService from '@/services/projects'
-import moment from 'moment'
 import { PROJECT_STATES } from '@/constants/ProjectStates'
 import { helpers, minValue, required } from '@vuelidate/validators'
 import { useVuelidate } from '@vuelidate/core'
@@ -154,6 +154,7 @@ export default {
   components: {
     ProjectState
   },
+  mixins: [FormatDate],
   props: {
     projectEdit: {
       type: Object,
@@ -226,13 +227,15 @@ export default {
     }
   },
   async mounted() {
+    console.log(this.project, 'project')
+    console.log(this.projectEdit, 'project')
     if (this.projectEdit) {
       this.project.id = this.projectEdit.id
       this.project.name = this.projectEdit.name
       this.project.monthlyContractedHours = this.projectEdit.monthlyContractedHours
       this.project.idClient = this.projectEdit.client.id
-      this.project.startDate = this.formatDate(this.projectEdit.startDate)
-      this.project.endDate = this.projectEdit.endDate ? this.formatDate(this.projectEdit.endDate) : null
+      this.project.startDate = this.formatDate(this.projectEdit.startDate, 'isoDate')
+      this.project.endDate = this.projectEdit.endDate ? this.formatDate(this.projectEdit.endDate, 'isoDate') : null
       this.project.state = this.projectEdit.stateHistory.at(-1).currentState
     } else {
       this.estados = PROJECT_STATES.filter((estado) => estado.isInitialState)
@@ -251,9 +254,6 @@ export default {
         console.log('No se pueden recuparar los clientes: ', err)
       }
     },
-    formatDate(date) {
-      return moment(date).format('YYYY-MM-DD')
-    },
     updateData() {
       this.$emit('update-data', this.project)
       console.log(this.project)
@@ -265,6 +265,7 @@ export default {
         return false
       }
       if (this.projectEdit) {
+        this.$emit('update-data', this.project)
         this.$emit('save-changes')
       } else {
         return true
