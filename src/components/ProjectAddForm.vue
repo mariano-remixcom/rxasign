@@ -63,8 +63,8 @@
                 @blur="v$.project.monthlyContractedHours.$touch"
               />
               <span class="input-group-text">
-                <input v-model="contratoAbierto" type="checkbox" class="me-1" />
-                Contrato abierto
+                <input v-model="project.key" type="checkbox" class="me-1" @change="updateData" />
+                Llave en mano
               </span>
             </div>
             <div v-if="v$.project.monthlyContractedHours.$error" class="text-danger">
@@ -170,7 +170,6 @@ export default {
   data() {
     return {
       idClient: '',
-      contratoAbierto: false,
       clients: [],
       selectedClient: '',
       project: {
@@ -180,7 +179,8 @@ export default {
         monthlyContractedHours: '',
         startDate: '',
         endDate: '',
-        state: 'Draft'
+        state: 'Draft',
+        key: false
       },
       projectsService: new ProjectsService(),
       clientsService: new ClientsService(),
@@ -237,6 +237,7 @@ export default {
       this.project.startDate = this.formatDate(this.projectEdit.startDate, 'isoDate')
       this.project.endDate = this.projectEdit.endDate ? this.formatDate(this.projectEdit.endDate, 'isoDate') : null
       this.project.state = this.projectEdit.stateHistory.at(-1).currentState
+      this.project.key = this.projectEdit.key
     } else {
       this.estados = PROJECT_STATES.filter((estado) => estado.isInitialState)
     }

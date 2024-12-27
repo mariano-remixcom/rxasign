@@ -66,7 +66,8 @@ export default {
           endDate: this.project.endDate ? new Date(this.project.endDate) : null,
           idClient: this.project.idClient,
           teamMembers: this.teamMembers,
-          state: this.project.state
+          state: this.project.state,
+          key: this.project.key
         })
 
         if (response.status === 201) {

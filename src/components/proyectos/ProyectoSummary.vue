@@ -4,7 +4,15 @@
     <div class="col">
       <field-with-label label="Cliente" :value="proyecto.client.name" />
       <field-with-label label="Proyecto" :value="proyecto.name" />
-      <field-with-label label="Cantidad de horas contratadas por mes" :value="`${proyecto.monthlyContractedHours} hs`" />
+      <field-with-label
+        class="small-text"
+        label="Cantidad de horas contratadas por mes"
+        :value="`${proyecto.monthlyContractedHours} hs`"
+      />
+      <div v-if="proyecto.key" class="key-container">
+        <i class="bi bi-key-fill"></i>
+        <p>Llave en mano</p>
+      </div>
       <field-with-label label="Estado" />
       <project-state :state-key="proyecto.currentState.currentState" />
     </div>
@@ -208,5 +216,16 @@ export default {
   left: 0;
   position: fixed;
   margin: 1rem;
+}
+.key-container {
+  display: flex;
+  align-items: center;
+}
+
+.key-container i {
+  margin-right: 8px; /* Espaciado entre el icono y el texto */
+}
+.small-text {
+  font-size: 0.9em !important; /* Ajusta este valor según lo necesario */
 }
 </style>
