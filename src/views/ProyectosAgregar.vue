@@ -1,24 +1,26 @@
 <template>
   <div id="app" class="container">
+    <!-- Título y Acciones -->
     <div class="pb-4 mb-4 page-title-separation">
-      <div class="container d-flex justify-content-between">
-        <div class="d-flex align-items-center justify-content-between">
-          <div class="me-auto">
-            <h1 class="h3 mb-0 fw-semibold">Agregar proyecto</h1>
-          </div>
+      <div class="container d-flex justify-content-between align-items-center">
+        <!-- Título -->
+        <div class="me-auto">
+          <h1 class="h3 mb-0 fw-semibold">Agregar proyecto</h1>
         </div>
-        <!-- Acciones inicio -->
+
+        <!-- Acciones -->
         <div class="d-flex gap-2">
           <router-link to="/">
-            <button class="btn btn-soft-primary">Cancelar</button>
+            <button class="btn btn-soft-primary w-100 w-sm-auto">Cancelar</button>
           </router-link>
-          <button class="btn btn-primary" @click="submitForm">Guardar</button>
+          <button class="btn btn-primary w-100 w-sm-auto" @click="submitForm">Guardar</button>
         </div>
-        <!-- Acciones fin -->
       </div>
     </div>
+
+    <!-- Formularios -->
     <div>
-      <div class="d-flex flex-column">
+      <div class="d-flex flex-column gap-4">
         <ProjectAddForm ref="projectAddForm" @update-data="onUpdateDataProject" />
         <ProjectAddTeam ref="projectAddTeam" @update-data="onUpdateDataTeam" />
       </div>
@@ -90,3 +92,36 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+/* Ajustes de espaciado */
+.page-title-separation {
+  padding-top: 1rem;
+}
+
+/* Ajustes en pantallas pequeñas */
+@media (max-width: 768px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .page-title-separation {
+    text-align: left;
+  }
+
+  .d-flex.gap-2 {
+    gap: 1rem; /* Espacio entre los botones */
+  }
+
+  /* Asegura que los botones se alineen correctamente */
+  .btn {
+    width: 100%; /* Los botones ocupan el 100% del ancho en pantallas pequeñas */
+  }
+
+  /* Alinea los botones horizontalmente con la misma dimensión en pantallas pequeñas */
+  .w-sm-auto {
+    width: auto !important; /* Los botones tienen el mismo tamaño en pantallas grandes */
+  }
+}
+</style>

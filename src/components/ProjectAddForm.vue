@@ -3,12 +3,13 @@
     <div class="section-header-primary mb-0" role="alert">Datos del proyecto</div>
     <div class="project-add-form">
       <form @submit.prevent="submitForm">
-        <div class="mb-3 d-flex flex-row row">
-          <div class="d-flex flex-column col-4">
+        <!-- Cliente -->
+        <div class="mb-3 row align-items-center">
+          <div class="col-12 col-md-4 d-flex flex-column">
             <label for="cliente" class="h6 mb-0">Cliente</label>
             <small>Seleccione un cliente</small>
           </div>
-          <div class="col">
+          <div class="col-12 col-md-8">
             <select
               id="cliente"
               v-model="project.idClient"
@@ -26,12 +27,13 @@
           </div>
         </div>
 
-        <div class="mb-3 d-flex flex-row row">
-          <div class="d-flex flex-column col-4">
+        <!-- Nombre del proyecto -->
+        <div class="mb-3 row align-items-center">
+          <div class="col-12 col-md-4 d-flex flex-column">
             <label for="proyecto" class="h6 mb-0">Nombre del proyecto</label>
             <small>Ingrese el nombre del proyecto</small>
           </div>
-          <div class="col">
+          <div class="col-12 col-md-8">
             <input
               id="proyecto"
               v-model="project.name"
@@ -45,12 +47,13 @@
           </div>
         </div>
 
-        <div class="mb-3 d-flex flex-row row">
-          <div class="d-flex flex-column col-4">
+        <!-- Horas -->
+        <div class="mb-3 row align-items-center">
+          <div class="col-12 col-md-4 d-flex flex-column">
             <label for="horas" class="h6 mb-0">Horas</label>
             <small>Cantidad de horas contratadas por mes</small>
           </div>
-          <div class="col">
+          <div class="col-12 col-md-8">
             <div class="input-group">
               <input
                 id="horas"
@@ -68,38 +71,37 @@
               </span>
             </div>
             <div v-if="v$.project.monthlyContractedHours.$error" class="text-danger">
-              La horas contratadas son requeridas y deben ser mayor a 0.
+              Las horas contratadas son requeridas y deben ser mayor a 0.
             </div>
           </div>
         </div>
 
-        <div class="mb-3 d-flex flex-row row">
-          <div class="d-flex flex-column col-4">
+        <!-- Vigencia -->
+        <div class="mb-3 row align-items-center">
+          <div class="col-12 col-md-4 d-flex flex-column">
             <label for="vigencia" class="h6 mb-0">Vigencia</label>
             <small>Inicio y fin del proyecto. Necesario para la funcionalidad de períodos.</small>
           </div>
-          <div class="col">
+          <div class="col-12 col-md-8">
             <div class="row">
-              <div class="col">
+              <div class="col-6">
                 <input
                   id="inicio"
                   v-model="project.startDate"
                   type="date"
                   class="form-control bg-white"
-                  placeholder="Desde"
                   required
                   @change="updateData"
                   @blur="v$.project.startDate.$touch"
                 />
                 <div v-if="v$.project.startDate.$error" class="text-danger">La fecha de inicio del proyecto es requerida</div>
               </div>
-              <div class="col">
+              <div class="col-6">
                 <input
                   id="fin"
                   v-model="project.endDate"
                   type="date"
                   class="form-control bg-white"
-                  placeholder="Hasta"
                   required
                   @change="updateData"
                   @blur="v$.project.endDate.$touch"
@@ -111,28 +113,19 @@
             </div>
           </div>
         </div>
-        <div class="mb-3 d-flex flex-row row">
-          <div class="d-flex flex-column col-4">
+
+        <!-- Estado -->
+        <div class="mb-3 row align-items-center">
+          <div class="col-12 col-md-4 d-flex flex-column">
             <label for="estado" class="h6 mb-0">Estado</label>
             <small>Estado actual del proyecto.</small>
           </div>
-          <div class="col">
-            <div class="row">
-              <div class="col">
-                <select id="state" v-model="project.state" class="form-select" required @change="updateData">
-                  <option
-                    v-for="state in estados"
-                    :key="state.key"
-                    :value="state.key"
-                    :selected="state.key === project.state"
-                    data-icon="bi bi-check-circle-fill"
-                  >
-                    <project-state :state-key="state.key" />
-                  </option>
-                </select>
-              </div>
-              <div class="col"></div>
-            </div>
+          <div class="col-12 col-md-8">
+            <select id="state" v-model="project.state" class="form-select" required @change="updateData">
+              <option v-for="state in estados" :key="state.key" :value="state.key" :selected="state.key === project.state">
+                <project-state :state-key="state.key" />
+              </option>
+            </select>
           </div>
         </div>
       </form>
@@ -283,14 +276,17 @@ export default {
   margin: 0 auto; /* Centra el formulario horizontalmente */
   width: 100%;
 }
-.container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  height: 100%;
-}
 small {
   color: var(--bs-gray-500);
+}
+
+/* Ajustes responsivos */
+@media (max-width: 768px) {
+  .row {
+    flex-direction: column;
+  }
+  .col-md-4 {
+    margin-bottom: 10px;
+  }
 }
 </style>

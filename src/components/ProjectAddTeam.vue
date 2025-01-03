@@ -2,11 +2,13 @@
   <div class="container">
     <div class="section-header-primary" role="alert">Integrantes del equipo</div>
 
-    <div v-if="teamMembers.length === 0" class="d-flex align-items-center justify-content-center">
+    <!-- Sin miembros -->
+    <div v-if="teamMembers.length === 0" class="d-flex align-items-center justify-content-center text-center">
       <h2 class="h6 mb-4">Aún no hay recursos asociados a este proyecto.</h2>
     </div>
 
-    <div v-if="isAdding" class="wmt-4 mb-4">
+    <!-- Con miembros -->
+    <div v-if="isAdding && teamMembers.length != 0" class="w-100 mb-4 table-responsive">
       <table class="table">
         <thead class="table-light">
           <tr>
@@ -19,7 +21,9 @@
         </thead>
         <tbody class="align-middle">
           <tr v-for="(member, index) in teamMembers" :key="index">
-            <td>
+            <!-- Nombre -->
+            <td data-label="Nombre">
+              <label class="table-header-label d-block mb-1 d-md-none">Nombre</label>
               <select v-model="member.userId" class="form-select" @change="updateMemberData(index)">
                 <option v-for="user in users" :key="user.id" :value="user.id">{{ user.fullName }}</option>
               </select>
@@ -29,7 +33,10 @@
                 </div>
               </div>
             </td>
-            <td>
+
+            <!-- Rol -->
+            <td data-label="Rol">
+              <label class="table-header-label d-block mb-1 d-md-none">Rol</label>
               <select v-model="member.role" class="form-select" @change="updateData">
                 <option v-for="role in roles" :key="role.key" :value="role.key">{{ role.displayName }}</option>
               </select>
@@ -40,26 +47,16 @@
               </div>
               <div v-if="duplicateRolesError" class="text-danger">Este usuario ya tiene asignado este rol.</div>
             </td>
-            <td
-              v-if="!isUserIdInTeamMembers"
-              :class="[
-                'text-center',
-                { 'text-danger font-weight-bold': isNegative(getAvailableHoursForUser(member.userId), member.hoursAssigned) }
-              ]"
-            >
-              {{ getAvailableHoursForUser(member.userId) - member.hoursAssigned }} hs
-            </td>
-            <td
-              v-if="isUserIdInTeamMembers"
-              :class="[
-                'text-center',
-                { 'text-danger font-weight-bold': isNegative(calculateAvailableHours(member.userId), member.hoursAssigned) }
-              ]"
-            >
+
+            <!-- Disponibles -->
+            <td data-label="Disponibles" class="text-center">
+              <label class="table-header-label d-block mb-1 d-md-none">Disponibles</label>
               {{ calculateAvailableHours(member.userId) }} hs
             </td>
 
-            <td>
+            <!-- Asignadas -->
+            <td data-label="Asignadas (hs)">
+              <label class="table-header-label d-block mb-1 d-md-none">Asignadas (hs)</label>
               <input
                 v-model="member.hoursAssigned"
                 type="number"
@@ -78,13 +75,18 @@
                 </div>
               </div>
             </td>
-            <td class="text-center">
+
+            <!-- Acciones -->
+            <td data-label="Acciones" class="text-center">
+              <label class="table-header-label d-block mb-1 d-md-none">Acciones</label>
               <button class="btn btn-link btn-m" @click="removeMember(index)"><i class="bi bi-trash"></i></button>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
+
+    <!-- Botón para agregar integrante -->
     <div class="d-flex align-items-center justify-content-center">
       <button class="btn btn-outline-primary" @click="addMember">Agregar Integrante</button>
     </div>
@@ -256,15 +258,58 @@ export default {
   }
 }
 </script>
+
 <style scoped lang="scss">
-/* fix botones de tabla */
+/* Botones de tabla */
 button.btn.btn-link.btn-m {
   color: $blue;
   --bs-btn-padding-x: 0.2rem;
   --bs-btn-padding-y: 0;
 }
 .negative {
-  color: red !important; /* Utilizamos !important para evitar conflictos de estilos */
+  color: red !important;
   font-weight: bold;
+}
+
+/* Responsividad */
+.table-responsive {
+  overflow-x: auto;
+}
+
+/* Ajustes en pantallas pequeñas */
+@media (max-width: 768px) {
+  .table thead {
+    display: none; /* Oculta los encabezados en pantallas pequeñas */
+  }
+  .table tbody tr {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    padding: 0.5rem;
+  }
+  .table tbody td {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 0.5rem;
+    border: none;
+  }
+  /* Estilo de etiquetas como encabezados */
+  .table-header-label {
+    font-weight: bold;
+    color: #6c757d; /* Color similar al de los encabezados */
+    font-size: 0.875rem; /* Tamaño de fuente más pequeño */
+    margin-bottom: 0.25rem; /* Espaciado entre etiqueta e input */
+  }
+}
+
+/* Ocultar etiquetas en pantallas grandes */
+@media (min-width: 769px) {
+  .table tbody label {
+    display: none;
+  }
 }
 </style>
