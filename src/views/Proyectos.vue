@@ -1,5 +1,5 @@
 <template>
-  <div class="mb-4 rounded-3">
+  <div class="mb-2 mt-4 rounded-3">
     <div class="container d-flex align-items-center justify-content-between page-title-separation">
       <div class="container-fluid">
         <h1 class="h3 fw-semibold">Proyectos</h1>
