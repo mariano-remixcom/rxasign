@@ -1,101 +1,149 @@
 <template>
   <div v-if="!loading">
     <div class="section-header-primary">Equipo</div>
+    <div class="d-none d-md-block">
+      <!-- Tabla de recursos existentes -->
+      <table v-if="equipoLocal.length > 0" class="table table-responsive mb-3">
+        <thead class="table-light">
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Recurso</th>
+            <th scope="col">Rol</th>
+            <th scope="col" class="text-center">Disponibles</th>
+            <th scope="col" class="col-2">Asignadas</th>
+            <th scope="col" class="text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="align-middle">
+          <tr v-for="(miembro, index) in equipoLocal" :key="index">
+            <td>{{ index + 1 }}</td>
+            <!-- Recurso -->
+            <td v-if="!miembro.editing">
+              {{ miembro.user?.fullName || miembro.fullName }}
+            </td>
+            <td v-else>
+              <select v-model="miembro.idUser" class="form-select" @change="fetchAvailableHours(miembro.idUser, miembro)">
+                <option v-for="(recurso, recursoIndex) in recursos" :key="recursoIndex" :value="recurso.id">
+                  {{ recurso.fullName }}
+                </option>
+              </select>
 
-    <!-- Tabla de recursos existentes -->
-    <table v-if="equipoLocal.length > 0" class="table mb-3">
-      <thead class="table-light">
-        <tr>
-          <th scope="col">#</th>
-          <th scope="col">Recurso</th>
-          <th scope="col">Rol</th>
-          <th scope="col" class="text-center">Disponibles</th>
-          <th scope="col" class="col-2">Asignadas</th>
-          <th scope="col" class="text-center">Acciones</th>
-        </tr>
-      </thead>
-      <tbody class="align-middle">
-        <tr v-for="(miembro, index) in equipoLocal" :key="index">
-          <td>{{ index + 1 }}</td>
-          <!-- Recurso -->
-          <td v-if="!miembro.editing">
-            {{ miembro.user?.fullName || miembro.fullName }}
-          </td>
-          <td v-else>
-            <select v-model="miembro.idUser" class="form-select" @change="fetchAvailableHours(miembro.idUser, miembro)">
+              <div v-if="miembro.showErrors">
+                <div v-for="error in v$.equipoLocal.$each.$response.$errors[index].idUser" :key="error" class="text-danger">
+                  Debe seleccionar un recurso.
+                </div>
+              </div>
+            </td>
+            <!-- Rol -->
+            <td v-if="!miembro.editing">
+              {{ miembro.rol }}
+            </td>
+            <td v-else>
+              <select v-model="miembro.rol" class="form-select">
+                <option v-for="(rol, rolIndex) in roles" :key="rolIndex" :value="rol.key">
+                  {{ rol.displayName }}
+                </option>
+              </select>
+
+              <div v-if="miembro.showErrors">
+                <div v-for="error in v$.equipoLocal.$each.$response.$errors[index].rol" :key="error" class="text-danger">
+                  <div class="error-msg">{{ error.$message }}</div>
+                </div>
+              </div>
+            </td>
+            <!-- Horas Disponibles -->
+            <td
+              v-if="!miembro.adding"
+              :class="[
+                'text-center',
+                { negative: isNegative(getAvailableHoursForUser(miembro.idUser), miembro.assignedHours) }
+              ]"
+            >
+              {{ getAvailableHoursForUser(miembro.idUser) }} hs
+            </td>
+            <td
+              v-else
+              :class="[
+                'text-center',
+                { negative: isNegative(getAvailableHoursForUser(miembro.idUser), miembro.assignedHours) }
+              ]"
+            >
+              {{ getAvailableHoursForUser(miembro.idUser) - miembro.assignedHours }} hs
+            </td>
+
+            <!-- Horas Asignadas -->
+            <td v-if="!miembro.editing">
+              {{ miembro.assignedHours }}
+            </td>
+            <td v-else>
+              <input v-model="miembro.assignedHours" class="form-control" type="number" />
+              <div v-if="miembro.showErrors">
+                <div
+                  v-for="error in v$.equipoLocal.$each.$response.$errors[index].assignedHours"
+                  :key="error"
+                  class="text-danger"
+                >
+                  La asignación horaria es requerida.
+                </div>
+              </div>
+            </td>
+            <!-- Acciones -->
+            <td class="text-center">
+              <button v-if="!miembro.editing" class="btn icon" @click="editResource(miembro)">
+                <i class="bi bi-pencil-square"></i>
+              </button>
+              <button v-if="miembro.editing" class="btn icon text-success" @click="saveResource(miembro)">
+                <i class="bi bi-check-lg"></i>
+              </button>
+              <button class="btn icon text-danger" @click="removeResource(miembro.id)">
+                <i class="bi bi-trash"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <!-- Pantallas pequeñas -->
+    <div class="d-md-none">
+      <div v-for="(miembro, index) in equipoLocal" :key="index" class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">
+            Recurso:
+            <span v-if="!miembro.editing">{{ miembro.user?.fullName || miembro.fullName }}</span>
+            <select v-else v-model="miembro.idUser" class="form-select" @change="fetchAvailableHours(miembro.idUser, miembro)">
               <option v-for="(recurso, recursoIndex) in recursos" :key="recursoIndex" :value="recurso.id">
                 {{ recurso.fullName }}
               </option>
             </select>
-
-            <div v-if="miembro.showErrors">
-              <div v-for="error in v$.equipoLocal.$each.$response.$errors[index].idUser" :key="error" class="text-danger">
-                Debe seleccionar un recurso.
-              </div>
-            </div>
-          </td>
-          <!-- Rol -->
-          <td v-if="!miembro.editing">
-            {{ miembro.rol }}
-          </td>
-          <td v-else>
-            <select v-model="miembro.rol" class="form-select">
+          </h5>
+          <p class="card-text">
+            Rol:
+            <span v-if="!miembro.editing">{{ miembro.rol }}</span>
+            <select v-else v-model="miembro.rol" class="form-select">
               <option v-for="(rol, rolIndex) in roles" :key="rolIndex" :value="rol.key">
                 {{ rol.displayName }}
               </option>
             </select>
+          </p>
+          <p class="card-text">Disponibles: {{ getAvailableHoursForUser(miembro.idUser) }} hs</p>
+          <p class="card-text">
+            Asignadas:
+            <span v-if="!miembro.editing">{{ miembro.assignedHours }}</span>
+            <input v-else v-model="miembro.assignedHours" class="form-control" type="number" />
+          </p>
+          <div class="d-flex justify-content-end">
+            <button v-if="!miembro.editing" class="btn btn-sm btn-outline-primary me-2" @click="editResource(miembro)">
+              Editar
+            </button>
+            <button v-if="miembro.editing" class="btn btn-sm btn-outline-success me-2" @click="saveResource(miembro)">
+              Guardar
+            </button>
+            <button class="btn btn-sm btn-outline-danger" @click="removeResource(miembro.id)">Eliminar</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-            <div v-if="miembro.showErrors">
-              <div v-for="error in v$.equipoLocal.$each.$response.$errors[index].rol" :key="error" class="text-danger">
-                <div class="error-msg">{{ error.$message }}</div>
-              </div>
-            </div>
-          </td>
-          <!-- Horas Disponibles -->
-          <td
-            v-if="!miembro.adding"
-            :class="['text-center', { negative: isNegative(getAvailableHoursForUser(miembro.idUser), miembro.assignedHours) }]"
-          >
-            {{ getAvailableHoursForUser(miembro.idUser) }} hs
-          </td>
-          <td
-            v-else
-            :class="['text-center', { negative: isNegative(getAvailableHoursForUser(miembro.idUser), miembro.assignedHours) }]"
-          >
-            {{ getAvailableHoursForUser(miembro.idUser) - miembro.assignedHours }} hs
-          </td>
-
-          <!-- Horas Asignadas -->
-          <td v-if="!miembro.editing">
-            {{ miembro.assignedHours }}
-          </td>
-          <td v-else>
-            <input v-model="miembro.assignedHours" class="form-control" type="number" />
-            <div v-if="miembro.showErrors">
-              <div
-                v-for="error in v$.equipoLocal.$each.$response.$errors[index].assignedHours"
-                :key="error"
-                class="text-danger"
-              >
-                La asignación horaria es requerida.
-              </div>
-            </div>
-          </td>
-          <!-- Acciones -->
-          <td class="text-center">
-            <button v-if="!miembro.editing" class="btn icon" @click="editResource(miembro)">
-              <i class="bi bi-pencil-square"></i>
-            </button>
-            <button v-if="miembro.editing" class="btn icon text-success" @click="saveResource(miembro)">
-              <i class="bi bi-check-lg"></i>
-            </button>
-            <button class="btn icon text-danger" @click="removeResource(miembro.id)">
-              <i class="bi bi-trash"></i>
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
     <!-- Botón para agregar recurso -->
     <div class="d-flex flex-row px-3">
       <button class="btn btn-outline-primary" @click="addNewResource">Agregar recurso</button>
@@ -104,6 +152,7 @@
         <div class="ms-1">{{ formatDate(fechaUltimaEdicion, 'dateAndTime') }}</div>
       </div>
     </div>
+
     <ConfirmModal
       :is-visible="isVisibleConfirm"
       message="¿Estás seguro que deseas guardar los cambios?"
@@ -446,5 +495,23 @@ input[type='number'] {
 .negative {
   color: red !important; /* Utilizamos !important para evitar conflictos de estilos */
   font-weight: bold;
+}
+/* Responsividad */
+@media (max-width: 768px) {
+  .table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .card {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 15px;
+  }
+
+  .btn {
+    font-size: 14px;
+  }
 }
 </style>

@@ -63,17 +63,22 @@ export default {
   align-items: center;
   z-index: 9999;
 }
+
 .modal-close {
   background: none;
   border: none;
   font-size: 20px;
 }
+
 .modal-content {
   background-color: white;
   border-radius: 8px;
   width: 90%;
   max-width: 500px;
+  max-height: 90%; /* Asegura que no exceda el 90% de la altura de la pantalla */
+  overflow-y: auto; /* Permite desplazamiento vertical si es necesario */
 }
+
 .modal-large {
   max-width: 1000px;
 }
@@ -106,5 +111,34 @@ export default {
   border-top: 1px solid #eee;
   display: flex;
   justify-content: flex-end;
+}
+
+@media (max-width: 768px) {
+  .modal-content {
+    width: 90%;
+    max-width: 90%; /* Asegura que el modal no ocupe más del 90% del ancho */
+    max-height: 80%; /* Limita la altura máxima en pantallas pequeñas */
+    border-radius: 5px;
+    overflow-y: auto; /* Permite el desplazamiento si el contenido es demasiado largo */
+  }
+
+  .modal-header {
+    padding: 10px;
+  }
+
+  .modal-footer {
+    padding: 10px;
+    text-align: center;
+    flex-direction: column;
+  }
+
+  .modal-footer .btn {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .modal-close {
+    font-size: 18px;
+  }
 }
 </style>

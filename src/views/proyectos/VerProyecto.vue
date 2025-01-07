@@ -2,31 +2,38 @@
   <div v-if="error?.status === 404">
     <proyecto-no-encontrado></proyecto-no-encontrado>
   </div>
-  <div v-if="!loading && !error" class="container">
+  <div v-if="!loading && !error" class="container main-container">
+    <!-- Título y Botones -->
     <div class="pb-4 mb-4 page-title-separation">
-      <div class="d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center justify-content-between flex-wrap">
+        <!-- Botón "Volver" -->
         <div class="me-2">
           <button class="btn btn-soft-primary rounded-circle" @click="goBack()">
             <i class="bi bi-arrow-left"></i>
           </button>
         </div>
+        <!-- Título del proyecto -->
         <div class="me-auto">
-          <h1 class="h3 mb-0 fw-semibold">{{ proyecto.client.name }} - {{ proyecto.name }}</h1>
+          <h1 class="h3 mb-0 fw-semibold text-break">{{ proyecto.client.name }} - {{ proyecto.name }}</h1>
         </div>
-        <div class="d-flex">
+        <!-- Botones Acciones -->
+        <div class="d-flex gap-2">
           <router-link to="#" class="me-2">
-            <button class="btn btn-soft-primary">Finalizar</button>
+            <button class="btn btn-soft-primary w-100 w-sm-auto">Finalizar</button>
           </router-link>
           <router-link to="#">
-            <button class="btn btn-primary">Horas proyecto</button>
+            <button class="btn btn-primary w-100 w-sm-auto">Horas proyecto</button>
           </router-link>
         </div>
       </div>
     </div>
+
+    <!-- Resumen del Proyecto -->
     <div class="mb-3">
       <proyecto-summary :proyecto="proyecto" @fetch-project="fetchProyectoData" />
     </div>
 
+    <!-- Resumen del Equipo -->
     <div class="mb-4">
       <equipo-summary
         :equipo="proyecto.squad.resources"
@@ -36,6 +43,7 @@
     </div>
   </div>
 </template>
+
 <script>
 import EquipoSummary from '@/components/proyectos/EquipoSummary.vue'
 import NavigateBack from '@/mixins/navigation/NavigateBack.vue'
@@ -114,3 +122,39 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+/* Asegura que los botones ocupen el mismo tamaño en pantallas pequeñas */
+@media (max-width: 768px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* Asegura que el contenido se ajuste a pantallas pequeñas */
+  .d-flex.flex-wrap {
+    flex-wrap: wrap;
+  }
+
+  /* Los botones ocupan todo el ancho en pantallas pequeñas */
+  .btn {
+    width: 100%;
+  }
+
+  /* Evita que los botones se estiren en pantallas grandes */
+  .w-sm-auto {
+    width: auto !important;
+  }
+}
+
+/* Solución al corte debajo de la barra de navegación */
+.main-container {
+  padding-top: calc(var(--navbar-height, 15px) + 1rem); /* Ajusta el valor por defecto de la altura del navbar */
+}
+
+@media (max-width: 768px) {
+  .main-container {
+    padding-top: calc(var(--navbar-height, 56px) + 0.5rem);
+  }
+}
+</style>

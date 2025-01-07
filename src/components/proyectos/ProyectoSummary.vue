@@ -1,7 +1,8 @@
 <template v-if="!!proyecto">
   <div class="section-header-primary">Proyecto</div>
   <div class="px-3 py-1 row">
-    <div class="col">
+    <!-- Columna 1 -->
+    <div class="col-12 col-md">
       <field-with-label label="Cliente" :value="proyecto.client.name" />
       <field-with-label label="Proyecto" :value="proyecto.name" />
       <field-with-label
@@ -16,7 +17,9 @@
       <field-with-label label="Estado" />
       <project-state :state-key="proyecto.currentState.currentState" />
     </div>
-    <div class="col">
+
+    <!-- Columna 2 -->
+    <div class="col-12 col-md">
       <field-with-label label="Período actual" :value="capitalizeFirstLetter(formatDate(new Date(), 'monthAndYear'))" />
       <field-with-label
         label="Inicio"
@@ -32,7 +35,8 @@
       <field-with-label v-else label="Fin" value="A definir" />
     </div>
 
-    <div class="col-2">
+    <!-- Columna 3 (botones y fecha de actualización) -->
+    <div class="col-12 col-md-2">
       <div class="d-flex flex-column">
         <div class="d-flex justify-content-end">
           <button class="btn btn-soft-primary mb-1" @click="editProject">Editar</button>
@@ -43,24 +47,9 @@
         </div>
       </div>
     </div>
-    <div
-      v-if="showToast"
-      class="toast align-items-center text-bg-primary border-0 position-fixed bottom-0 start-0 m-3 show"
-      role="alert"
-      aria-live="assertive"
-      aria-atomic="true"
-    >
-      <div class="d-flex">
-        <div class="toast-body">{{ toastContent }}</div>
-        <button
-          type="button"
-          class="btn-close btn-close-white me-2 m-auto"
-          aria-label="Close"
-          @click="showToast = false"
-        ></button>
-      </div>
-    </div>
   </div>
+
+  <!-- Toast -->
   <div
     v-if="showToast"
     class="toast align-items-center text-bg-primary border-0 position-fixed bottom-0 start-0 m-3 show"
@@ -78,23 +67,8 @@
       ></button>
     </div>
   </div>
-  <div
-    v-if="showToast"
-    class="toast align-items-center text-bg-primary border-0 position-fixed bottom-0 start-0 m-3 show"
-    role="alert"
-    aria-live="assertive"
-    aria-atomic="true"
-  >
-    <div class="d-flex">
-      <div class="toast-body">{{ toastContent }}</div>
-      <button
-        type="button"
-        class="btn-close btn-close-white me-2 m-auto"
-        aria-label="Close"
-        @click="showToast = false"
-      ></button>
-    </div>
-  </div>
+
+  <!-- Modal de edición -->
   <EditModal
     :is-visible="showModal"
     :large="large"
@@ -108,6 +82,7 @@
     @save="saveChanges"
   />
 </template>
+
 <script>
 import EditModal from '@/components/proyectos/EditProjectModal.vue'
 import FieldWithLabel from './FieldWithLabel.vue'
@@ -210,22 +185,32 @@ export default {
 }
 </script>
 <style scoped>
-.toast {
-  z-index: 1050;
-  bottom: 0;
-  left: 0;
-  position: fixed;
-  margin: 1rem;
-}
-.key-container {
-  display: flex;
-  align-items: center;
-}
+/* Asegura que los botones ocupen todo el ancho en pantallas pequeñas */
+@media (max-width: 768px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
 
-.key-container i {
-  margin-right: 8px; /* Espaciado entre el icono y el texto */
-}
-.small-text {
-  font-size: 0.9em !important; /* Ajusta este valor según lo necesario */
+  /* Para las columnas, aseguramos que ocupen todo el ancho en pantallas pequeñas */
+  .col-12 {
+    width: 100%;
+  }
+
+  /* Ajusta la visualización del contenedor de llave en mano */
+  .key-container {
+    margin-top: 1rem;
+  }
+
+  /* Asegura que los botones ocupen el 100% del ancho en pantallas pequeñas */
+  .btn {
+    width: 100%;
+  }
+
+  /* Establece los márgenes para las columnas en pantallas pequeñas */
+  .row {
+    margin-left: 0;
+    margin-right: 0;
+  }
 }
 </style>
