@@ -30,6 +30,7 @@
     <div class="mb-4">
       <equipo-summary
         :equipo="proyecto.squad.resources"
+        :horas-contratadas="proyecto.monthlyContractedHours"
         :fecha-ultima-edicion="proyecto.squad.updatedAt"
         :id-squad="proyecto.squad.id"
       />
