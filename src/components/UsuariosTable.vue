@@ -18,10 +18,10 @@
               <i class="bi bi-person-circle avatar-fallback" :title="user.nombre"></i>
             </div>
           </td>
-          <td>{{ user.nombre }}</td>
-          <td>{{ user.horasAsignadas }}</td>
-          <td>{{ user.horasContratadas }}</td>
-          <td>{{ user.horasLibres }}</td>
+          <td>{{ user.fullName }}</td>
+          <td>{{ user.assignedHours }}</td>
+          <td>{{ user.monthlyContractedHours }}</td>
+          <td>{{ user.availableHours }}</td>
           <td>
             <button class="btn btn-link btn-m"><i class="bi bi-pencil-square"></i></button>
             <button class="btn btn-link btn-m"><i class="bi bi-trash"></i></button>
@@ -33,82 +33,78 @@
 </template>
 
 <script>
+import UsersService from '@/services/users'
+
 export default {
   name: 'UsuariosTable',
   data() {
     return {
-      users: [
-        {
-          nombre: 'Rodrigo Loza',
-          horasAsignadas: '140',
-          horasContratadas: '160',
-          horasLibres: '20'
-        },
-        {
-          nombre: 'Agustin Menegat',
-          horasAsignadas: '120',
-          horasContratadas: '160',
-          horasLibres: '40'
-        },
-        {
-          nombre: 'Yanina Silva',
-          horasAsignadas: '100',
-          horasContratadas: '160',
-          horasLibres: '60'
-        },
-        {
-          nombre: 'Joaquin Zanardi',
-          horasAsignadas: '130',
-          horasContratadas: '160',
-          horasLibres: '30'
-        },
-        {
-          nombre: 'Mariano Soulé',
-          horasAsignadas: '110',
-          horasContratadas: '160',
-          horasLibres: '50'
-        },
-        {
-          nombre: 'Norelys Rodriguez',
-          horasAsignadas: '140',
-          horasContratadas: '160',
-          horasLibres: '20'
-        },
-        {
-          nombre: 'Yoana Gerling',
-          horasAsignadas: '120',
-          horasContratadas: '160',
-          horasLibres: '40'
-        },
-        {
-          nombre: 'Maurizio Volpe',
-          horasAsignadas: '150',
-          horasContratadas: '160',
-          horasLibres: '10'
-        },
-        {
-          nombre: 'Patricio Sabatini',
-          horasAsignadas: '130',
-          horasContratadas: '160',
-          horasLibres: '30'
-        }
-      ]
+      usersService: new UsersService(),
+      users: []
     }
   },
   mounted() {
-    // this.initTooltips()
+    this.loadUsersAndHours()
   },
-  updated() {
-    // this.initTooltips()
-  }
-  /* methods: {
-    initTooltips() {
-      const tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'));
-      tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-      });
+  methods: {
+    async loadUsersAndHours() {
+      await this.getUsers()
+      await this.getAvailableHours()
+      await this.getAssignedHours()
+    },
+    async getUsers() {
+      try {
+        const response = await this.usersService.getAllUsers()
+
+        this.users = response.data
+        console.log(this.users, 'users')
+      } catch (err) {
+        console.log('Error al obtener los usuarios: ', err)
+      }
+    },
+    async getAvailableHours() {
+      const usersWithHours = await Promise.all(
+        this.users.map(async (user) => {
+          try {
+            const hoursResponse = await this.usersService.getAvailableHoursForUser(user.id)
+
+            return {
+              ...user,
+              availableHours: hoursResponse.data
+            }
+          } catch (err) {
+            console.error(`Error al obtener las horas disponibles para el usuario ${user.id}: `, err)
+
+            return { ...user, availableHours: 0 } // En caso de error, asignar 0 horas disponibles
+          }
+        })
+      )
+
+      this.users = usersWithHours
+      console.log(this.users, 'users with available hours')
+    },
+    async getAssignedHours() {
+      const usersWithHoursAssigned = await Promise.all(
+        this.users.map(async (user) => {
+          try {
+            const hoursResponse = await this.usersService.getAssignedHoursForUser(user.id)
+
+            return {
+              ...user,
+              assignedHours: hoursResponse.data.assignedHours
+            }
+          } catch (err) {
+            console.error(`Error al obtener las horas asignadas para el usuario ${user.id}: `, err)
+
+            return { ...user, assignedHours: 0 } // En caso de error, asignar 0 horas asignadas
+          }
+        })
+      )
+
+      this.users = usersWithHoursAssigned
+      console.log(this.users, 'users with assigned hours')
     }
-  } */
+  }
 }
 </script>
 

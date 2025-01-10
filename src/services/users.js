@@ -1,6 +1,6 @@
 import api from './api'
 
-export class UsersService {
+export default class UsersService {
   getActiveResourcesForCombobox() {
     return api().get('/users/minimal-active')
   }
@@ -9,7 +9,15 @@ export class UsersService {
     return api().get(`/users/available-hours/${id}`)
   }
 
+  getAssignedHoursForUser(id) {
+    return api().get(`/users/assigned-hours/${id}`)
+  }
+
   getUserById(id) {
     return api().get(`/users/${id}`)
+  }
+
+  getAllUsers() {
+    return api().get(`/users`)
   }
 }
