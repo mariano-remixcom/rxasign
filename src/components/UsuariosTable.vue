@@ -15,20 +15,55 @@
         <tr v-for="(user, index) in users" :key="index">
           <td>
             <div class="avatar-container">
-              <i class="bi bi-person-circle avatar-fallback" :title="user.nombre"></i>
+              <i class="bi bi-person-circle avatar-fallback" :title="user.fullName"></i>
             </div>
           </td>
-          <td>{{ user.fullName }}</td>
+          <td>
+            <span class="link pointer" @click="togglePopover($event, user)">
+              {{ user.fullName }}
+            </span>
+          </td>
           <td>{{ user.assignedHours }}</td>
           <td>{{ user.monthlyContractedHours }}</td>
           <td>{{ user.availableHours }}</td>
           <td>
-            <button class="btn btn-link btn-m"><i class="bi bi-pencil-square"></i></button>
-            <button class="btn btn-link btn-m"><i class="bi bi-trash"></i></button>
+            <button class="btn btn-link btn-m">
+              <i class="bi bi-pencil-square"></i>
+            </button>
+            <button class="btn btn-link btn-m">
+              <i class="bi bi-trash"></i>
+            </button>
           </td>
         </tr>
       </tbody>
     </table>
+
+    <!-- Popover -->
+    <div v-if="selectedUser" class="popover-container" :style="popoverStyles">
+      <div class="popover custom-popover">
+        <div class="popover-header">Proyectos de {{ selectedUser.fullName }}</div>
+        <div class="popover-body">
+          <table v-if="selectedUser.resources && selectedUser.resources.length" class="table table-sm mt-2">
+            <thead>
+              <tr>
+                <th>Proyecto</th>
+                <th>Hs Asignadas</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="resource in selectedUser.resources" :key="resource.id">
+                <td>{{ resource.squad.project.name }}</td>
+                <td>{{ resource.assignedHours }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <div v-else>
+            <br />
+            Aún no se le han asignado horas.
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -40,17 +75,21 @@ export default {
   data() {
     return {
       usersService: new UsersService(),
-      users: []
+      users: [],
+      selectedUser: null,
+      popoverStyles: {}
     }
   },
   mounted() {
     this.loadUsersAndHours()
   },
+
   methods: {
     async loadUsersAndHours() {
       await this.getUsers()
       await this.getAvailableHours()
       await this.getAssignedHours()
+      await this.getResources()
     },
     async getUsers() {
       try {
@@ -103,6 +142,61 @@ export default {
 
       this.users = usersWithHoursAssigned
       console.log(this.users, 'users with assigned hours')
+    },
+    async getResources() {
+      const usersWithResources = await Promise.all(
+        this.users.map(async (user) => {
+          try {
+            const resourcesResponse = await this.usersService.getUserWithResources(user.id)
+
+            return {
+              ...user,
+              resources: resourcesResponse.data.resources
+            }
+          } catch (err) {
+            console.error(`Error al obtener los recursos asociados al usuario ${user.id}: `, err)
+
+            return { ...user, resources: 0 }
+          }
+        })
+      )
+
+      this.users = usersWithResources
+      console.log(this.users, 'users with resources')
+    },
+    togglePopover(event, user) {
+      event.stopPropagation()
+      if (this.selectedUser === user) {
+        this.closePopover()
+
+        return
+      }
+
+      this.selectedUser = user
+      const rect = event.target.getBoundingClientRect()
+
+      this.popoverStyles = {
+        position: 'absolute',
+        top: `${rect.top + window.scrollY}px`,
+        left: `${rect.right + 10}px`,
+        zIndex: 1000
+      }
+
+      // Escuchar clicks en el documento
+      document.addEventListener('click', this.handleOutsideClick)
+    },
+    closePopover() {
+      this.selectedUser = null
+
+      // Eliminar el listener de clicks
+      document.removeEventListener('click', this.handleOutsideClick)
+    },
+    handleOutsideClick(event) {
+      const popover = document.querySelector('.popover-container')
+
+      if (popover && !popover.contains(event.target)) {
+        this.closePopover()
+      }
     }
   }
 }
@@ -126,5 +220,60 @@ button.btn.btn-link.btn-m {
 .avatar-fallback {
   font-size: 1.5rem;
   color: #6c757d; /* Color de icono */
+}
+.pointer {
+  color: $blue;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.popover-container {
+  position: absolute;
+  z-index: 1000;
+}
+
+.popover {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  max-width: 300px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  position: relative;
+}
+
+.popover-header {
+  background-color: #6f42c1;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 8px 8px 0 0;
+}
+
+.popover-body {
+  padding: 10px;
+  font-size: 14px;
+  color: #333;
+}
+
+.popover::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -10px;
+  transform: translateY(-50%);
+  border-width: 10px;
+  border-style: solid;
+  border-color: transparent white transparent transparent;
+}
+
+.close-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
 }
 </style>

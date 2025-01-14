@@ -20,4 +20,8 @@ export default class UsersService {
   getAllUsers() {
     return api().get(`/users`)
   }
+
+  getUserWithResources(id) {
+    return api().get(`/users/user-with-resources/${id}`)
+  }
 }
