@@ -24,15 +24,32 @@
             </span>
           </td>
           <td>{{ user.assignedHours }}</td>
-          <td>{{ user.monthlyContractedHours }}</td>
+          <td>
+            <div v-if="editingUserIndex === index">
+              <input v-model.number="editedHours" type="number" class="form-control form-control-sm" />
+            </div>
+            <div v-else>
+              {{ user.monthlyContractedHours }}
+            </div>
+          </td>
           <td>{{ user.availableHours }}</td>
           <td>
-            <button class="btn btn-link btn-m">
-              <i class="bi bi-pencil-square"></i>
-            </button>
-            <button class="btn btn-link btn-m">
-              <i class="bi bi-trash"></i>
-            </button>
+            <div v-if="editingUserIndex === index">
+              <button class="btn btn-link btn-m" @click="saveEdit(user.id, index)">
+                <i class="bi bi-check-circle"></i>
+              </button>
+              <button class="btn btn-link btn-m" @click="cancelEdit">
+                <i class="bi bi-x-circle"></i>
+              </button>
+            </div>
+            <div v-else>
+              <button class="btn btn-link btn-m" @click="startEdit(user.id, index)">
+                <i class="bi bi-pencil-square"></i>
+              </button>
+              <button class="btn btn-link btn-m">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
           </td>
         </tr>
       </tbody>
@@ -69,6 +86,7 @@
 
 <script>
 import UsersService from '@/services/users'
+import { useToaster } from '@/helpers/alerts/toasts/useToaster'
 
 export default {
   name: 'UsuariosTable',
@@ -77,7 +95,10 @@ export default {
       usersService: new UsersService(),
       users: [],
       selectedUser: null,
-      popoverStyles: {}
+      popoverStyles: {},
+      editingUserIndex: null, // Índice del usuario en modo de edición
+      originalHours: null, // Valor original de horas antes de editar
+      editedHours: null
     }
   },
   mounted() {
@@ -197,6 +218,62 @@ export default {
       if (popover && !popover.contains(event.target)) {
         this.closePopover()
       }
+    },
+    startEdit(userId, index) {
+      this.editingUserIndex = index // Establece el índice del usuario a editar
+      this.originalHours = this.users[index].monthlyContractedHours // Guarda el valor original
+      this.editedHours = this.originalHours // Copia el valor actual
+    },
+    saveEdit(userId, index) {
+      const user = this.users[index]
+
+      // Validar si las nuevas horas contratadas son menores a las horas asignadas
+      if (this.editedHours < user.assignedHours) {
+        this.showErrorToast('Las horas contratadas no pueden ser menores a las horas asignadas.')
+
+        return
+      }
+
+      // Actualiza el valor en la tabla localmente
+      this.users[index].monthlyContractedHours = this.editedHours
+
+      // Envía los datos al backend
+      this.updateUserHours(userId, this.editedHours)
+        .then(() => {
+          this.showSuccessToast('Horas actualizadas exitosamente.')
+        })
+        .catch((error) => {
+          this.showErrorToast('Error al actualizar las horas: ' + error.message)
+          this.users[index].monthlyContractedHours = this.originalHours // Restaura si hay error
+        })
+        .finally(() => {
+          this.resetEditState() // Finaliza el modo de edición
+        })
+    },
+    cancelEdit() {
+      // Cancela los cambios y restaura el valor original
+      this.resetEditState()
+    },
+    resetEditState() {
+      this.editingUserIndex = null
+      this.originalHours = null
+      this.editedHours = null
+    },
+    async updateUserHours(userId, newHours) {
+      const editResponse = await this.usersService.updateUser(userId, { monthlyContractedHours: newHours })
+
+      console.log(editResponse)
+      this.loadUsersAndHours()
+    },
+    showSuccessToast(message) {
+      const { addToast } = useToaster()
+
+      addToast(message, 'success')
+    },
+    showErrorToast(message) {
+      const { addToast } = useToaster()
+
+      addToast(message, 'danger')
     }
   }
 }

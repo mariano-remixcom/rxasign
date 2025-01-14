@@ -24,4 +24,8 @@ export default class UsersService {
   getUserWithResources(id) {
     return api().get(`/users/user-with-resources/${id}`)
   }
+
+  updateUser(id, data) {
+    return api().patch(`/users/${id}`, data)
+  }
 }
