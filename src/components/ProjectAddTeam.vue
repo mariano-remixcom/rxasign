@@ -14,7 +14,7 @@
           <tr>
             <th scope="col">Nombre</th>
             <th scope="col">Rol</th>
-            <th scope="col" class="text-center">Disponibles</th>
+            <th scope="col" class="text-center">Hs disponibles del recurso</th>
             <th scope="col" class="text-center">Asignadas (hs)</th>
             <th scope="col" class="text-center">Acciones</th>
           </tr>
@@ -82,6 +82,10 @@
               <button class="btn btn-link btn-m" @click="removeMember(index)"><i class="bi bi-trash"></i></button>
             </td>
           </tr>
+          <tr>
+            <td colspan="4" class="text-end fw-bold">Total asignadas: {{ totalAssignedHours }} hs</td>
+            <td></td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -101,6 +105,12 @@ import { useVuelidate } from '@vuelidate/core'
 
 export default {
   name: 'ProjectAddTeam',
+  props: {
+    horasContratadas: {
+      type: Number,
+      required: true
+    }
+  },
   emits: ['update-data'],
   setup() {
     return {
@@ -118,6 +128,11 @@ export default {
       availableHoursMap: {},
       duplicateRolesError: false,
       isUserIdInTeamMembers: false
+    }
+  },
+  computed: {
+    totalAssignedHours() {
+      return this.teamMembers.reduce((sum, member) => sum + (member.hoursAssigned || 0), 0)
     }
   },
   validations() {

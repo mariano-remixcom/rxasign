@@ -9,7 +9,7 @@
             <th scope="col">#</th>
             <th scope="col">Recurso</th>
             <th scope="col">Rol</th>
-            <th scope="col" class="text-center">Disponibles</th>
+            <th scope="col" class="text-center">Hs disponibles del recurso</th>
             <th scope="col" class="col-2">Asignadas</th>
             <th scope="col" class="text-center">Acciones</th>
           </tr>
@@ -99,6 +99,11 @@
                 <i class="bi bi-trash"></i>
               </button>
             </td>
+          </tr>
+          <tr>
+            <td colspan="4" class="text-end fw-bold">Total asignadas:</td>
+            <td class="fw-bold">{{ totalAssignedHours }} de {{ horasContratadas }} hs</td>
+            <td></td>
           </tr>
         </tbody>
       </table>
@@ -205,6 +210,10 @@ export default {
     idSquad: {
       type: Number,
       required: true
+    },
+    horasContratadas: {
+      type: Number,
+      required: true
     }
   },
   setup() {
@@ -240,6 +249,11 @@ export default {
       showModalDelete: false,
       roles: USER_ROLES,
       availableHoursMap: {}
+    }
+  },
+  computed: {
+    totalAssignedHours() {
+      return this.equipoLocal.reduce((sum, miembro) => sum + (miembro.assignedHours || 0), 0)
     }
   },
   mounted() {
