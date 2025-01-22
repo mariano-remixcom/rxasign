@@ -46,9 +46,9 @@
               <button class="btn btn-link btn-m" @click="startEdit(user.id, index)">
                 <i class="bi bi-pencil-square"></i>
               </button>
-              <button class="btn btn-link btn-m">
+              <!-- <button class="btn btn-link btn-m">
                 <i class="bi bi-trash"></i>
-              </button>
+              </button> -->
             </div>
           </td>
         </tr>
