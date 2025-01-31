@@ -24,7 +24,7 @@
     </div>
 
     <!-- inicio card horas -->
-    <div class="row justify-content-center mb-3">
+    <!-- <div class="row justify-content-center mb-3">
       <div class="card bg-white col-12 col-md-8 col-lg-6">
         <div class="card-body d-flex flex-column flex-sm-row align-items-center">
           <div class="icon-column text-primary mb-3 mb-sm-0">
@@ -41,7 +41,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <!-- inicio card usuarios -->
     <div class="row justify-content-center mb-3">
@@ -71,7 +71,7 @@ export default {
   name: 'DashboardAsignaciones',
   methods: {
     addUser() {
-      console.log('Agregar usuario')
+      // console.log('Agregar usuario')
     }
   }
 }

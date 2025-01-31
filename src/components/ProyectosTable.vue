@@ -15,7 +15,13 @@
           </tr>
         </thead>
         <tbody class="align-middle">
-          <tr v-for="item in projects" :key="item.id">
+          <!-- Mostrar mensaje si no hay proyectos -->
+          <tr v-if="projects.length === 0">
+            <td colspan="9" class="text-center">Aún no hay proyectos cargados</td>
+          </tr>
+
+          <!-- Mostrar proyectos si existen -->
+          <tr v-for="item in projects" v-else :key="item.id">
             <td data-label="Nombre">
               <a class="link pointer" @click="goToVerProyecto(item.id)">{{ item.name }}</a>
             </td>
@@ -39,8 +45,8 @@
             <td data-label="Modificado">{{ formatDate(item.updatedAt) }}</td>
             <td data-label="Estado"><project-state :state-key="item.currentState.currentState" /></td>
             <td data-label="Acciones">
-              <button class="btn btn-link btn-m"><i class="bi bi-clipboard-data"></i></button>
-              <button class="btn btn-link btn-m" @click="finishProject"><i class="bi bi-check-circle"></i></button>
+              <!-- <button class="btn btn-link btn-m"><i class="bi bi-clipboard-data"></i></button>
+              <button class="btn btn-link btn-m" @click="finishProject"><i class="bi bi-check-circle"></i></button> -->
               <button class="btn btn-link btn-m" @click="editProject(item)"><i class="bi bi-pencil-square"></i></button>
               <button class="btn btn-link btn-m" @click="deleteProject(item.id)"><i class="bi bi-trash"></i></button>
             </td>
@@ -116,7 +122,7 @@ export default {
         const response = await this.projectsService.getAllProjects()
 
         this.projects = response.data
-        console.log(this.projects)
+        // console.log(this.projects)
       } catch (err) {
         console.log('Error al obtener los proyectos: ', err)
       }
@@ -137,9 +143,7 @@ export default {
     },
     async deleteOk() {
       try {
-        const response = await this.projectsService.deleteProject(this.idProjectToDelete)
-
-        console.log(response)
+        await this.projectsService.deleteProject(this.idProjectToDelete)
         this.idProjectToDelete = null
         this.showModalDelete = false
         this.getProjects()
@@ -170,7 +174,7 @@ export default {
     },
     async saveChanges() {
       try {
-        const response = await this.projectsService.updateProject(this.project.id, {
+        await this.projectsService.updateProject(this.project.id, {
           name: this.project.name,
           monthlyContractedHours: this.project.monthlyContractedHours,
           startDate: new Date(this.project.startDate),
@@ -179,7 +183,6 @@ export default {
           state: this.project.state
         })
 
-        console.log(response)
         this.getProjects()
         this.showModalEdit = false
         this.showSuccessToast('Los cambios se guardaron exitosamente')

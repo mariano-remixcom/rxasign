@@ -8,7 +8,7 @@
       </router-link>
       <!-- Sección de login del usuario -->
       <div class="d-flex align-items-center">
-        <span class="navbar-text text-white me-2">Hola, Mariano</span>
+        <span class="navbar-text text-white me-2">Hola</span>
         <router-link to="/login" class="btn btn-outline-light">Salir</router-link>
       </div>
     </div>

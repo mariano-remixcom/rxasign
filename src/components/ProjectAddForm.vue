@@ -220,8 +220,8 @@ export default {
     }
   },
   async mounted() {
-    console.log(this.project, 'project')
-    console.log(this.projectEdit, 'project')
+    // console.log(this.project, 'project')
+    // console.log(this.projectEdit, 'project')
     if (this.projectEdit) {
       this.project.id = this.projectEdit.id
       this.project.name = this.projectEdit.name
@@ -250,7 +250,7 @@ export default {
     },
     updateData() {
       this.$emit('update-data', this.project)
-      console.log(this.project)
+      // console.log(this.project)
     },
     async submitForm() {
       const isFormCorrect = await this.v$.$validate()

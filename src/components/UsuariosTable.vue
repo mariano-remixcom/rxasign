@@ -13,18 +13,18 @@
       </thead>
       <tbody class="align-middle">
         <tr v-for="(user, index) in users" :key="index">
-          <td>
+          <td data-label="Avatar">
             <div class="avatar-container">
               <i class="bi bi-person-circle avatar-fallback" :title="user.fullName"></i>
             </div>
           </td>
-          <td>
+          <td data-label="Nombre">
             <span class="link pointer" @click="togglePopover($event, user)">
               {{ user.fullName }}
             </span>
           </td>
-          <td>{{ user.assignedHours }}</td>
-          <td>
+          <td data-label="Horas Asignadas">{{ user.assignedHours }}</td>
+          <td data-label="Horas Contratadas">
             <div v-if="editingUserIndex === index">
               <input v-model.number="editedHours" type="number" class="form-control form-control-sm" />
             </div>
@@ -32,8 +32,8 @@
               {{ user.monthlyContractedHours }}
             </div>
           </td>
-          <td>{{ user.availableHours }}</td>
-          <td>
+          <td data-label="Horas Libres">{{ user.availableHours }}</td>
+          <td data-label="Acciones">
             <div v-if="editingUserIndex === index">
               <button class="btn btn-link btn-m" @click="saveEdit(user.id, index)">
                 <i class="bi bi-check-circle"></i>
@@ -46,9 +46,6 @@
               <button class="btn btn-link btn-m" @click="startEdit(user.id, index)">
                 <i class="bi bi-pencil-square"></i>
               </button>
-              <!-- <button class="btn btn-link btn-m">
-                <i class="bi bi-trash"></i>
-              </button> -->
             </div>
           </td>
         </tr>
@@ -117,7 +114,7 @@ export default {
         const response = await this.usersService.getAllUsers()
 
         this.users = response.data
-        console.log(this.users, 'users')
+        // console.log(this.users, 'users')
       } catch (err) {
         console.log('Error al obtener los usuarios: ', err)
       }
@@ -128,9 +125,10 @@ export default {
           try {
             const hoursResponse = await this.usersService.getAvailableHoursForUser(user.id)
 
+            // console.log(hoursResponse)
             return {
               ...user,
-              availableHours: hoursResponse.data
+              availableHours: hoursResponse.data.availableHours
             }
           } catch (err) {
             console.error(`Error al obtener las horas disponibles para el usuario ${user.id}: `, err)
@@ -141,7 +139,7 @@ export default {
       )
 
       this.users = usersWithHours
-      console.log(this.users, 'users with available hours')
+      // console.log(this.users, 'users with available hours')
     },
     async getAssignedHours() {
       const usersWithHoursAssigned = await Promise.all(
@@ -162,7 +160,7 @@ export default {
       )
 
       this.users = usersWithHoursAssigned
-      console.log(this.users, 'users with assigned hours')
+      // console.log(this.users, 'users with assigned hours')
     },
     async getResources() {
       const usersWithResources = await Promise.all(
@@ -183,7 +181,7 @@ export default {
       )
 
       this.users = usersWithResources
-      console.log(this.users, 'users with resources')
+      // console.log(this.users, 'users with resources')
     },
     togglePopover(event, user) {
       event.stopPropagation()
@@ -260,9 +258,7 @@ export default {
       this.editedHours = null
     },
     async updateUserHours(userId, newHours) {
-      const editResponse = await this.usersService.updateUser(userId, { monthlyContractedHours: newHours })
-
-      console.log(editResponse)
+      await this.usersService.updateUser(userId, { monthlyContractedHours: newHours })
       this.loadUsersAndHours()
     },
     showSuccessToast(message) {
@@ -352,5 +348,90 @@ button.btn.btn-link.btn-m {
   border: none;
   font-size: 16px;
   cursor: pointer;
+}
+.container {
+  width: 100%;
+  padding: 0;
+  margin: 0 auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+@media (max-width: 768px) {
+  thead {
+    display: none; // Oculta los encabezados en pantallas pequeñas
+  }
+  .container {
+    width: 100%;
+    padding: 0;
+  }
+
+  table {
+    display: block;
+    width: 100%;
+  }
+
+  tr {
+    display: block;
+    width: 100%;
+    margin-bottom: 1rem;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 1rem;
+    box-sizing: border-box;
+    border-bottom: 1px solid #dee2e6;
+  }
+
+  td:last-child {
+    border-bottom: none;
+  }
+
+  td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    color: #6c757d;
+    flex-basis: 40%;
+  }
+
+  td span,
+  td div {
+    flex-grow: 1;
+    text-align: right;
+  }
+
+  /* Asegurar que la fila ocupe toda la pantalla */
+  tbody {
+    display: block;
+    width: 100%;
+  }
+  .popover-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-100%, -40%);
+    z-index: 1050; /* Asegura que esté por encima de otros elementos */
+    width: 90%; /* Ajusta el ancho del popover en pantallas pequeñas */
+    max-width: 400px; /* Limita el ancho máximo */
+  }
+
+  .popover {
+    width: 100%; /* Asegura que ocupe todo el contenedor */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  .popover::after {
+    display: none; /* Oculta la flecha del popover en pantallas pequeñas */
+  }
 }
 </style>

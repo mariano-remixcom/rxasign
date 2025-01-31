@@ -98,8 +98,8 @@
 </template>
 
 <script>
+import UsersService from '@/services/users'
 import { USER_ROLES } from '@/constants/UserRoles'
-import { UsersService } from '@/services/users'
 import { helpers, minValue, required } from '@vuelidate/validators'
 import { useVuelidate } from '@vuelidate/core'
 
@@ -153,7 +153,7 @@ export default {
       const responseUsers = await this.usersService.getActiveResourcesForCombobox()
 
       this.users = responseUsers.data
-      console.log(this.users)
+      // console.log(this.users)
       this.users.forEach((user) => {
         if (user.id) {
           this.fetchAvailableHours(user.id)
@@ -179,8 +179,8 @@ export default {
         try {
           const response = await this.usersService.getAvailableHoursForUser(id)
 
-          this.availableHoursMap[id] = response.data
-          console.log(`Available hours for user ID ${id}:`, response.data)
+          this.availableHoursMap[id] = response.data.availableHours
+          // console.log(`Available hours for user ID ${id}:`, response.data)
         } catch (error) {
           console.error('Error al obtener las horas disponibles:', error)
         }
@@ -200,6 +200,7 @@ export default {
       })
 
       this.isAdding = true
+      // console.log(this.teamMembers)
     },
     removeMember(index) {
       this.teamMembers.splice(index, 1)
@@ -259,10 +260,10 @@ export default {
     },
 
     checkDuplicateRoles() {
-      const roles = this.teamMembers.map((member) => member.role)
-      const uniqueRoles = new Set(roles)
+      const roleCombinations = this.teamMembers.map((member) => `${member.role}-${member.userId}`)
+      const uniqueCombinations = new Set(roleCombinations)
 
-      this.duplicateRoleError = roles.length !== uniqueRoles.size
+      this.duplicateRoleError = roleCombinations.length !== uniqueCombinations.size
 
       return !this.duplicateRoleError
     },

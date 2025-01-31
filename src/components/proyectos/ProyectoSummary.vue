@@ -133,7 +133,7 @@ export default {
   },
   methods: {
     capitalizeFirstLetter: function (value) {
-      console.log(this.proyecto)
+      // console.log(this.proyecto)
 
       return value.charAt(0).toUpperCase() + value.slice(1)
     },
@@ -153,7 +153,7 @@ export default {
     },
     async saveChanges() {
       try {
-        const response = await new ProjectsService().updateProject(this.editForm.id, {
+        await new ProjectsService().updateProject(this.editForm.id, {
           name: this.editForm.name,
           monthlyContractedHours: this.editForm.monthlyContractedHours,
           startDate: new Date(this.editForm.startDate),
@@ -162,10 +162,9 @@ export default {
           state: this.editForm.state
         })
 
-        console.log(response)
         this.showModal = false
         this.showToast = true
-        console.log(this.showToast)
+        // console.log(this.showToast)
         this.$emit('fetch-project', this.editForm.id)
         this.toastContent = 'Los cambios se guardaron exitosamente'
         setTimeout(() => {

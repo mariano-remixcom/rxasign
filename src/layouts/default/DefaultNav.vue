@@ -29,9 +29,9 @@
           <li class="nav-item">
             <router-link to="/proyectos" class="nav-link" @click="collapseNavbar">Proyectos</router-link>
           </li>
-          <li class="nav-item">
+          <!-- <li class="nav-item">
             <router-link to="/horas" class="nav-link" @click="collapseNavbar">Horas</router-link>
-          </li>
+          </li> -->
           <li class="nav-item">
             <router-link to="/usuarios" class="nav-link" @click="collapseNavbar">Usuarios</router-link>
           </li>
@@ -40,7 +40,7 @@
 
       <!-- Sección derecha: Usuario -->
       <div class="d-flex align-items-center justify-content-end ms-auto user-section">
-        <span class="navbar-text text-white me-2">Hola, Mariano</span>
+        <span class="navbar-text text-white me-2">Hola</span>
         <router-link to="/login" class="btn btn-outline-light btn-sm">Salir</router-link>
       </div>
     </div>

@@ -5,7 +5,7 @@
         <h1 class="h3">Usuarios</h1>
         <p>Lista de usuarios y sus horas asignadas.</p>
       </div>
-      <button class="btn btn-primary btn-lg" @click="addUser">Nuevo</button>
+      <!-- <button class="btn btn-primary btn-lg" @click="addUser">Nuevo</button> -->
     </div>
   </div>
   <div id="app">

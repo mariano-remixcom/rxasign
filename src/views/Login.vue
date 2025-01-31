@@ -40,9 +40,9 @@ export default {
   },
   methods: {
     login() {
-      console.log('Email:', this.email)
-      console.log('Password:', this.password)
-      console.log('Remember Me:', this.rememberMe)
+      // console.log('Email:', this.email)
+      // console.log('Password:', this.password)
+      // console.log('Remember Me:', this.rememberMe)
     },
     toggleShowPassword() {
       this.showPassword = !this.showPassword

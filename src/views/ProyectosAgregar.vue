@@ -83,11 +83,11 @@ export default {
     },
     onUpdateDataProject(updatedProject) {
       this.project = updatedProject
-      console.log(this.project, 'project')
+      // console.log(this.project, 'project')
     },
     onUpdateDataTeam(updatedTeam) {
       this.teamMembers = updatedTeam
-      console.log(this.teamMembers, 'team members')
+      // console.log(this.teamMembers, 'team members')
     }
   }
 }

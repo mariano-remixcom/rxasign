@@ -95,7 +95,7 @@
               <button v-if="miembro.editing" class="btn icon text-success" @click="saveResource(miembro)">
                 <i class="bi bi-check-lg"></i>
               </button>
-              <button class="btn icon text-danger" @click="removeResource(miembro.id)">
+              <button class="btn icon text-danger" @click="removeResource(miembro)">
                 <i class="bi bi-trash"></i>
               </button>
             </td>
@@ -143,10 +143,14 @@
             <button v-if="miembro.editing" class="btn btn-sm btn-outline-success me-2" @click="saveResource(miembro)">
               Guardar
             </button>
-            <button class="btn btn-sm btn-outline-danger" @click="removeResource(miembro.id)">Eliminar</button>
+            <button class="btn btn-sm btn-outline-danger" @click="removeResource(miembro)">Eliminar</button>
           </div>
         </div>
       </div>
+      <p class="fw-bold">
+        Total asignadas:
+        {{ totalAssignedHours }} de {{ horasContratadas }} hs
+      </p>
     </div>
 
     <!-- Botón para agregar recurso -->
@@ -271,7 +275,7 @@ export default {
         .getActiveResourcesForCombobox()
         .then((response) => {
           this.recursos = response.data
-          console.log(this.recursos, 'recursos')
+          // console.log(this.recursos, 'recursos')
         })
         .catch((error) => {
           console.error('Error al obtener los recursos:', error)
@@ -285,8 +289,8 @@ export default {
         new UsersService()
           .getAvailableHoursForUser(id)
           .then((response) => {
-            this.availableHoursMap[id] = response.data
-            console.log(`Available hours for user ID ${id}:`, response.data)
+            this.availableHoursMap[id] = response.data.availableHours
+            // console.log(`Available hours for user ID ${id}:`, response.data)
           })
           .catch((error) => {
             console.error('Error al obtener las horas disponibles:', error)
@@ -319,7 +323,7 @@ export default {
     },
     async saveResource(miembro) {
       this.currentResource = miembro
-      console.log(this.currentResource, 'current')
+      // console.log(this.currentResource, 'current')
       const isFormCorrect = await this.v$.$validate()
 
       if (!isFormCorrect) {
@@ -355,7 +359,7 @@ export default {
       new ResourcesService()
         .createResource(newMember)
         .then((response) => {
-          console.log(response, 'recurso creado')
+          // console.log(response, 'recurso creado')
           const recursoCreado = response.data
           const recursoEncontrado = this.recursos.find((recurso) => recurso.id === miembro.idUser)
 
@@ -389,9 +393,18 @@ export default {
         console.error('Error al actualizar el recurso o al obtener el usuario:', error)
       }
     },
-    removeResource(id) {
-      this.showModalDelete = true
-      this.currentResource = id
+    removeResource(miembro) {
+      // console.log(miembro, 'miembro')
+      if (!miembro.adding) {
+        this.showModalDelete = true
+        this.currentResource = miembro.id
+      } else {
+        const index = this.equipoLocal.indexOf(miembro)
+
+        if (index !== -1) {
+          this.equipoLocal.splice(index, 1) // Elimina un elemento en el índice encontrado
+        }
+      }
     },
     confirmRemoveResource() {
       new ResourcesService()
@@ -403,7 +416,7 @@ export default {
               this.fetchAvailableHours(miembro.idUser, miembro)
             }
           })
-          console.log('Recurso eliminado:', response.data)
+          // console.log('Recurso eliminado:', response.data)
           this.showModalDelete = false
           this.currentResource = ''
         })

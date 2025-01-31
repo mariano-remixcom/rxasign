@@ -18,12 +18,12 @@
         </div>
         <!-- Botones Acciones -->
         <div class="d-flex gap-2">
-          <router-link to="#" class="me-2">
+          <!-- <router-link to="#" class="me-2">
             <button class="btn btn-soft-primary w-100 w-sm-auto">Finalizar</button>
-          </router-link>
-          <router-link to="#">
+          </router-link> -->
+          <!-- <router-link to="#">
             <button class="btn btn-primary w-100 w-sm-auto">Horas proyecto</button>
-          </router-link>
+          </router-link> -->
         </div>
       </div>
     </div>
@@ -86,7 +86,7 @@ export default {
         .finally(() => {
           loading.value = false
         })
-      console.log(proyecto, 'proyecto')
+      // console.log(proyecto, 'proyecto')
     }
 
     return {
