@@ -39,10 +39,10 @@
       </div>
 
       <!-- Sección derecha: Usuario -->
-      <div class="d-flex align-items-center justify-content-end ms-auto user-section">
+      <!-- <div class="d-flex align-items-center justify-content-end ms-auto user-section">
         <span class="navbar-text text-white me-2">Hola</span>
         <router-link to="/login" class="btn btn-outline-light btn-sm">Salir</router-link>
-      </div>
+      </div> -->
     </div>
   </nav>
 </template>

@@ -7,10 +7,10 @@
         <div class="d-flex flex-row"></div>
       </router-link>
       <!-- Sección de login del usuario -->
-      <div class="d-flex align-items-center">
+      <!-- <div class="d-flex align-items-center">
         <span class="navbar-text text-white me-2">Hola</span>
         <router-link to="/login" class="btn btn-outline-light">Salir</router-link>
-      </div>
+      </div> -->
     </div>
   </nav>
 </template>
