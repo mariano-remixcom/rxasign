@@ -23,7 +23,7 @@
               {{ user.fullName }}
             </span>
           </td>
-          <td data-label="Horas Asignadas">{{ user.assignedHours }}</td>
+          <td data-label="Horas Asignadas">{{ user.totalAssignedHours }}</td>
           <td data-label="Horas Contratadas">
             <div v-if="editingUserIndex === index">
               <input v-model.number="editedHours" type="number" class="form-control form-control-sm" />
@@ -32,7 +32,7 @@
               {{ user.monthlyContractedHours }}
             </div>
           </td>
-          <td data-label="Horas Libres">{{ user.availableHours }}</td>
+          <td data-label="Horas Libres">{{ user.monthlyContractedHours - user.totalAssignedHours }}</td>
           <td data-label="Acciones">
             <div v-if="editingUserIndex === index">
               <button class="btn btn-link btn-m" @click="saveEdit(user.id, index)">
@@ -105,83 +105,9 @@ export default {
   methods: {
     async loadUsersAndHours() {
       await this.getUsers()
-      await this.getAvailableHours()
-      await this.getAssignedHours()
-      await this.getResources()
     },
     async getUsers() {
-      try {
-        const response = await this.usersService.getAllUsers()
-
-        this.users = response.data
-        // console.log(this.users, 'users')
-      } catch (err) {
-        console.log('Error al obtener los usuarios: ', err)
-      }
-    },
-    async getAvailableHours() {
-      const usersWithHours = await Promise.all(
-        this.users.map(async (user) => {
-          try {
-            const hoursResponse = await this.usersService.getAvailableHoursForUser(user.id)
-
-            // console.log(hoursResponse)
-            return {
-              ...user,
-              availableHours: hoursResponse.data.availableHours
-            }
-          } catch (err) {
-            console.error(`Error al obtener las horas disponibles para el usuario ${user.id}: `, err)
-
-            return { ...user, availableHours: 0 } // En caso de error, asignar 0 horas disponibles
-          }
-        })
-      )
-
-      this.users = usersWithHours
-      // console.log(this.users, 'users with available hours')
-    },
-    async getAssignedHours() {
-      const usersWithHoursAssigned = await Promise.all(
-        this.users.map(async (user) => {
-          try {
-            const hoursResponse = await this.usersService.getAssignedHoursForUser(user.id)
-
-            return {
-              ...user,
-              assignedHours: hoursResponse.data.assignedHours
-            }
-          } catch (err) {
-            console.error(`Error al obtener las horas asignadas para el usuario ${user.id}: `, err)
-
-            return { ...user, assignedHours: 0 } // En caso de error, asignar 0 horas asignadas
-          }
-        })
-      )
-
-      this.users = usersWithHoursAssigned
-      // console.log(this.users, 'users with assigned hours')
-    },
-    async getResources() {
-      const usersWithResources = await Promise.all(
-        this.users.map(async (user) => {
-          try {
-            const resourcesResponse = await this.usersService.getUserWithResources(user.id)
-
-            return {
-              ...user,
-              resources: resourcesResponse.data.resources
-            }
-          } catch (err) {
-            console.error(`Error al obtener los recursos asociados al usuario ${user.id}: `, err)
-
-            return { ...user, resources: 0 }
-          }
-        })
-      )
-
-      this.users = usersWithResources
-      // console.log(this.users, 'users with resources')
+      this.users = (await this.usersService.getAllUsersWithHoursData()).data
     },
     togglePopover(event, user) {
       event.stopPropagation()
@@ -226,7 +152,7 @@ export default {
       const user = this.users[index]
 
       // Validar si las nuevas horas contratadas son menores a las horas asignadas
-      if (this.editedHours < user.assignedHours) {
+      if (this.editedHours < user.totalAssignedHours) {
         this.showErrorToast('Las horas contratadas no pueden ser menores a las horas asignadas.')
 
         return
@@ -292,13 +218,16 @@ button.btn.btn-link.btn-m {
 
 .avatar-fallback {
   font-size: 1.5rem;
-  color: #6c757d; /* Color de icono */
+  color: #6c757d;
+  /* Color de icono */
 }
+
 .pointer {
   color: $blue;
   cursor: pointer;
   text-decoration: underline;
 }
+
 .popover-container {
   position: absolute;
   z-index: 1000;
@@ -349,6 +278,7 @@ button.btn.btn-link.btn-m {
   font-size: 16px;
   cursor: pointer;
 }
+
 .container {
   width: 100%;
   padding: 0;
@@ -364,6 +294,7 @@ table {
   thead {
     display: none; // Oculta los encabezados en pantallas pequeñas
   }
+
   .container {
     width: 100%;
     padding: 0;
@@ -415,23 +346,29 @@ table {
     display: block;
     width: 100%;
   }
+
   .popover-container {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-100%, -40%);
-    z-index: 1050; /* Asegura que esté por encima de otros elementos */
-    width: 90%; /* Ajusta el ancho del popover en pantallas pequeñas */
-    max-width: 400px; /* Limita el ancho máximo */
+    z-index: 1050;
+    /* Asegura que esté por encima de otros elementos */
+    width: 90%;
+    /* Ajusta el ancho del popover en pantallas pequeñas */
+    max-width: 400px;
+    /* Limita el ancho máximo */
   }
 
   .popover {
-    width: 100%; /* Asegura que ocupe todo el contenedor */
+    width: 100%;
+    /* Asegura que ocupe todo el contenedor */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   }
 
   .popover::after {
-    display: none; /* Oculta la flecha del popover en pantallas pequeñas */
+    display: none;
+    /* Oculta la flecha del popover en pantallas pequeñas */
   }
 }
 </style>
