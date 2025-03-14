@@ -56,7 +56,7 @@
               v-if="!miembro.adding"
               :class="[
                 'text-center',
-                { negative: isNegative(getAvailableHoursForUser(miembro.idUser), miembro.assignedHours) }
+                { negative: isNegative(getAvailableHoursForUser(miembro.idUser, true), miembro.assignedHours) }
               ]"
             >
               {{ getAvailableHoursForUser(miembro.idUser) }} hs
@@ -298,8 +298,16 @@ export default {
       }
     },
 
-    getAvailableHoursForUser(id) {
-      return this.availableHoursMap[id] || 0 // Devuelve 0 si no hay datos disponibles aún
+    getAvailableHoursForUser(id, countThisProject = false) {
+      const availableHours = this.availableHoursMap[id] || 0
+
+      if (countThisProject) {
+        const userAssignedHours = this.equipoLocal.find((user) => user.idUser === id).assignedHours
+
+        return availableHours + userAssignedHours
+      }
+
+      return availableHours
     },
 
     addNewResource() {
