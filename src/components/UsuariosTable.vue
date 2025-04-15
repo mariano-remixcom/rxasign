@@ -3,12 +3,12 @@
     <table class="table">
       <thead class="table-light">
         <tr>
-          <th scope="col">Avatar</th>
+          <th class="text-center" scope="col">Avatar</th>
           <th scope="col">Nombre</th>
-          <th scope="col">Horas Asignadas</th>
-          <th scope="col">Horas Contratadas</th>
-          <th scope="col">Horas Libres</th>
-          <th scope="col">Acciones</th>
+          <th class="text-center" scope="col">Horas Asignadas</th>
+          <th class="text-center" scope="col">Horas Contratadas</th>
+          <th class="text-center" scope="col">Horas Libres</th>
+          <th class="text-center" scope="col">Acciones</th>
         </tr>
       </thead>
       <tbody class="align-middle">
@@ -19,22 +19,26 @@
             </div>
           </td>
           <td data-label="Nombre">
-            <span class="link pointer" @click="togglePopover($event, user)">
+            <span class="link pointer text-center" @click="togglePopover($event, user)">
               {{ user.fullName }}
             </span>
           </td>
-          <td data-label="Horas Asignadas">{{ user.assignedHours }}</td>
+          <td data-label="Horas Asignadas">
+            <div class="text-center">{{ user.assignedHours }}</div>
+          </td>
           <td data-label="Horas Contratadas">
-            <div v-if="editingUserIndex === index">
+            <div v-if="editingUserIndex === index" class="text-center">
               <input v-model.number="editedHours" type="number" class="form-control form-control-sm" />
             </div>
-            <div v-else>
+            <div v-else class="text-center">
               {{ user.monthlyContractedHours }}
             </div>
           </td>
-          <td data-label="Horas Libres">{{ user.availableHours }}</td>
+          <td data-label="Horas Libres">
+            <div class="text-center">{{ user.availableHours }}</div>
+          </td>
           <td data-label="Acciones">
-            <div v-if="editingUserIndex === index">
+            <div v-if="editingUserIndex === index" class="text-center">
               <button class="btn btn-link btn-m" @click="saveEdit(user.id, index)">
                 <i class="bi bi-check-circle"></i>
               </button>
@@ -42,7 +46,7 @@
                 <i class="bi bi-x-circle"></i>
               </button>
             </div>
-            <div v-else>
+            <div v-else class="text-center">
               <button class="btn btn-link btn-m" @click="startEdit(user.id, index)">
                 <i class="bi bi-pencil-square"></i>
               </button>
@@ -61,13 +65,15 @@
             <thead>
               <tr>
                 <th>Proyecto</th>
+                <th>Hs Vendidas</th>
                 <th>Hs Asignadas</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="resource in selectedUser.resources" :key="resource.id">
-                <td>{{ resource.squad.project.name }}</td>
-                <td>{{ resource.assignedHours }}</td>
+                <td data-label="Proyecto">{{ resource.squad.project.name }}</td>
+                <td class="text-center" data-label="Hs Vendidas">{{ resource.soldHours }}</td>
+                <td class="text-center" data-label="Hs Asignadas">{{ resource.assignedHours }}</td>
               </tr>
             </tbody>
           </table>
@@ -181,7 +187,7 @@ export default {
       )
 
       this.users = usersWithResources
-      // console.log(this.users, 'users with resources')
+      console.log(this.users, 'users with resources')
     },
     togglePopover(event, user) {
       event.stopPropagation()
@@ -308,7 +314,7 @@ button.btn.btn-link.btn-m {
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  max-width: 300px;
+  max-width: 500px;
   border: 1px solid rgba(0, 0, 0, 0.1);
   padding: 10px;
   position: relative;

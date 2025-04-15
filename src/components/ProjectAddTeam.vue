@@ -15,6 +15,7 @@
             <th scope="col">Nombre</th>
             <th scope="col">Rol</th>
             <th scope="col" class="text-center">Hs disponibles del recurso</th>
+            <th scope="col" class="text-center">Vendidas (hs)</th>
             <th scope="col" class="text-center">Asignadas (hs)</th>
             <th scope="col" class="text-center">Acciones</th>
           </tr>
@@ -54,6 +55,24 @@
               {{ calculateAvailableHours(member.userId) }} hs
             </td>
 
+            <!-- Vendidas -->
+            <td data-label="Vendidas (hs)">
+              <label class="table-header-label d-block mb-1 d-md-none">Vendidas (hs)</label>
+              <input
+                v-model="member.hoursSold"
+                type="number"
+                class="form-control"
+                min="0"
+                :max="member.availableHours"
+                @input="updateData"
+              />
+              <div v-if="changed">
+                <div v-for="error in v$.teamMembers.$each.$response.$errors[index].hoursSold" :key="error" class="text-danger">
+                  La horas vendidas son requeridas.
+                </div>
+              </div>
+            </td>
+
             <!-- Asignadas -->
             <td data-label="Asignadas (hs)">
               <label class="table-header-label d-block mb-1 d-md-none">Asignadas (hs)</label>
@@ -83,7 +102,7 @@
             </td>
           </tr>
           <tr>
-            <td colspan="4" class="text-end fw-bold">Total asignadas: {{ totalAssignedHours }} hs</td>
+            <td colspan="5" class="text-end fw-bold">Total asignadas: {{ totalAssignedHours }} hs</td>
             <td></td>
           </tr>
         </tbody>
@@ -143,7 +162,8 @@ export default {
           role: {
             required
           },
-          hoursAssigned: { required, minValue: minValue(1) }
+          hoursAssigned: { required, minValue: minValue(1) },
+          hoursSold: { required, minValue: minValue(1) }
         })
       }
     }
@@ -196,6 +216,7 @@ export default {
         role: null,
         availableHours: 0,
         hoursAssigned: null,
+        hoursSold: null,
         startDate: new Date().toISOString()
       })
 
@@ -234,6 +255,7 @@ export default {
       const formattedMembers = this.teamMembers.map((member) => ({
         rol: member.role,
         assignedHours: member.hoursAssigned,
+        soldHours: member.hoursSold,
         idUser: member.userId,
         startDate: member.startDate
       }))

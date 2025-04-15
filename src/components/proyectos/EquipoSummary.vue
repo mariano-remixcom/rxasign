@@ -10,6 +10,7 @@
             <th scope="col">Recurso</th>
             <th scope="col">Rol</th>
             <th scope="col" class="text-center">Hs disponibles del recurso</th>
+            <th scope="col" class="col-2">Vendidas</th>
             <th scope="col" class="col-2">Asignadas</th>
             <th scope="col" class="text-center">Acciones</th>
           </tr>
@@ -70,6 +71,18 @@
             >
               {{ getAvailableHoursForUser(miembro.idUser) - miembro.assignedHours }} hs
             </td>
+            <!-- Horas Vendidas -->
+            <td v-if="!miembro.editing">
+              {{ miembro.soldHours }}
+            </td>
+            <td v-else>
+              <input v-model="miembro.soldHours" class="form-control" type="number" />
+              <div v-if="miembro.showErrors">
+                <div v-for="error in v$.equipoLocal.$each.$response.$errors[index].soldHours" :key="error" class="text-danger">
+                  Las horas vendidas son requeridas.
+                </div>
+              </div>
+            </td>
 
             <!-- Horas Asignadas -->
             <td v-if="!miembro.editing">
@@ -101,7 +114,7 @@
             </td>
           </tr>
           <tr>
-            <td colspan="4" class="text-end fw-bold">Total asignadas:</td>
+            <td colspan="5" class="text-end fw-bold">Total asignadas:</td>
             <td class="fw-bold">{{ totalAssignedHours }} de {{ horasContratadas }} hs</td>
             <td></td>
           </tr>
@@ -131,6 +144,11 @@
             </select>
           </p>
           <p class="card-text">Disponibles: {{ getAvailableHoursForUser(miembro.idUser) }} hs</p>
+          <p class="card-text">
+            Vendidas:
+            <span v-if="!miembro.editing">{{ miembro.soldHours }}</span>
+            <input v-else v-model="miembro.soldHours" class="form-control" type="number" />
+          </p>
           <p class="card-text">
             Asignadas:
             <span v-if="!miembro.editing">{{ miembro.assignedHours }}</span>
@@ -238,6 +256,7 @@ export default {
               this.checkDuplicateRole(parent.idUser, index)
             )
           },
+          soldHours: { required, minValue: minValue(1) },
           assignedHours: { required, minValue: minValue(1) }
         })
       }
@@ -309,6 +328,7 @@ export default {
         rol: '',
         rolDisplayName: '',
         availableHours: 0,
+        soldHours: '',
         assignedHours: '',
         editing: true,
         showErrors: false,
@@ -350,6 +370,7 @@ export default {
       miembro.adding = false
       const newMember = {
         rol: miembro.rol,
+        soldHours: miembro.soldHours,
         assignedHours: miembro.assignedHours,
         idSquad: this.idSquad,
         idUser: miembro.idUser,

@@ -5,6 +5,7 @@ import moment from 'moment/dist/moment'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import { router } from './router'
+import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 
 moment.updateLocale('es', es)
 
