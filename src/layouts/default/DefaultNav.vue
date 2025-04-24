@@ -39,25 +39,50 @@
       </div>
 
       <!-- Sección derecha: Usuario -->
-      <!-- <div class="d-flex align-items-center justify-content-end ms-auto user-section">
-        <span class="navbar-text text-white me-2">Hola</span>
-        <router-link to="/login" class="btn btn-outline-light btn-sm">Salir</router-link>
-      </div> -->
+      <div class="d-flex align-items-center justify-content-end ms-auto user-section">
+        <span class="navbar-text text-white me-2">Hola {{ userFirstName }}</span>
+        <button class="btn btn-outline-light btn-sm" @click="logout">Salir</button>
+      </div>
     </div>
   </nav>
 </template>
 
-<script setup>
+<script>
+import AuthService from '../../services/auth'
+import UsersService from '../../services/users.js'
 import { ref } from 'vue'
 
-const navbarExpanded = ref(false)
+export default {
+  setup() {
+    // TODO: Esto esta tirando error cuando el usuario no esta logeado
+    const userFirstName = ref('')
+    const usersService = new UsersService()
 
-const toggleNavbar = () => {
-  navbarExpanded.value = !navbarExpanded.value
-}
+    usersService.getCurrentUser().then(({ data }) => {
+      userFirstName.value = data.firstName
+    })
 
-const collapseNavbar = () => {
-  navbarExpanded.value = false
+    return { userFirstName }
+  },
+  data() {
+    return {
+      navbarExpanded: false
+    }
+  },
+  methods: {
+    collapseNavbar() {
+      this.navbarExpanded = false
+    },
+    toggleNavbar() {
+      this.navbarExpanded = !this.navbarExpanded
+    },
+    logout() {
+      const authService = new AuthService()
+
+      authService.logout()
+      this.$router.push('/login')
+    }
+  }
 }
 </script>
 

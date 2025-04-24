@@ -1,6 +1,10 @@
 import api from './api'
 
 export default class UsersService {
+  getAllUsersWithHoursData() {
+    return api().get('/users/with-hours')
+  }
+
   getActiveResourcesForCombobox() {
     return api().get('/users/minimal-active')
   }
@@ -27,5 +31,9 @@ export default class UsersService {
 
   updateUser(id, data) {
     return api().patch(`/users/${id}`, data)
+  }
+
+  getCurrentUser() {
+    return api().get('/users/me')
   }
 }

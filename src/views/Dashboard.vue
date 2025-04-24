@@ -68,7 +68,6 @@
 
 <script>
 export default {
-  name: 'DashboardAsignaciones',
   methods: {
     addUser() {
       // console.log('Agregar usuario')

@@ -14,8 +14,12 @@
         <i class="bi bi-key-fill"></i>
         <p>Llave en mano</p>
       </div>
-      <field-with-label label="Estado" />
-      <project-state :state-key="proyecto.currentState.currentState" />
+      <div class="mb-2">
+        <div class="text-muted">
+          <small>Estado:</small>
+        </div>
+        <project-state :state-key="proyecto.currentState.currentState" />
+      </div>
     </div>
 
     <!-- Columna 2 -->
@@ -73,7 +77,7 @@
     :is-visible="showModal"
     :large="large"
     :project-edit="projectEdit"
-    @updateDataEdit="updateDataEdit"
+    @update-data-edit="updateDataEdit"
     @close="
       () => {
         ;(showModal = false), (large = false)
