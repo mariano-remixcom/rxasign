@@ -1,4 +1,5 @@
 import AdminLayout from '../layouts/admin/AdminLayout.vue'
+import AuthService from '@/services/auth'
 import DefaultLayout from '../layouts/default/DefaultLayout.vue'
 import LoginLayout from '../layouts/login/LoginLayout.vue'
 import { createRouter, createWebHashHistory } from 'vue-router'
@@ -69,6 +70,16 @@ const router = createRouter({
   linkActiveClass: 'active',
   history,
   routes
+})
+
+// TODO: This should update when the user logs in or out
+const isAuthenticated = await new AuthService().isAuthenticated()
+
+router.beforeEach(async (to, from) => {
+  // If user is not logged then redirect to login
+  if (!isAuthenticated && to.name !== 'Login') {
+    return { name: 'Login' }
+  }
 })
 
 export { router }
