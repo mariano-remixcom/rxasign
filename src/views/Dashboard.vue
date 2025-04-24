@@ -67,23 +67,7 @@
 </template>
 
 <script>
-import AuthService from '@/services/auth'
-
 export default {
-  name: 'DashboardAsignaciones',
-  async mounted() {
-    const authService = new AuthService()
-
-    await authService.login('fmarquez@remixcom.com', 'konig2024')
-
-    try {
-      const user = await authService.isLogged()
-
-      console.log(user)
-    } catch (error) {
-      console.error('Error al obtener el usuario.')
-    }
-  },
   methods: {
     addUser() {
       // console.log('Agregar usuario')
