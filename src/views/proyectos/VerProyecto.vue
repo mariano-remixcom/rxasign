@@ -91,6 +91,7 @@ export default {
 
     return {
       loading,
+      error,
       proyecto,
       fetchProyectoData
     }

@@ -11,7 +11,7 @@
   <div id="app">
     <UsuariosTable />
   </div>
-  <Modal
+  <BaseModal
     :is-visible="showModal"
     :title="title"
     :large="large"
@@ -22,18 +22,20 @@
     "
   >
     <AgregarUsuario v-if="isAdding" />
-  </Modal>
+  </BaseModal>
 </template>
 
 <script>
 import AgregarUsuario from '@/components/AgregarUsuario.vue'
+import BaseModal from '@/components/shared/BaseModal.vue'
 import UsuariosTable from '@/components/UsuariosTable.vue'
 
 export default {
   name: 'App',
   components: {
     UsuariosTable,
-    AgregarUsuario
+    AgregarUsuario,
+    BaseModal
   },
   data() {
     return {

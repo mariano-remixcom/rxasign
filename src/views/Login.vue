@@ -17,10 +17,10 @@
         </div>
       </div>
       <div class="form-actions">
-        <div class="remember-me">
+        <!-- <div class="remember-me">
           <input id="remember-me" v-model="rememberMe" type="checkbox" />
           <label for="remember-me">Recordarme</label>
-        </div>
+        </div> -->
         <a href="#" class="fw-semibold">Recuperar Contraseña</a>
       </div>
       <button class="btn btn-primary w-100" @click="login">Ingresar</button>
@@ -29,6 +29,9 @@
 </template>
 
 <script>
+import AuthService from '../services/auth'
+import { useToaster } from '@/helpers/alerts/toasts/useToaster'
+
 export default {
   data() {
     return {
@@ -39,10 +42,29 @@ export default {
     }
   },
   methods: {
-    login() {
-      // console.log('Email:', this.email)
-      // console.log('Password:', this.password)
-      // console.log('Remember Me:', this.rememberMe)
+    async login() {
+      if (this.email === '' || this.password === '') {
+        useToaster('error', 'Por favor, complete todos los campos.')
+
+        return
+      }
+
+      const authService = new AuthService()
+
+      try {
+        await authService.login(this.email, this.password)
+        this.$router.push({ name: 'Dashboard' })
+      } catch (error) {
+        if (error.response && error.response.status === 404) {
+          useToaster('error', 'Usuario o contraseña incorrectos.')
+        } else if (error.response && error.response.status === 401) {
+          useToaster('error', 'Usuario o contraseña incorrectos.')
+        } else if (error.response && error.response.status === 500) {
+          alert('Error interno del servidor.')
+        } else {
+          alert('Error al iniciar sesión.')
+        }
+      }
     },
     toggleShowPassword() {
       this.showPassword = !this.showPassword
