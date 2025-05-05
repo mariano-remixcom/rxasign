@@ -25,4 +25,22 @@ export default class AuthService {
         return false
       })
   }
+
+  requestPasswordRecovery(email) {
+    return api().post('/auth/recovery', {
+      email,
+      host: window.location.origin
+    })
+  }
+
+  validateToken(token) {
+    return api().get(`/auth/validate-token/${token}`)
+  }
+
+  resetPassword(token, password) {
+    return api().post('/auth/reset-password', {
+      token,
+      password
+    })
+  }
 }

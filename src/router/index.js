@@ -63,6 +63,22 @@ const routes = [
     meta: {
       layout: LoginLayout
     }
+  },
+  {
+    path: '/recuperar',
+    name: 'RecuperarPassword',
+    component: () => import(/* webpackChunkName: "recuperar" */ '../views/PasswordRecoveryRequest.vue'),
+    meta: {
+      layout: LoginLayout
+    }
+  },
+  {
+    path: '/recuperar/:token',
+    name: 'RestablecerPassword',
+    component: () => import(/* webpackChunkName: "restablecer" */ '../views/PasswordReset.vue'),
+    meta: {
+      layout: LoginLayout
+    }
   }
 ]
 
@@ -77,7 +93,9 @@ const isAuthenticated = await new AuthService().isAuthenticated()
 
 router.beforeEach(async (to, from) => {
   // If user is not logged then redirect to login
-  if (!isAuthenticated && to.name !== 'Login') {
+  const publicRoutes = ['Login', 'RecuperarPassword', 'RestablecerPassword']
+
+  if (!isAuthenticated && !publicRoutes.includes(to.name)) {
     return { name: 'Login' }
   }
 })
