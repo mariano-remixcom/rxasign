@@ -29,9 +29,9 @@
           <li class="nav-item">
             <router-link to="/proyectos" class="nav-link" @click="collapseNavbar">Proyectos</router-link>
           </li>
-          <!-- <li class="nav-item">
-            <router-link to="/horas" class="nav-link" @click="collapseNavbar">Horas</router-link>
-          </li> -->
+          <li v-if="isAdminUser" class="nav-item">
+            <router-link to="/horas" class="nav-link" @click="collapseNavbar">Gestión de Horas</router-link>
+          </li>
           <li class="nav-item">
             <router-link to="/usuarios" class="nav-link" @click="collapseNavbar">Usuarios</router-link>
           </li>
@@ -56,13 +56,15 @@ export default {
   setup() {
     // TODO: Esto esta tirando error cuando el usuario no esta logeado
     const userFirstName = ref('')
+    const isAdminUser = ref(false)
     const usersService = new UsersService()
 
     usersService.getCurrentUser().then(({ data }) => {
       userFirstName.value = data.firstName
+      isAdminUser.value = data.type === 'ADMIN' || data.type === 'SUPERADMIN'
     })
 
-    return { userFirstName }
+    return { userFirstName, isAdminUser }
   },
   data() {
     return {

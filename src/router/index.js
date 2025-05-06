@@ -1,6 +1,6 @@
-import AdminLayout from '../layouts/admin/AdminLayout.vue'
 import AuthService from '@/services/auth'
 import DefaultLayout from '../layouts/default/DefaultLayout.vue'
+import FormsLayout from '../layouts/admin/FormsLayout.vue'
 import LoginLayout from '../layouts/login/LoginLayout.vue'
 import { createRouter, createWebHashHistory } from 'vue-router'
 
@@ -27,7 +27,7 @@ const routes = [
         name: 'Agregar Proyecto',
         component: () => import(/* webpackChunkName: "proyectosagregar" */ '../views/ProyectosAgregar.vue'),
         meta: {
-          layout: AdminLayout
+          layout: FormsLayout
         }
       },
       {

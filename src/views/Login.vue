@@ -1,6 +1,6 @@
 <template>
   <div class="login-container">
-    <div class="login-form">
+    <form class="login-form" @submit="login">
       <h1><strong>Hola!</strong></h1>
       <p>Ingrese sus datos de acceso para iniciar sesión.</p>
       <div class="form-group">
@@ -17,14 +17,10 @@
         </div>
       </div>
       <div class="form-actions">
-        <!-- <div class="remember-me">
-          <input id="remember-me" v-model="rememberMe" type="checkbox" />
-          <label for="remember-me">Recordarme</label>
-        </div> -->
         <a href="#" class="fw-semibold">Recuperar Contraseña</a>
       </div>
-      <button class="btn btn-primary w-100" @click="login">Ingresar</button>
-    </div>
+      <button type="submit" class="btn btn-primary w-100">Ingresar</button>
+    </form>
   </div>
 </template>
 
@@ -37,7 +33,6 @@ export default {
     return {
       email: '',
       password: '',
-      rememberMe: false,
       showPassword: false
     }
   },
