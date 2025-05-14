@@ -49,26 +49,36 @@
 
 <script>
 import AuthService from '../../services/auth'
-import UsersService from '../../services/users.js'
-import { ref } from 'vue'
+import { useSession } from '@/helpers/session/useSession'
 
 export default {
   setup() {
-    // TODO: Esto esta tirando error cuando el usuario no esta logeado
-    const userFirstName = ref('')
-    const isAdminUser = ref(false)
-    const usersService = new UsersService()
+    const { getSession, getSessionRef } = useSession()
+    const session = getSessionRef()
 
-    usersService.getCurrentUser().then(({ data }) => {
-      userFirstName.value = data.firstName
-      isAdminUser.value = data.type === 'ADMIN' || data.type === 'SUPERADMIN'
-    })
+    getSession()
 
-    return { userFirstName, isAdminUser }
+    return { session }
   },
   data() {
     return {
       navbarExpanded: false
+    }
+  },
+  computed: {
+    userFirstName() {
+      if (!this.session) {
+        return ''
+      }
+
+      return this.session.firstName
+    },
+    isAdminUser() {
+      if (!this.session) {
+        return false
+      }
+
+      return this.session.type === 'ADMIN' || this.session.type === 'SUPERADMIN'
     }
   },
   methods: {
@@ -78,10 +88,13 @@ export default {
     toggleNavbar() {
       this.navbarExpanded = !this.navbarExpanded
     },
-    logout() {
+    async logout() {
       const authService = new AuthService()
 
-      authService.logout()
+      await authService.logout()
+      const { setSession } = useSession()
+
+      setSession(false)
       this.$router.push('/login')
     }
   }

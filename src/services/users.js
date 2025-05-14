@@ -32,8 +32,4 @@ export default class UsersService {
   updateUser(id, data) {
     return api().patch(`/users/${id}`, data)
   }
-
-  getCurrentUser() {
-    return api().get('/users/me')
-  }
 }

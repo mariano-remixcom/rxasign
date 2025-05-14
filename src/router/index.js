@@ -1,8 +1,8 @@
-import AuthService from '@/services/auth'
 import DefaultLayout from '../layouts/default/DefaultLayout.vue'
 import FormsLayout from '../layouts/admin/FormsLayout.vue'
 import LoginLayout from '../layouts/login/LoginLayout.vue'
 import { createRouter, createWebHashHistory } from 'vue-router'
+import { useSession } from '@/helpers/session/useSession'
 
 const history = createWebHashHistory()
 const routes = [
@@ -72,12 +72,11 @@ const router = createRouter({
   routes
 })
 
-// TODO: This should update when the user logs in or out
-const isAuthenticated = await new AuthService().isAuthenticated()
+const { isAuthenticated } = useSession()
 
 router.beforeEach(async (to, from) => {
   // If user is not logged then redirect to login
-  if (!isAuthenticated && to.name !== 'Login') {
+  if (!(await isAuthenticated()) && to.name !== 'Login') {
     return { name: 'Login' }
   }
 })

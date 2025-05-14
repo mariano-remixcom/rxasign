@@ -26,6 +26,7 @@
 
 <script>
 import AuthService from '../services/auth'
+import { useSession } from '@/helpers/session/useSession'
 import { useToaster } from '@/helpers/alerts/toasts/useToaster'
 
 export default {
@@ -34,6 +35,13 @@ export default {
       email: '',
       password: '',
       showPassword: false
+    }
+  },
+  async mounted() {
+    const { isAuthenticated } = useSession()
+
+    if (await isAuthenticated()) {
+      this.$router.push({ name: 'Dashboard' })
     }
   },
   methods: {
@@ -47,7 +55,11 @@ export default {
       const authService = new AuthService()
 
       try {
-        await authService.login(this.email, this.password)
+        const { data } = await authService.login(this.email, this.password)
+        const { setSession } = useSession()
+
+        setSession(data)
+
         this.$router.push({ name: 'Dashboard' })
       } catch (error) {
         if (error.response && error.response.status === 404) {
