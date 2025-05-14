@@ -2,14 +2,14 @@
   <div class="mb-1 rounded-3">
     <div class="container page-title-separation d-flex align-items-center justify-content-between mb-4">
       <div class="container-fluid">
-        <h1 class="h3">Gestión de Horas</h1>
+        <h1 class="h3 mb-4">Gestión de Horas</h1>
       </div>
     </div>
   </div>
   <div id="app">
     <div class="container d-flex flex-column align-items-center justify-content-between">
       <div class="container">
-        <div class="row mb-3">
+        <!-- <div class="row mb-3">
           <div class="col-md-4">
             <label for="periodo" class="form-label">Período</label>
             <select id="periodo" class="form-select">
@@ -25,7 +25,6 @@
               <option>Octubre 2024</option>
               <option>Noviembre 2024</option>
               <option>Diciembre 2024</option>
-              <!-- Agregar otras opciones aquí -->
             </select>
           </div>
           <div class="col-md-8">
@@ -37,13 +36,12 @@
               <option>FUDU - Discovery</option>
               <option>Remix - Asignaciones</option>
               <option>Remix - Redes</option>
-              <!-- Agregar otras opciones aquí -->
             </select>
           </div>
-        </div>
+        </div> -->
         <div class="row mb-3">
           <div class="col-12">
-            <TablaGestionHoras />
+            <TablaGestionHoras v-if="users" :users="users" />
           </div>
         </div>
         <div class="row">
@@ -57,6 +55,7 @@
 </template>
 
 <script>
+import RegisteredPeriodsService from '@/services/RegisteredPeriods'
 import TablaGestionHoras from '@/components/gestion-horas/TablaGestionHoras.vue'
 
 export default {
@@ -64,9 +63,20 @@ export default {
   components: {
     TablaGestionHoras
   },
-  mounted() {},
+  data() {
+    return {
+      users: null
+    }
+  },
+  mounted() {
+    this.getResourcesWithHours()
+  },
   methods: {
-    getResourcesWithHours() {}
+    async getResourcesWithHours() {
+      const registeredPeriodsService = new RegisteredPeriodsService()
+
+      this.users = (await registeredPeriodsService.getSumaryHoursByUser()).data
+    }
   }
 }
 </script>

@@ -9,24 +9,29 @@
         <th>Semana 2</th>
         <th>Semana 3</th>
         <th>Semana 4</th>
+        <th>Semana 5</th>
       </tr>
     </thead>
-    <tbody>
-      <tr v-for="recurso in recursos" :key="recurso.id" class="table">
-        <td>{{ recurso.nombre }}</td>
-        <td>{{ recurso.asignadas }} hs</td>
-        <td>{{ recurso.registradas }} hs</td>
+    <tbody class="align-middle">
+      <tr v-for="user in users" :key="user.userId">
         <td>
-          <input v-model="recurso.semana1" type="number" class="form-control input-fixed-width" />
+          <div class="d-flex align-items-center bg-white">
+            <img v-if="user.avatar" :src="user.avatar" class="rounded-circle" width="40" height="40" />
+            <i v-else class="bi bi-person-circle bg-white h4 p-0 m-0" :title="user.fullName"></i>
+            <div class="bg-white ms-2">
+              <strong>{{ user.fullName }}</strong>
+              <div class="text-muted">
+                <small v-for="role in user.roles" :key="user.id + role">
+                  {{ roles.find((r) => r.key === role).displayName }}
+                </small>
+              </div>
+            </div>
+          </div>
         </td>
-        <td>
-          <input v-model="recurso.semana2" type="number" class="form-control input-fixed-width" />
-        </td>
-        <td>
-          <input v-model="recurso.semana3" type="number" class="form-control input-fixed-width" />
-        </td>
-        <td>
-          <input v-model="recurso.semana4" type="number" class="form-control input-fixed-width" />
+        <td>{{ user.monthlyAssignedHours }} hs</td>
+        <td>{{ user.registeredHours }} hs</td>
+        <td v-for="week in user.registeredHoursByWeek" :key="user.userId + week.weekStart">
+          <input v-model="week.totalHours" type="number" class="form-control input-fixed-width" readonly />
         </td>
       </tr>
     </tbody>
@@ -34,16 +39,18 @@
 </template>
 
 <script>
+import { USER_ROLES } from '@/constants/UserRoles'
+
 export default {
+  props: {
+    users: {
+      type: Array,
+      required: true
+    }
+  },
   data() {
     return {
-      recursos: [
-        { id: 1, nombre: 'Yoana Gerling', asignadas: 40, registradas: 0, semana1: 0, semana2: 0, semana3: 0, semana4: 0 },
-        { id: 2, nombre: 'Patricio Sabatini', asignadas: 10, registradas: 0, semana1: 0, semana2: 0, semana3: 0, semana4: 0 },
-        { id: 3, nombre: 'Rodrigo Loza', asignadas: 40, registradas: 0, semana1: 0, semana2: 0, semana3: 0, semana4: 0 },
-        { id: 4, nombre: 'Joaquín Zanardi', asignadas: 40, registradas: 0, semana1: 0, semana2: 0, semana3: 0, semana4: 0 },
-        { id: 5, nombre: 'Norelys Rodríguez', asignadas: 40, registradas: 0, semana1: 0, semana2: 0, semana3: 0, semana4: 0 }
-      ]
+      roles: USER_ROLES
     }
   }
 }
