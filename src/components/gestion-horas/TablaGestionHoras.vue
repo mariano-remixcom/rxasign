@@ -21,8 +21,9 @@
             <div class="bg-white ms-2">
               <strong>{{ user.fullName }}</strong>
               <div class="text-muted">
-                <small v-for="role in user.roles" :key="user.id + role">
+                <small v-for="(role, idx) in user.roles" :key="user.id + role">
                   {{ roles.find((r) => r.key === role).displayName }}
+                  <span v-if="idx < user.roles.length - 1"> - </span>
                 </small>
               </div>
             </div>
