@@ -9,7 +9,7 @@
   <div id="app">
     <div class="container d-flex flex-column align-items-center justify-content-between">
       <div class="container">
-        <!-- <div class="row mb-3">
+        <div class="row mb-3">
           <div class="col-md-4">
             <label for="periodo" class="form-label">Período</label>
             <select id="periodo" class="form-select">
@@ -29,16 +29,14 @@
           </div>
           <div class="col-md-8">
             <label for="proyecto" class="form-label">Proyecto</label>
-            <select id="proyecto" class="form-select">
-              <option selected>Bancor - Empleado digital</option>
-              <option>Hoklan - Odoo dev</option>
-              <option>Checkpet - Desarrollo App</option>
-              <option>FUDU - Discovery</option>
-              <option>Remix - Asignaciones</option>
-              <option>Remix - Redes</option>
+            <select id="proyecto" v-model="selectedProject" class="form-select" @change="onChangeProject">
+              <option :value="{ id: -1, name: 'all' }">Todos los proyectos</option>
+              <option v-for="project in projects" :key="`project-${project.id}`" :value="project">
+                {{ project.client.name }} - {{ project.name }}
+              </option>
             </select>
           </div>
-        </div> -->
+        </div>
         <div class="row mb-3">
           <div class="col-12">
             <TablaGestionHoras v-if="users" :users="users" />
@@ -55,8 +53,10 @@
 </template>
 
 <script>
-import RegisteredPeriodsService from '@/services/RegisteredPeriods'
+import ProjectsService from '@/services/projects'
+import RegisteredPeriodsService from '@/services/registeredPeriods'
 import TablaGestionHoras from '@/components/gestion-horas/TablaGestionHoras.vue'
+import moment from 'moment'
 
 export default {
   name: 'App',
@@ -65,17 +65,34 @@ export default {
   },
   data() {
     return {
-      users: null
+      users: null,
+      projects: [],
+      selectedProject: { id: -1, name: 'all' },
+      startDate: moment().startOf('month').subtract(1, 'month').format('YYYY-MM-DD'),
+      endDate: moment().endOf('month').subtract(1, 'month').format('YYYY-MM-DD')
     }
   },
   mounted() {
     this.getResourcesWithHours()
+    this.getProjects()
   },
   methods: {
-    async getResourcesWithHours() {
+    async onChangeProject() {
+      if (this.selectedProject.id === -1) {
+        return this.getResourcesWithHours()
+      }
+
+      return this.getResourcesWithHours([this.selectedProject.id])
+    },
+    async getResourcesWithHours(projectIds) {
       const registeredPeriodsService = new RegisteredPeriodsService()
 
-      this.users = (await registeredPeriodsService.getSumaryHoursByUser()).data
+      this.users = (await registeredPeriodsService.getSumaryHoursByUser(this.startDate, this.endDate, projectIds)).data
+    },
+    async getProjects() {
+      const registeredPeriodsService = new ProjectsService()
+
+      this.projects = (await registeredPeriodsService.getAllProjects()).data
     }
   }
 }

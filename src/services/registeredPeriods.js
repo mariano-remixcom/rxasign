@@ -1,7 +1,13 @@
 import api from './api'
 
 export default class RegisteredPeriodsService {
-  getSumaryHoursByUser() {
-    return api().get(`/registered-periods/sumary`)
+  getSumaryHoursByUser(startDate, endDate, projectIds) {
+    return api().get(`/registered-periods/sumary`, {
+      params: {
+        startDate,
+        endDate,
+        projectIds
+      }
+    })
   }
 }
