@@ -35,6 +35,16 @@
           <input v-model="week.totalHours" type="number" class="form-control input-fixed-width" readonly />
         </td>
       </tr>
+      <tr>
+        <td>Total</td>
+        <td>{{ totalAssignedHours }} hs</td>
+        <td>{{ totalRegisteredHours }} hs</td>
+        <td>{{ totalRegisteredHoursWeek1 }} hs</td>
+        <td>{{ totalRegisteredHoursWeek2 }} hs</td>
+        <td>{{ totalRegisteredHoursWeek3 }} hs</td>
+        <td>{{ totalRegisteredHoursWeek4 }} hs</td>
+        <td>{{ totalRegisteredHoursWeek5 }} hs</td>
+      </tr>
     </tbody>
   </table>
 </template>
@@ -52,6 +62,29 @@ export default {
   data() {
     return {
       roles: USER_ROLES
+    }
+  },
+  computed: {
+    totalAssignedHours() {
+      return this.users.reduce((acc, user) => acc + user.monthlyAssignedHours, 0)
+    },
+    totalRegisteredHours() {
+      return this.users.reduce((acc, user) => acc + user.registeredHours, 0)
+    },
+    totalRegisteredHoursWeek1() {
+      return this.users.reduce((acc, user) => acc + user.registeredHoursByWeek[0].totalHours, 0)
+    },
+    totalRegisteredHoursWeek2() {
+      return this.users.reduce((acc, user) => acc + user.registeredHoursByWeek[1].totalHours, 0)
+    },
+    totalRegisteredHoursWeek3() {
+      return this.users.reduce((acc, user) => acc + user.registeredHoursByWeek[2].totalHours, 0)
+    },
+    totalRegisteredHoursWeek4() {
+      return this.users.reduce((acc, user) => acc + user.registeredHoursByWeek[3].totalHours, 0)
+    },
+    totalRegisteredHoursWeek5() {
+      return this.users.reduce((acc, user) => acc + user.registeredHoursByWeek[4].totalHours, 0)
     }
   }
 }
