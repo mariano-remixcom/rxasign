@@ -10,26 +10,28 @@
     <div class="container d-flex flex-column align-items-center justify-content-between">
       <div class="container">
         <div class="row mb-3">
-          <div class="col-md-4">
-            <label for="periodo" class="form-label">Período</label>
-            <select id="periodo" class="form-select">
-              <option>Enero 2024</option>
-              <option>Febrero 2024</option>
-              <option>Marzo 2024</option>
-              <option>Abril 2024</option>
-              <option>Mayo 2024</option>
-              <option>Junio 2024</option>
-              <option selected>Julio 2024 (actual)</option>
-              <option>Agosto 2024</option>
-              <option>Septiembre 2024</option>
-              <option>Octubre 2024</option>
-              <option>Noviembre 2024</option>
-              <option>Diciembre 2024</option>
-            </select>
+          <div class="col-md-6">
+            <label class="form-label">Período</label>
+            <div class="d-flex">
+              <input
+                id="startDate"
+                v-model="startDate"
+                type="date"
+                class="form-control bg-white me-2"
+                @change="debouncedOnChangeFilters"
+              />
+              <input
+                id="endDate"
+                v-model="endDate"
+                type="date"
+                class="form-control bg-white"
+                @change="debouncedOnChangeFilters"
+              />
+            </div>
           </div>
-          <div class="col-md-8">
+          <div class="col-md-6">
             <label for="proyecto" class="form-label">Proyecto</label>
-            <select id="proyecto" v-model="selectedProject" class="form-select" @change="onChangeProject">
+            <select id="proyecto" v-model="selectedProject" class="form-select" @change="onChangeFilters">
               <option :value="{ id: -1, name: 'all' }">Todos los proyectos</option>
               <option v-for="project in projects" :key="`project-${project.id}`" :value="project">
                 {{ project.client.name }} - {{ project.name }}
@@ -42,11 +44,6 @@
             <TablaGestionHoras v-if="users" :users="users" />
           </div>
         </div>
-        <div class="row">
-          <div class="col-12 text-end">
-            <p class="text-muted">Actualizado: 25/06/24 15:17</p>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -57,6 +54,7 @@ import ProjectsService from '@/services/projects'
 import RegisteredPeriodsService from '@/services/registeredPeriods'
 import TablaGestionHoras from '@/components/gestion-horas/TablaGestionHoras.vue'
 import moment from 'moment'
+import { useDebounceFn } from '@vueuse/core'
 
 export default {
   name: 'App',
@@ -68,8 +66,11 @@ export default {
       users: null,
       projects: [],
       selectedProject: { id: -1, name: 'all' },
-      startDate: moment().startOf('month').subtract(1, 'month').format('YYYY-MM-DD'),
-      endDate: moment().endOf('month').subtract(1, 'month').format('YYYY-MM-DD')
+      startDate: moment().startOf('month').format('YYYY-MM-DD'),
+      endDate: moment().endOf('month').format('YYYY-MM-DD'),
+      debouncedOnChangeFilters: useDebounceFn(() => {
+        this.onChangeFilters()
+      }, 500)
     }
   },
   mounted() {
@@ -77,7 +78,7 @@ export default {
     this.getProjects()
   },
   methods: {
-    async onChangeProject() {
+    async onChangeFilters() {
       if (this.selectedProject.id === -1) {
         return this.getResourcesWithHours()
       }
