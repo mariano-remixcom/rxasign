@@ -41,7 +41,7 @@
         </div>
         <div class="row mb-3">
           <div class="col-12">
-            <TablaGestionHoras v-if="users" :users="users" />
+            <TablaGestionHoras v-if="users" :users="users" @show-details="onShowDetail" />
           </div>
         </div>
       </div>
@@ -73,17 +73,25 @@ export default {
       }, 500)
     }
   },
+  computed: {
+    selectedProjectId() {
+      if (this.selectedProject.id === -1) {
+        return undefined
+      }
+
+      return [this.selectedProject.id]
+    }
+  },
   mounted() {
     this.getResourcesWithHours()
     this.getProjects()
   },
   methods: {
     async onChangeFilters() {
-      if (this.selectedProject.id === -1) {
-        return this.getResourcesWithHours()
-      }
-
-      return this.getResourcesWithHours([this.selectedProject.id])
+      return this.getResourcesWithHours(this.selectedProjectId)
+    },
+    async onShowDetail(userId) {
+      return this.getUserRegisteredHours(userId, this.selectedProjectId)
     },
     async getResourcesWithHours(projectIds) {
       const registeredPeriodsService = new RegisteredPeriodsService()
@@ -94,6 +102,13 @@ export default {
       const registeredPeriodsService = new ProjectsService()
 
       this.projects = (await registeredPeriodsService.getAllProjects()).data
+    },
+    getUserRegisteredHours(userId, projectIds) {
+      const registeredPeriods = new RegisteredPeriodsService()
+
+      return registeredPeriods.getUserDetail(userId, this.startDate, this.endDate, projectIds).then((response) => {
+        console.log(response.data)
+      })
     }
   }
 }

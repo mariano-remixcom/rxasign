@@ -10,4 +10,15 @@ export default class RegisteredPeriodsService {
       }
     })
   }
+
+  getUserDetail(userId, startDate, endDate, projectIds) {
+    return api().get(`/registered-periods/`, {
+      params: {
+        userId,
+        startDate,
+        endDate,
+        projectIds
+      }
+    })
+  }
 }
