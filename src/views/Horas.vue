@@ -18,6 +18,8 @@
                 v-model="startDate"
                 type="date"
                 class="form-control bg-white me-2"
+                :class="{ 'is-invalid': v$.startDate.$error }"
+                @blur="v$.startDate.$touch"
                 @change="debouncedOnChangeFilters"
               />
               <input
@@ -25,6 +27,8 @@
                 v-model="endDate"
                 type="date"
                 class="form-control bg-white"
+                :class="{ 'is-invalid': v$.endDate.$error }"
+                @blur="v$.endDate.$touch"
                 @change="debouncedOnChangeFilters"
               />
             </div>
@@ -41,7 +45,7 @@
         </div>
         <div class="row mb-3">
           <div class="col-12">
-            <TablaGestionHoras v-if="users" :users="users" @show-details="onShowDetail" />
+            <TablaGestionHoras v-if="users" :users="users" :users-details="usersDetails" @show-details="onShowDetail" />
           </div>
         </div>
       </div>
@@ -54,6 +58,7 @@ import ProjectsService from '@/services/projects'
 import RegisteredPeriodsService from '@/services/registeredPeriods'
 import TablaGestionHoras from '@/components/gestion-horas/TablaGestionHoras.vue'
 import moment from 'moment'
+import useVuelidate from '@vuelidate/core'
 import { useDebounceFn } from '@vueuse/core'
 
 export default {
@@ -61,16 +66,60 @@ export default {
   components: {
     TablaGestionHoras
   },
+  setup() {
+    return {
+      v$: useVuelidate()
+    }
+  },
   data() {
     return {
       users: null,
+      usersDetails: {},
       projects: [],
       selectedProject: { id: -1, name: 'all' },
       startDate: moment().startOf('month').format('YYYY-MM-DD'),
       endDate: moment().endOf('month').format('YYYY-MM-DD'),
       debouncedOnChangeFilters: useDebounceFn(() => {
+        this.v$.$validate()
+
+        if (this.v$.$invalid) {
+          return
+        }
+
         this.onChangeFilters()
       }, 500)
+    }
+  },
+  validations() {
+    return {
+      startDate: {
+        required: true,
+        date: true,
+        isValid: (value) => {
+          return moment(value).isValid()
+        },
+        before: (value) => {
+          if (!this.areDatesValid()) {
+            return true
+          }
+
+          return moment(value).isBefore(this.endDate)
+        }
+      },
+      endDate: {
+        required: true,
+        date: true,
+        isValid: (value) => {
+          return moment(value).isValid()
+        },
+        after: (value) => {
+          if (!this.areDatesValid()) {
+            return true
+          }
+
+          return moment(value).isAfter(this.startDate)
+        }
+      }
     }
   },
   computed: {
@@ -88,12 +137,22 @@ export default {
   },
   methods: {
     async onChangeFilters() {
-      return this.getResourcesWithHours(this.selectedProjectId)
+      const $promises = []
+
+      Object.keys(this.usersDetails).forEach((userId) => {
+        $promises.push(this.getUserRegisteredHours(userId, this.selectedProjectId))
+      })
+
+      $promises.push(this.getResourcesWithHours(this.selectedProjectId))
+
+      return Promise.all($promises)
     },
     async onShowDetail(userId) {
       return this.getUserRegisteredHours(userId, this.selectedProjectId)
     },
     async getResourcesWithHours(projectIds) {
+      if (!this.areDatesValid()) return
+
       const registeredPeriodsService = new RegisteredPeriodsService()
 
       this.users = (await registeredPeriodsService.getSumaryHoursByUser(this.startDate, this.endDate, projectIds)).data
@@ -104,11 +163,19 @@ export default {
       this.projects = (await registeredPeriodsService.getAllProjects()).data
     },
     getUserRegisteredHours(userId, projectIds) {
+      if (!this.areDatesValid()) return
+
       const registeredPeriods = new RegisteredPeriodsService()
 
       return registeredPeriods.getUserDetail(userId, this.startDate, this.endDate, projectIds).then((response) => {
-        console.log(response.data)
+        this.usersDetails[userId] = response.data
       })
+    },
+    areDatesValid() {
+      const start = moment(this.startDate)
+      const end = moment(this.endDate)
+
+      return start.isValid() && end.isValid() && start.isBefore(end)
     }
   }
 }

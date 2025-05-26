@@ -70,6 +70,7 @@ export default {
           alert('Error interno del servidor.')
         } else {
           alert('Error al iniciar sesión.')
+          console.error('Error al iniciar sesión:', error)
         }
       }
     },
