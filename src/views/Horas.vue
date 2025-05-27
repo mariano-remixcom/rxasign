@@ -175,7 +175,7 @@ export default {
       const start = moment(this.startDate)
       const end = moment(this.endDate)
 
-      return start.isValid() && end.isValid() && start.isBefore(end)
+      return start.isValid() && end.isValid()
     }
   }
 }
