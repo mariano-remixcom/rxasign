@@ -21,4 +21,14 @@ export default class RegisteredPeriodsService {
       }
     })
   }
+
+  exportRegisteredHours(startDate, endDate, selectedProjectId, selectedUsers, format) {
+    return api().post(`/registered-periods/export`, {
+      startDate,
+      endDate,
+      selectedProjectId,
+      selectedUsers,
+      format
+    })
+  }
 }

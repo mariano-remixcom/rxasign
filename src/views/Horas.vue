@@ -33,7 +33,7 @@
               />
             </div>
           </div>
-          <div class="col-md-6">
+          <div class="col-md-3 col-lg-4">
             <label for="proyecto" class="form-label">Proyecto</label>
             <select id="proyecto" v-model="selectedProject" class="form-select" @change="onChangeFilters">
               <option :value="{ id: -1, name: 'all' }">Todos los proyectos</option>
@@ -41,6 +41,17 @@
                 {{ project.client.name }} - {{ project.name }}
               </option>
             </select>
+          </div>
+          <div class="col-md-3 col-lg-2 d-flex align-items-end pt-2">
+            <div class="dropdown w-100">
+              <button class="btn btn-soft-primary w-100 drowdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                Exportar <i class="bi bi-chevron-down"></i>
+              </button>
+              <ul class="dropdown-menu w-100">
+                <li><button class="dropdown-item" @click="exportData('pdf')">En PDF</button></li>
+                <li><button class="dropdown-item" @click="exportData('xls')">En Excel</button></li>
+              </ul>
+            </div>
           </div>
         </div>
         <div class="row mb-3">
@@ -203,7 +214,35 @@ export default {
     },
     onDeselectUser(userId) {
       this.selectedUsers = this.selectedUsers.filter((id) => id !== userId)
+    },
+    exportData(format) {
+      const registeredPeriods = new RegisteredPeriodsService()
+
+      return registeredPeriods.exportRegisteredHours(
+        this.startDate,
+        this.endDate,
+        this.selectedProjectId,
+        this.selectedUsers,
+        format
+      )
     }
   }
 }
 </script>
+<style lang="scss" scoped>
+.dropdown-menu {
+  background-color: $primary-light;
+  color: $indigo-500;
+  border: 0;
+}
+
+.dropdown-item {
+  background-color: $primary-light;
+  color: $indigo-500;
+
+  &:hover,
+  &:active {
+    background-color: $indigo-100;
+  }
+}
+</style>
