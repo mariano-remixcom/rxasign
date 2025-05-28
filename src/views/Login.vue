@@ -69,7 +69,7 @@ export default {
         } else if (error.response && error.response.status === 500) {
           alert('Error interno del servidor.')
         } else {
-          alert('Error al iniciar sesión.')
+          alert('Error al iniciar sesión.' + error.message)
           console.error('Error al iniciar sesión:', error)
         }
       }

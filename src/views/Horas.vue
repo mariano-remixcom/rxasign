@@ -45,7 +45,17 @@
         </div>
         <div class="row mb-3">
           <div class="col-12">
-            <TablaGestionHoras v-if="users" :users="users" :users-details="usersDetails" @show-details="onShowDetail" />
+            <TablaGestionHoras
+              v-if="users"
+              :users="users"
+              :users-details="usersDetails"
+              :selected-users="selectedUsers"
+              @show-details="onShowDetail"
+              @select-all="onSelectAll"
+              @deselect-all="onDeselectAll"
+              @select-user="onSelectUser"
+              @deselect-user="onDeselectUser"
+            />
           </div>
         </div>
       </div>
@@ -73,6 +83,7 @@ export default {
   },
   data() {
     return {
+      selectedUsers: [],
       users: null,
       usersDetails: {},
       projects: [],
@@ -156,6 +167,10 @@ export default {
       const registeredPeriodsService = new RegisteredPeriodsService()
 
       this.users = (await registeredPeriodsService.getSumaryHoursByUser(this.startDate, this.endDate, projectIds)).data
+
+      this.selectedUsers = this.selectedUsers.filter((userId) => {
+        return this.users.some((user) => user.userId === userId)
+      })
     },
     async getProjects() {
       const registeredPeriodsService = new ProjectsService()
@@ -176,6 +191,18 @@ export default {
       const end = moment(this.endDate)
 
       return start.isValid() && end.isValid()
+    },
+    onSelectAll() {
+      this.selectedUsers = this.users.map((user) => user.userId)
+    },
+    onDeselectAll() {
+      this.selectedUsers = []
+    },
+    onSelectUser(userId) {
+      this.selectedUsers.push(userId)
+    },
+    onDeselectUser(userId) {
+      this.selectedUsers = this.selectedUsers.filter((id) => id !== userId)
     }
   }
 }
