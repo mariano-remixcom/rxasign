@@ -215,16 +215,27 @@ export default {
     onDeselectUser(userId) {
       this.selectedUsers = this.selectedUsers.filter((id) => id !== userId)
     },
-    exportData(format) {
+    async exportData(format) {
       const registeredPeriods = new RegisteredPeriodsService()
 
-      return registeredPeriods.exportRegisteredHours(
+      const response = await registeredPeriods.exportRegisteredHours(
         this.startDate,
         this.endDate,
         this.selectedProjectId,
         this.selectedUsers,
         format
       )
+
+      const fileName = `registered-hours-${this.startDate}-${this.endDate}.${format}`
+      const blob = response.data
+
+      const link = document.createElement('a')
+
+      link.href = URL.createObjectURL(blob)
+      link.download = fileName
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
     }
   }
 }
