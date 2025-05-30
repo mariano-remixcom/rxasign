@@ -49,7 +49,7 @@
               </button>
               <ul class="dropdown-menu w-100">
                 <li><button class="dropdown-item" @click="exportData('pdf')">En PDF</button></li>
-                <li><button class="dropdown-item" @click="exportData('xls')">En Excel</button></li>
+                <li><button class="dropdown-item" @click="exportData('xlsx')">En Excel</button></li>
               </ul>
             </div>
           </div>
