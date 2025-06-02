@@ -1,10 +1,10 @@
+import AuthService from '../../services/auth'
 import DefaultLayout from '../layouts/default/DefaultLayout.vue'
 import FormsLayout from '../layouts/admin/FormsLayout.vue'
 import LoginLayout from '../layouts/login/LoginLayout.vue'
-import { createRouter, createWebHashHistory } from 'vue-router'
-import { useSession } from '@/helpers/session/useSession'
+import { createRouter, createWebHistory } from 'vue-router'
 
-const history = createWebHashHistory()
+const history = createWebHistory()
 const routes = [
   {
     path: '/',
@@ -63,6 +63,22 @@ const routes = [
     meta: {
       layout: LoginLayout
     }
+  },
+  {
+    path: '/recuperar',
+    name: 'RecuperarPassword',
+    component: () => import(/* webpackChunkName: "recuperar" */ '../views/PasswordRecoveryRequest.vue'),
+    meta: {
+      layout: LoginLayout
+    }
+  },
+  {
+    path: '/recuperar/:token',
+    name: 'RestablecerPassword',
+    component: () => import(/* webpackChunkName: "restablecer" */ '../views/PasswordReset.vue'),
+    meta: {
+      layout: LoginLayout
+    }
   }
 ]
 
@@ -72,11 +88,30 @@ const router = createRouter({
   routes
 })
 
-const { isAuthenticated } = useSession()
+// TODO: This should update when the user logs in or out
+// Remover esta línea:
+// const isAuthenticated = await new AuthService().isAuthenticated()
 
 router.beforeEach(async (to, from) => {
-  // If user is not logged then redirect to login
-  if (!(await isAuthenticated()) && to.name !== 'Login') {
+  const publicRoutes = ['Login', 'RecuperarPassword', 'RestablecerPassword']
+
+  // Si es una ruta pública, permitir acceso sin verificar autenticación
+  if (publicRoutes.includes(to.name)) {
+    return true
+  }
+
+  // Para rutas protegidas, verificar autenticación en cada navegación
+  try {
+    const authService = new AuthService()
+    const user = await authService.isAuthenticated()
+
+    if (user) {
+      return true // Usuario autenticado, permitir acceso
+    } else {
+      return { name: 'Login' } // No autenticado, redirigir a login
+    }
+  } catch (error) {
+    // Error en verificación (conexión, servidor, etc.)
     return { name: 'Login' }
   }
 })

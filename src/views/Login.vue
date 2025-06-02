@@ -17,7 +17,11 @@
         </div>
       </div>
       <div class="form-actions">
-        <a href="#" class="fw-semibold">Recuperar Contraseña</a>
+        <!-- <div class="remember-me">
+          <input id="remember-me" v-model="rememberMe" type="checkbox" />
+          <label for="remember-me">Recordarme</label>
+        </div> -->
+        <router-link to="/recuperar" class="fw-semibold">Restablecer Contraseña</router-link>
       </div>
       <button type="submit" class="btn btn-primary w-100">Ingresar</button>
     </form>
