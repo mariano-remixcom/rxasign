@@ -1,6 +1,6 @@
 <template>
   <div class="login-container">
-    <form class="login-form" @submit="login">
+    <form class="login-form" @submit.prevent="login">
       <h1><strong>Hola!</strong></h1>
       <p>Ingrese sus datos de acceso para iniciar sesión.</p>
       <div class="form-group">
@@ -17,10 +17,6 @@
         </div>
       </div>
       <div class="form-actions">
-        <!-- <div class="remember-me">
-          <input id="remember-me" v-model="rememberMe" type="checkbox" />
-          <label for="remember-me">Recordarme</label>
-        </div> -->
         <router-link to="/recuperar" class="fw-semibold">Restablecer Contraseña</router-link>
       </div>
       <button type="submit" class="btn btn-primary w-100">Ingresar</button>
@@ -50,10 +46,10 @@ export default {
   },
   methods: {
     async login() {
-      if (this.email === '' || this.password === '') {
-        useToaster('error', 'Por favor, complete todos los campos.')
+      const { addToast } = useToaster()
 
-        return
+      if (this.email === '' || this.password === '') {
+        return addToast('Por favor, complete todos los campos.', 'warning')
       }
 
       const authService = new AuthService()
@@ -67,13 +63,13 @@ export default {
         this.$router.push({ name: 'Dashboard' })
       } catch (error) {
         if (error.response && error.response.status === 404) {
-          useToaster('error', 'Usuario o contraseña incorrectos.')
+          addToast('Usuario o contraseña incorrectos.', 'danger')
         } else if (error.response && error.response.status === 401) {
-          useToaster('error', 'Usuario o contraseña incorrectos.')
+          addToast(error.response.data, 'danger')
         } else if (error.response && error.response.status === 500) {
-          alert('Error interno del servidor.')
+          addToast('Error interno del servidor.', 'danger')
         } else {
-          alert('Error al iniciar sesión.' + error.message)
+          addToast('Error al iniciar sesión.', 'danger')
           console.error('Error al iniciar sesión:', error)
         }
       }
