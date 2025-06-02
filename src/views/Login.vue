@@ -1,6 +1,6 @@
 <template>
   <div class="login-container">
-    <div class="login-form">
+    <form class="login-form" @submit="login">
       <h1><strong>Hola!</strong></h1>
       <p>Ingrese sus datos de acceso para iniciar sesión.</p>
       <div class="form-group">
@@ -17,19 +17,16 @@
         </div>
       </div>
       <div class="form-actions">
-        <!-- <div class="remember-me">
-          <input id="remember-me" v-model="rememberMe" type="checkbox" />
-          <label for="remember-me">Recordarme</label>
-        </div> -->
         <a href="#" class="fw-semibold">Recuperar Contraseña</a>
       </div>
-      <button class="btn btn-primary w-100" @click="login">Ingresar</button>
-    </div>
+      <button type="submit" class="btn btn-primary w-100">Ingresar</button>
+    </form>
   </div>
 </template>
 
 <script>
 import AuthService from '../services/auth'
+import { useSession } from '@/helpers/session/useSession'
 import { useToaster } from '@/helpers/alerts/toasts/useToaster'
 
 export default {
@@ -37,8 +34,14 @@ export default {
     return {
       email: '',
       password: '',
-      rememberMe: false,
       showPassword: false
+    }
+  },
+  async mounted() {
+    const { isAuthenticated } = useSession()
+
+    if (await isAuthenticated()) {
+      this.$router.push({ name: 'Dashboard' })
     }
   },
   methods: {
@@ -52,7 +55,11 @@ export default {
       const authService = new AuthService()
 
       try {
-        await authService.login(this.email, this.password)
+        const { data } = await authService.login(this.email, this.password)
+        const { setSession } = useSession()
+
+        setSession(data)
+
         this.$router.push({ name: 'Dashboard' })
       } catch (error) {
         if (error.response && error.response.status === 404) {
@@ -62,7 +69,8 @@ export default {
         } else if (error.response && error.response.status === 500) {
           alert('Error interno del servidor.')
         } else {
-          alert('Error al iniciar sesión.')
+          alert('Error al iniciar sesión.' + error.message)
+          console.error('Error al iniciar sesión:', error)
         }
       }
     },

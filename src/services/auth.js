@@ -9,7 +9,7 @@ export default class AuthService {
     return api().get('/auth/logout')
   }
 
-  isAuthenticated() {
+  getCurrentUser() {
     return api()
       .get('/users/me')
       .then((response) => {
