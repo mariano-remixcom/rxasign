@@ -1,4 +1,4 @@
-import AuthService from '../../services/auth'
+import AuthService from '../services/auth'
 import DefaultLayout from '../layouts/default/DefaultLayout.vue'
 import FormsLayout from '../layouts/admin/FormsLayout.vue'
 import LoginLayout from '../layouts/login/LoginLayout.vue'
