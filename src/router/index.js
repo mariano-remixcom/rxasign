@@ -2,9 +2,9 @@ import AdminLayout from '../layouts/admin/AdminLayout.vue'
 import AuthService from '@/services/auth'
 import DefaultLayout from '../layouts/default/DefaultLayout.vue'
 import LoginLayout from '../layouts/login/LoginLayout.vue'
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 
-const history = createWebHashHistory()
+const history = createWebHistory()
 const routes = [
   {
     path: '/',
@@ -89,13 +89,29 @@ const router = createRouter({
 })
 
 // TODO: This should update when the user logs in or out
-const isAuthenticated = await new AuthService().isAuthenticated()
+// Remover esta línea:
+// const isAuthenticated = await new AuthService().isAuthenticated()
 
 router.beforeEach(async (to, from) => {
-  // If user is not logged then redirect to login
   const publicRoutes = ['Login', 'RecuperarPassword', 'RestablecerPassword']
 
-  if (!isAuthenticated && !publicRoutes.includes(to.name)) {
+  // Si es una ruta pública, permitir acceso sin verificar autenticación
+  if (publicRoutes.includes(to.name)) {
+    return true
+  }
+
+  // Para rutas protegidas, verificar autenticación en cada navegación
+  try {
+    const authService = new AuthService()
+    const user = await authService.isAuthenticated()
+
+    if (user) {
+      return true // Usuario autenticado, permitir acceso
+    } else {
+      return { name: 'Login' } // No autenticado, redirigir a login
+    }
+  } catch (error) {
+    // Error en verificación (conexión, servidor, etc.)
     return { name: 'Login' }
   }
 })

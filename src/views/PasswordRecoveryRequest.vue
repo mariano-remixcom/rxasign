@@ -1,8 +1,8 @@
 <template>
   <div class="recovery-container">
     <div class="recovery-form">
-      <h1><strong>Recuperar contraseña</strong></h1>
-      <p>Ingresa tu correo electrónico y te enviaremos un enlace para recuperar tu contraseña.</p>
+      <h1><strong>Restablecer contraseña</strong></h1>
+      <p>Ingresa tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña.</p>
 
       <div v-if="message" class="alert" :class="messageType">
         {{ message }}

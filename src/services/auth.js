@@ -27,14 +27,14 @@ export default class AuthService {
   }
 
   requestPasswordRecovery(email) {
-    return api().post('/auth/recovery', {
+    return api().post('/auth/request-password-reset', {
       email,
       host: window.location.origin
     })
   }
 
   validateToken(token) {
-    return api().get(`/auth/validate-token/${token}`)
+    return api().get(`/auth/validate-reset-token/${token}`)
   }
 
   resetPassword(token, password) {

@@ -21,7 +21,7 @@
           <input id="remember-me" v-model="rememberMe" type="checkbox" />
           <label for="remember-me">Recordarme</label>
         </div> -->
-        <router-link to="/recuperar" class="fw-semibold">Recuperar Contraseña</router-link>
+        <router-link to="/recuperar" class="fw-semibold">Restablecer Contraseña</router-link>
       </div>
       <button class="btn btn-primary w-100" @click="login">Ingresar</button>
     </div>
