@@ -1,8 +1,8 @@
-import AuthService from '../services/auth'
 import DefaultLayout from '../layouts/default/DefaultLayout.vue'
 import FormsLayout from '../layouts/admin/FormsLayout.vue'
 import LoginLayout from '../layouts/login/LoginLayout.vue'
 import { createRouter, createWebHistory } from 'vue-router'
+import { useSession } from '@/helpers/session/useSession'
 
 const history = createWebHistory()
 const routes = [
@@ -49,6 +49,14 @@ const routes = [
     }
   },
   {
+    path: '/horas',
+    name: 'Horas',
+    component: () => import(/* webpackChunkName: "horas" */ '../views/Horas.vue'),
+    meta: {
+      layout: DefaultLayout
+    }
+  },
+  {
     path: '/usuarios',
     name: 'Usuarios',
     component: () => import(/* webpackChunkName: "usuarios" */ '../views/Usuarios.vue'),
@@ -88,30 +96,11 @@ const router = createRouter({
   routes
 })
 
-// TODO: This should update when the user logs in or out
-// Remover esta línea:
-// const isAuthenticated = await new AuthService().isAuthenticated()
+const { isAuthenticated } = useSession()
+const publicRoutes = ['Login', 'RecuperarPassword', 'RestablecerPassword']
 
 router.beforeEach(async (to, from) => {
-  const publicRoutes = ['Login', 'RecuperarPassword', 'RestablecerPassword']
-
-  // Si es una ruta pública, permitir acceso sin verificar autenticación
-  if (publicRoutes.includes(to.name)) {
-    return true
-  }
-
-  // Para rutas protegidas, verificar autenticación en cada navegación
-  try {
-    const authService = new AuthService()
-    const user = await authService.isAuthenticated()
-
-    if (user) {
-      return true // Usuario autenticado, permitir acceso
-    } else {
-      return { name: 'Login' } // No autenticado, redirigir a login
-    }
-  } catch (error) {
-    // Error en verificación (conexión, servidor, etc.)
+  if (!publicRoutes.includes(to.name) && !(await isAuthenticated())) {
     return { name: 'Login' }
   }
 })
