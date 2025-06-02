@@ -41,9 +41,9 @@ const routes = [
     ]
   },
   {
-    path: '/horas',
+    path: '/registro-horas',
     name: 'Registro de horas',
-    component: () => import(/* webpackChunkName: "horas" */ '../views/Horas.vue'),
+    component: () => import(/* webpackChunkName: "horas" */ '../views/RegistroHoras.vue'),
     meta: {
       layout: DefaultLayout
     }

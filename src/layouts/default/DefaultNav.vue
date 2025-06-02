@@ -29,6 +29,9 @@
           <li class="nav-item">
             <router-link to="/proyectos" class="nav-link" @click="collapseNavbar">Proyectos</router-link>
           </li>
+          <li class="nav-item">
+            <router-link to="/registro-horas" class="nav-link" @click="collapseNavbar">Registro de Horas</router-link>
+          </li>
           <li v-if="isAdminUser" class="nav-item">
             <router-link to="/horas" class="nav-link" @click="collapseNavbar">Gestión de Horas</router-link>
           </li>
