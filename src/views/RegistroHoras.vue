@@ -77,7 +77,7 @@
                   <td>{{ getProjectName(entry.idProject) }}</td>
                   <td>{{ getTaskDisplayName(entry.taskType) }}</td>
                   <td>{{ entry.description }}</td>
-                  <td>{{ formatHours(entry.time) }}</td>
+                  <td>{{ formatHours(entry.hours) }}</td>
                   <td>
                     <div class="d-flex">
                       <button class="btn btn-link text-primary p-1" @click="startEditEntry(entry)">
@@ -136,12 +136,12 @@
                           type="text"
                           placeholder="0:00"
                           class="form-control input-fixed-width text-end"
-                          :class="{ 'is-invalid': v$.editingEntries[index]?.time.$error }"
+                          :class="{ 'is-invalid': v$.editingEntries[index]?.hours.$error }"
                           @blur="formatTimeInputForEntry(entry)"
                         />
                         <span class="mx-1">hs</span>
                       </div>
-                      <div v-if="v$.editingEntries[index]?.time.$error" class="invalid-feedback d-block">
+                      <div v-if="v$.editingEntries[index]?.hours.$error" class="invalid-feedback d-block">
                         El tiempo debe ser mayor a 0
                       </div>
                     </div>
@@ -202,13 +202,13 @@
                       type="text"
                       placeholder="0:00"
                       class="form-control input-fixed-width text-end"
-                      :class="{ 'is-invalid': v$.currentEntry.time.$error }"
+                      :class="{ 'is-invalid': v$.currentEntry.hours.$error }"
                       @blur="formatTimeInput"
                     />
                     <span class="mx-1">hs</span>
                   </div>
 
-                  <div v-if="v$.currentEntry.time.$error" class="invalid-feedback d-block">El tiempo debe ser mayor a 0</div>
+                  <div v-if="v$.currentEntry.hours.$error" class="invalid-feedback d-block">El tiempo debe ser mayor a 0</div>
                 </td>
 
                 <td>
@@ -293,7 +293,7 @@ export default {
         idProject: '',
         taskType: '',
         description: '',
-        time: 0,
+        hours: 0,
         timeInput: '',
         entryDate: ''
       },
@@ -326,7 +326,7 @@ export default {
 
     totalHours() {
       return this.timeEntries.reduce((total, entry) => {
-        return total + (parseFloat(entry.time) || 0)
+        return total + (parseFloat(entry.hours) || 0)
       }, 0)
     },
 
@@ -340,13 +340,13 @@ export default {
       currentEntry: {
         idProject: { required },
         taskType: { required },
-        time: { required, minValue: minValue(0.01) }
+        hours: { required, minValue: minValue(0.01) }
       },
       editingEntries: {
         $each: {
           idProject: { required },
           taskType: { required },
-          time: { required, minValue: minValue(0.01) }
+          hours: { required, minValue: minValue(0.01) }
         }
       }
     }
@@ -489,7 +489,7 @@ export default {
       const [hours, minutes] = timeStr.split(':').map((part) => parseInt(part, 10) || 0)
 
       this.currentEntry.timeInput = `${hours}:${minutes.toString().padStart(2, '0')}`
-      this.currentEntry.time = this.parseHours(this.currentEntry.timeInput)
+      this.currentEntry.hours = this.parseHours(this.currentEntry.timeInput)
     },
 
     formatTimeInputForEntry(entry) {
@@ -504,12 +504,12 @@ export default {
       const [hours, minutes] = timeStr.split(':').map((part) => parseInt(part, 10) || 0)
 
       entry.timeInput = `${hours}:${minutes.toString().padStart(2, '0')}`
-      entry.time = this.parseHours(entry.timeInput)
+      entry.hours = this.parseHours(entry.timeInput)
 
       const editIndex = this.timeEntries.findIndex((e) => e.id === entry.id)
 
       if (editIndex !== -1 && this.editingEntries[editIndex]) {
-        this.editingEntries[editIndex].time = entry.time
+        this.editingEntries[editIndex].hours = entry.hours
       }
     },
 
@@ -530,7 +530,7 @@ export default {
           this.timeEntries = response.data.data.map((entry) => ({
             ...entry,
             isEditing: false,
-            timeInput: this.formatHours(entry.time)
+            timeInput: this.formatHours(entry.hours)
           }))
           this.editingEntries = JSON.parse(JSON.stringify(this.timeEntries))
         } else {
@@ -587,7 +587,7 @@ export default {
         idProject: '',
         taskType: '',
         description: '',
-        time: 0,
+        hours: 0,
         timeInput: '0:00',
         entryDate: this.selectedDateFormatted
       }
@@ -602,7 +602,7 @@ export default {
       this.showEntryForm = false
       this.entriesBackup = JSON.parse(JSON.stringify(this.timeEntries))
       entry.isEditing = true
-      entry.timeInput = this.formatHours(entry.time)
+      entry.timeInput = this.formatHours(entry.hours)
       this.editingEntries = JSON.parse(JSON.stringify(this.timeEntries))
 
       if (this.v$ && this.v$.editingEntries) {
@@ -669,7 +669,7 @@ export default {
           idProject: entry.idProject,
           taskType: entry.taskType,
           description: entry.description || this.defaultDescription,
-          time: entry.time,
+          hours: entry.hours,
           entryDate: entry.entryDate || this.selectedDateFormatted
         }
 
@@ -706,7 +706,7 @@ export default {
           idProject: this.currentEntry.idProject,
           taskType: this.currentEntry.taskType,
           description: this.currentEntry.description || this.defaultDescription,
-          time: this.currentEntry.time,
+          hours: this.currentEntry.hours,
           entryDate: this.currentEntry.entryDate || this.selectedDateFormatted
         }
 
