@@ -76,8 +76,8 @@
 
 <script>
 import ProjectsService from '@/services/projects'
-import RegisteredPeriodsService from '@/services/registeredPeriods'
 import TablaGestionHoras from '@/components/gestion-horas/TablaGestionHoras.vue'
+import TimeEntriesService from '@/services/time-entries'
 import moment from 'moment'
 import useVuelidate from '@vuelidate/core'
 import { useDebounceFn } from '@vueuse/core'
@@ -175,25 +175,25 @@ export default {
     async getResourcesWithHours(projectIds) {
       if (!this.areDatesValid()) return
 
-      const registeredPeriodsService = new RegisteredPeriodsService()
+      const timeEntriesService = new TimeEntriesService()
 
-      this.users = (await registeredPeriodsService.getSumaryHoursByUser(this.startDate, this.endDate, projectIds)).data
+      this.users = (await timeEntriesService.getSumaryHoursByUser(this.startDate, this.endDate, projectIds)).data
 
       this.selectedUsers = this.selectedUsers.filter((userId) => {
         return this.users.some((user) => user.userId === userId)
       })
     },
     async getProjects() {
-      const registeredPeriodsService = new ProjectsService()
+      const timeEntriesService = new ProjectsService()
 
-      this.projects = (await registeredPeriodsService.getAllProjects()).data
+      this.projects = (await timeEntriesService.getAllProjects()).data
     },
     getUserRegisteredHours(userId, projectIds) {
       if (!this.areDatesValid()) return
 
-      const registeredPeriods = new RegisteredPeriodsService()
+      const timeEntries = new TimeEntriesService()
 
-      return registeredPeriods.getUserDetail(userId, this.startDate, this.endDate, projectIds).then((response) => {
+      return timeEntries.getUserDetail(userId, this.startDate, this.endDate, projectIds).then((response) => {
         this.usersDetails[userId] = response.data
       })
     },
@@ -216,9 +216,9 @@ export default {
       this.selectedUsers = this.selectedUsers.filter((id) => id !== userId)
     },
     async exportData(format) {
-      const registeredPeriods = new RegisteredPeriodsService()
+      const timeEntries = new TimeEntriesService()
 
-      const response = await registeredPeriods.exportRegisteredHours(
+      const response = await timeEntries.exportRegisteredHours(
         this.startDate,
         this.endDate,
         this.selectedProjectId,
