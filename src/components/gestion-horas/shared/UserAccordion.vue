@@ -1,69 +1,67 @@
 <template>
-  <div v-if="user" id="userTable" ref="userTable" class="accordion accordion-flush">
-    <div class="accordion-item border-0 p-0">
-      <div class="accordion-header d-flex flex-row bg-white border-bottom">
-        <div class="p-2 align-self-center">
-          <input type="checkbox" :checked="selected" @click="toggleUser" />
-        </div>
-        <button
-          class="accordion-button collapsed p-0 pe-3 bg-white"
-          type="button"
-          data-bs-toggle="collapse"
-          :data-bs-target="`#collapse${user.userId}`"
-          aria-expanded="false"
-          :aria-controls="`collapse${user.userId}`"
-        >
-          <div class="d-flex flex-row w-100">
-            <div class="col-6 col-lg-3 p-2-5">
-              <div class="d-flex align-items-center">
-                <img v-if="user.avatar" :src="user.avatar" class="rounded-circle" width="40" height="40" />
-                <i v-else class="bi bi-person-circle h4 p-0 m-0" :title="user.fullName"></i>
-                <div class="ms-2">
-                  <div class="fw-semibold">{{ user.fullName }}</div>
-                  <div class="text-muted">
-                    <small v-for="(role, idx) in user.roles" :key="user.id + role">
-                      {{ roles.find((r) => r.key === role).displayName }}
-                      <span v-if="idx < user.roles.length - 1"> - </span>
-                    </small>
-                  </div>
+  <div v-if="user" ref="userTable" class="accordion-item border-0 p-0">
+    <div :id="`header${user.userId}`" class="accordion-header d-flex flex-row bg-white border-bottom">
+      <div class="p-2 align-self-center">
+        <input type="checkbox" :checked="selected" @click="toggleUser" />
+      </div>
+      <button
+        class="accordion-button collapsed p-0 pe-3 bg-white"
+        type="button"
+        data-bs-toggle="collapse"
+        :data-bs-target="`#collapse${user.userId}`"
+        aria-expanded="false"
+        :aria-controls="`collapse${user.userId}`"
+      >
+        <div class="d-flex flex-row w-100">
+          <div class="col-6 col-lg-3 p-2-5">
+            <div class="d-flex align-items-center">
+              <img v-if="user.avatar" :src="user.avatar" class="rounded-circle" width="40" height="40" />
+              <i v-else class="bi bi-person-circle h4 p-0 m-0" :title="user.fullName"></i>
+              <div class="ms-2">
+                <div class="fw-semibold">{{ user.fullName }}</div>
+                <div class="text-muted">
+                  <small v-for="(role, idx) in user.roles" :key="user.id + role">
+                    {{ roles.find((r) => r.key === role).displayName }}
+                    <span v-if="idx < user.roles.length - 1"> - </span>
+                  </small>
                 </div>
               </div>
             </div>
-            <div class="col-3 col-lg p-2-5 align-content-center">{{ user.monthlyAssignedHours }} hs</div>
-            <div class="col-3 col-lg p-2-5 align-content-center">{{ user.registeredHours }} hs</div>
-            <div
-              v-for="week in user.registeredHoursByWeek"
-              :key="user.userId + week.weekStart"
-              class="d-none d-lg-flex col p-2-5 align-content-center"
-            >
-              <input v-model="week.totalHours" type="number" class="form-control input-fixed-width" readonly />
-            </div>
           </div>
-        </button>
-      </div>
-      <div :id="`collapse${user.userId}`" class="accordion-collapse collapse" data-bs-parent="#userTable">
-        <div class="accordion-body">
-          <table v-if="userDetails && userDetails.length > 0" class="table">
-            <thead>
-              <tr>
-                <th>Proyecto</th>
-                <th>Tarea</th>
-                <th>Descripción</th>
-                <th>Tiempo</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="registeredPeriod in userDetails" :key="'detailUser' + user.userId + '-' + registeredPeriod.id">
-                <td>{{ registeredPeriod.project.client.name }} - {{ registeredPeriod.project.name }}</td>
-                <td>Desarrollo</td>
-                <td>TASK NAME</td>
-                <td>{{ formatHours(registeredPeriod.hours) }}</td>
-              </tr>
-            </tbody>
-          </table>
-          <div v-if="userDetails && userDetails.length === 0" class="text-center text-muted">
-            No hay detalles de horas registradas para este usuario.
+          <div class="col-3 col-lg p-2-5 align-content-center">{{ user.monthlyAssignedHours }} hs</div>
+          <div class="col-3 col-lg p-2-5 align-content-center">{{ user.registeredHours }} hs</div>
+          <div
+            v-for="week in user.registeredHoursByWeek"
+            :key="user.userId + week.weekStart"
+            class="d-none d-lg-flex col p-2-5 align-content-center"
+          >
+            <input v-model="week.totalHours" type="number" class="form-control input-fixed-width" readonly />
           </div>
+        </div>
+      </button>
+    </div>
+    <div :id="`collapse${user.userId}`" class="accordion-collapse collapse" :aria-labelledby="`header${user.userId}`">
+      <div class="accordion-body">
+        <table v-if="userDetails && userDetails.length > 0" class="table">
+          <thead>
+            <tr>
+              <th>Proyecto</th>
+              <th>Tarea</th>
+              <th width="60%">Descripción</th>
+              <th>Tiempo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="timeEntry in userDetails" :key="'detailUser' + user.userId + '-' + timeEntry.id">
+              <td>{{ timeEntry.project.client.name }} - {{ timeEntry.project.name }}</td>
+              <td>{{ timeEntry.taskType }}</td>
+              <td>{{ timeEntry.description }}</td>
+              <td>{{ formatHours(timeEntry.hours) }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div v-if="userDetails && userDetails.length === 0" class="text-center text-muted">
+          No hay detalles de horas registradas para este usuario.
         </div>
       </div>
     </div>

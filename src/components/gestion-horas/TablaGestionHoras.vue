@@ -16,16 +16,18 @@
       </div>
     </div>
     <div class="align-middle">
-      <UserAccordion
-        v-for="user in users"
-        :key="'user' + user.userId"
-        :user="user"
-        :selected="selectedUsers.includes(user.userId)"
-        :user-details="usersDetails ? usersDetails[user.userId] : null"
-        @show-details="showDetails"
-        @select-user="onSelectUser"
-        @deselect-user="onDeselectUser"
-      />
+      <div id="userTable" class="accordion accordion-flush">
+        <UserAccordion
+          v-for="user in users"
+          :key="'user' + user.userId"
+          :user="user"
+          :selected="selectedUsers.includes(user.userId)"
+          :user-details="usersDetails ? usersDetails[user.userId] : null"
+          @show-details="showDetails"
+          @select-user="onSelectUser"
+          @deselect-user="onDeselectUser"
+        />
+      </div>
       <div class="d-flex flex-row bg-white border-bottom padding-header-footer-right padding-header-footer-left">
         <div class="col-6 col-lg-3 bg-white p-2-5">Total</div>
         <div class="col-3 col-lg bg-white p-2-5">{{ totalAssignedHours }} hs</div>
