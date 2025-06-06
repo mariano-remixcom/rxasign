@@ -55,7 +55,7 @@ export default class TimeEntriesService {
 
   exportRegisteredHours(startDate, endDate, selectedProjectId, selectedUsers, format) {
     return api().post(
-      `/registered-periods/export`,
+      `/time-entries/export`,
       {
         startDate,
         endDate,
