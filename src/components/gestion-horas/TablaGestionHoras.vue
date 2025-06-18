@@ -2,7 +2,7 @@
   <div>
     <div class="d-flex flex-row w-100 border-bottom">
       <div class="px-2">
-        <input v-model="selectAll" type="checkbox" @click="onClickSelectAll" />
+        <input v-model="selectAll" :disabled="loadingUsers" type="checkbox" @click="onClickSelectAll" />
       </div>
       <div class="d-flex flex-row w-100 padding-header-footer-right">
         <div class="col-6 col-lg-3 fw-bold text-black px-2-5">Usuario</div>
@@ -15,7 +15,7 @@
         <div class="d-none d-lg-flex col fw-bold text-black px-2-5">Semana 5</div>
       </div>
     </div>
-    <div class="align-middle">
+    <div v-if="!loadingUsers" class="align-middle">
       <div id="userTable" class="accordion accordion-flush">
         <UserAccordion
           v-for="user in users"
@@ -28,7 +28,10 @@
           @deselect-user="onDeselectUser"
         />
       </div>
-      <div class="d-flex flex-row bg-white border-bottom padding-header-footer-right padding-header-footer-left">
+      <div
+        v-if="!loadingUsers"
+        class="d-flex flex-row bg-white border-bottom padding-header-footer-right padding-header-footer-left"
+      >
         <div class="col-6 col-lg-3 bg-white p-2-5">Total</div>
         <div class="col-3 col-lg bg-white p-2-5">{{ totalAssignedHours }} hs</div>
         <div class="col-3 col-lg bg-white p-2-5">{{ totalRegisteredHours }} hs</div>
@@ -37,6 +40,11 @@
         <div class="d-none d-lg-flex col bg-white p-2-5">{{ totalRegisteredHoursWeek3 }} hs</div>
         <div class="d-none d-lg-flex col bg-white p-2-5">{{ totalRegisteredHoursWeek4 }} hs</div>
         <div class="d-none d-lg-flex col bg-white p-2-5">{{ totalRegisteredHoursWeek5 }} hs</div>
+      </div>
+    </div>
+    <div v-if="loadingUsers" class="d-flex justify-content-center align-items-center m-2">
+      <div class="spinner-border text-primary" role="status" style="width: 1.5rem; height: 1.5rem">
+        <span class="visually-hidden">Loading...</span>
       </div>
     </div>
   </div>
@@ -50,6 +58,10 @@ export default {
     UserAccordion
   },
   props: {
+    loadingUsers: {
+      type: Boolean,
+      required: true
+    },
     users: {
       type: Array,
       required: true

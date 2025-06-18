@@ -42,6 +42,11 @@
     </div>
     <div :id="`collapse${user.userId}`" class="accordion-collapse collapse" :aria-labelledby="`header${user.userId}`">
       <div class="accordion-body">
+        <div v-if="!userDetails" class="d-flex justify-content-center align-items-center">
+          <div class="spinner-border spinner-border-sm" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
         <table v-if="userDetails && userDetails.length > 0" class="table">
           <thead>
             <tr>

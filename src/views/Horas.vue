@@ -57,7 +57,7 @@
         <div class="row mb-3">
           <div class="col-12">
             <TablaGestionHoras
-              v-if="users"
+              :loading-users="loadingUsers"
               :users="users"
               :users-details="usersDetails"
               :selected-users="selectedUsers"
@@ -96,6 +96,7 @@ export default {
     return {
       selectedUsers: [],
       users: null,
+      loadingUsers: true,
       usersDetails: {},
       projects: [],
       selectedProject: { id: -1, name: 'all' },
@@ -175,6 +176,7 @@ export default {
     async getResourcesWithHours(projectIds) {
       if (!this.areDatesValid()) return
 
+      this.loadingUsers = true
       const timeEntriesService = new TimeEntriesService()
 
       this.users = (await timeEntriesService.getSumaryHoursByUser(this.startDate, this.endDate, projectIds)).data
@@ -182,6 +184,8 @@ export default {
       this.selectedUsers = this.selectedUsers.filter((userId) => {
         return this.users.some((user) => user.userId === userId)
       })
+
+      this.loadingUsers = false
     },
     async getProjects() {
       const timeEntriesService = new ProjectsService()
