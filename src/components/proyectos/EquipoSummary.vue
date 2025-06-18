@@ -207,11 +207,11 @@
 <script>
 import ConfirmModal from '@/components/shared/ConfirmModal.vue'
 import DeleteModal from '@/components/shared/DeleteModal.vue'
-import FormatDate from '@/mixins/formatting-text/FormatDate.vue'
 import ResourcesService from '@/services/resources'
 import UsersService from '@/services/users'
 import { USER_ROLES } from '@/constants/UserRoles'
 import { helpers, minValue, required } from '@vuelidate/validators'
+import { useFormatDate } from '@/composables/formatting-text/useFormatDate'
 import { useSetupSession } from '@/composables/session/useSetupSession'
 import { useVuelidate } from '@vuelidate/core'
 
@@ -220,7 +220,6 @@ export default {
     ConfirmModal,
     DeleteModal
   },
-  mixins: [FormatDate],
   props: {
     equipo: {
       type: Array,
@@ -242,7 +241,8 @@ export default {
   setup() {
     return {
       v$: useVuelidate(),
-      ...useSetupSession()
+      ...useSetupSession(),
+      ...useFormatDate()
     }
   },
   validations() {

@@ -90,10 +90,10 @@
 <script>
 import EditModal from '@/components/proyectos/EditProjectModal.vue'
 import FieldWithLabel from './FieldWithLabel.vue'
-import FormatDate from '@/mixins/formatting-text/FormatDate.vue'
 import ProjectState from '@/components/proyectos/ProjectState.vue'
 import ProjectsService from '@/services/projects'
 import moment from 'moment'
+import { useFormatDate } from '@/composables/formatting-text/useFormatDate'
 import { useSetupSession } from '@/composables/session/useSetupSession'
 
 export default {
@@ -102,7 +102,6 @@ export default {
     EditModal,
     ProjectState
   },
-  mixins: [FormatDate],
   props: {
     proyecto: {
       type: Object,
@@ -111,7 +110,10 @@ export default {
   },
   emits: ['fetch-project'],
   setup() {
-    return useSetupSession()
+    return {
+      ...useSetupSession(),
+      ...useFormatDate()
+    }
   },
   data() {
     return {

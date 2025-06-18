@@ -83,10 +83,10 @@
 import ClientsService from '@/services/clients'
 import DeleteModal from '@/components/shared/DeleteModal.vue'
 import EditModal from '@/components/proyectos/EditProjectModal.vue'
-import FormatDate from '@/mixins/formatting-text/FormatDate.vue'
 import ProjectState from '@/components/proyectos/ProjectState.vue'
 import ProjectsService from '@/services/projects'
 import ResourcesService from '@/services/resources'
+import { useFormatDate } from '@/composables/formatting-text/useFormatDate'
 import { useSetupSession } from '@/composables/session/useSetupSession'
 import { useToaster } from '@/composables/alerts/toasts/useToaster'
 
@@ -97,9 +97,11 @@ export default {
     DeleteModal,
     ProjectState
   },
-  mixins: [FormatDate],
   setup() {
-    return useSetupSession()
+    return {
+      ...useSetupSession(),
+      ...useFormatDate()
+    }
   },
   data() {
     return {
