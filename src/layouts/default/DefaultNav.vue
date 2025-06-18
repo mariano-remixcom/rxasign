@@ -52,36 +52,16 @@
 
 <script>
 import AuthService from '../../services/auth'
-import { useSession } from '@/helpers/session/useSession'
+import { useSession } from '@/composables/session/useSession'
+import { useSetupSession } from '@/composables/session/useSetupSession'
 
 export default {
   setup() {
-    const { getSession, getSessionRef } = useSession()
-    const session = getSessionRef()
-
-    getSession()
-
-    return { session }
+    return useSetupSession()
   },
   data() {
     return {
       navbarExpanded: false
-    }
-  },
-  computed: {
-    userFirstName() {
-      if (!this.session) {
-        return ''
-      }
-
-      return this.session.firstName
-    },
-    isAdminUser() {
-      if (!this.session) {
-        return false
-      }
-
-      return this.session.type === 'ADMIN' || this.session.type === 'SUPERADMIN'
     }
   },
   methods: {

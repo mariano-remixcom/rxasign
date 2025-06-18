@@ -30,7 +30,7 @@
 
 <script>
 import AuthService from '@/services/auth'
-import { useToaster } from '@/helpers/alerts/toasts/useToaster'
+import { useToaster } from '@/composables/alerts/toasts/useToaster'
 
 export default {
   data() {

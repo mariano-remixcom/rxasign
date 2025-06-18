@@ -8,7 +8,7 @@
           <th class="text-center" scope="col">Horas Asignadas</th>
           <th class="text-center" scope="col">Horas Contratadas</th>
           <th class="text-center" scope="col">Horas Libres</th>
-          <th class="text-center" scope="col">Acciones</th>
+          <th v-if="isAdminUser" class="text-center" scope="col">Acciones</th>
         </tr>
       </thead>
       <tbody class="align-middle">
@@ -23,7 +23,7 @@
               {{ user.fullName }}
             </span>
           </td>
-          <td data-label="Horas Asignadas">{{ user.totalAssignedHours }}</td>
+          <td data-label="Horas Asignadas" class="text-center">{{ user.totalAssignedHours }}</td>
           <td data-label="Horas Contratadas">
             <div v-if="editingUserIndex === index" class="text-center">
               <input v-model.number="editedHours" type="number" class="form-control form-control-sm" />
@@ -32,8 +32,8 @@
               {{ user.monthlyContractedHours }}
             </div>
           </td>
-          <td data-label="Horas Libres">{{ user.monthlyContractedHours - user.totalAssignedHours }}</td>
-          <td data-label="Acciones">
+          <td data-label="Horas Libres" class="text-center">{{ user.monthlyContractedHours - user.totalAssignedHours }}</td>
+          <td v-if="isAdminUser" data-label="Acciones">
             <div v-if="editingUserIndex === index" class="text-center">
               <button class="btn btn-link btn-m" @click="saveEdit(user.id, index)">
                 <i class="bi bi-check-circle"></i>
@@ -85,10 +85,14 @@
 
 <script>
 import UsersService from '@/services/users'
-import { useToaster } from '@/helpers/alerts/toasts/useToaster'
+import { useSetupSession } from '@/composables/session/useSetupSession'
+import { useToaster } from '@/composables/alerts/toasts/useToaster'
 
 export default {
   name: 'UsuariosTable',
+  setup() {
+    return useSetupSession()
+  },
   data() {
     return {
       usersService: new UsersService(),
@@ -103,7 +107,6 @@ export default {
   mounted() {
     this.loadUsersAndHours()
   },
-
   methods: {
     async loadUsersAndHours() {
       await this.getUsers()

@@ -2,7 +2,7 @@ import DefaultLayout from '../layouts/default/DefaultLayout.vue'
 import FormsLayout from '../layouts/admin/FormsLayout.vue'
 import LoginLayout from '../layouts/login/LoginLayout.vue'
 import { createRouter, createWebHistory } from 'vue-router'
-import { useSession } from '@/helpers/session/useSession'
+import { useSession } from '@/composables/session/useSession'
 
 const history = createWebHistory()
 const routes = [

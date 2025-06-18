@@ -6,7 +6,7 @@
         <p>Lista de proyectos por cliente con su equipo.</p>
       </div>
       <!-- Acciones inicio -->
-      <div class="d-flex gap-2">
+      <div v-if="isAdminUser" class="d-flex gap-2">
         <router-link to="/proyectos/agregar">
           <button class="btn btn-primary btn-lg">Nuevo</button>
         </router-link>
@@ -21,12 +21,16 @@
 
 <script>
 import ProyectosTable from '@/components/ProyectosTable.vue'
-import { useToaster } from '@/helpers/alerts/toasts/useToaster'
+import { useSetupSession } from '@/composables/session/useSetupSession'
+import { useToaster } from '@/composables/alerts/toasts/useToaster'
 
 export default {
   name: 'App',
   components: {
     ProyectosTable
+  },
+  setup() {
+    return useSetupSession()
   },
   created() {
     const { addToast } = useToaster()
