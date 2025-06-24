@@ -20,11 +20,18 @@
               <tr>
                 <td>
                   <div class="d-flex align-items-center">
-                    <button class="btn btn-light btn-sm px-2" @click="previousWeek">
+                    <button class="btn btn-light btn-sm px-2" :disabled="isLoadingEntries" @click="previousWeek">
                       <i class="bi bi-chevron-compact-left"></i>
                     </button>
-                    <div class="btn btn-grey btn-sm px-3" style="cursor: pointer" @click="resetToCurrentWeek">Esta semana</div>
-                    <button class="btn btn-light btn-sm px-2" @click="nextWeek">
+                    <div
+                      class="btn btn-grey btn-sm px-3"
+                      style="cursor: pointer"
+                      :class="{ disabled: isLoadingEntries }"
+                      @click="resetToCurrentWeek"
+                    >
+                      Esta semana
+                    </div>
+                    <button class="btn btn-light btn-sm px-2" :disabled="isLoadingEntries" @click="nextWeek">
                       <i class="bi bi-chevron-compact-right"></i>
                     </button>
                     <!-- Días de la semana (solo laborales) -->
@@ -34,10 +41,11 @@
                         :key="index"
                         :class="[
                           'px-3 py-1 mx-1 rounded-pill text-nowrap',
-                          isSelectedDay(day) ? 'bg-purple text-white fw-semibold' : 'text-secondary cursor-pointer'
+                          isSelectedDay(day) ? 'bg-purple text-white fw-semibold' : 'text-secondary cursor-pointer',
+                          isLoadingEntries ? 'disabled' : ''
                         ]"
                         style="min-width: 100px; text-align: center; cursor: pointer"
-                        @click="selectDay(day)"
+                        @click="!isLoadingEntries && selectDay(day)"
                       >
                         {{ formatDayText(day) }}
                       </div>
@@ -64,8 +72,20 @@
               </tr>
             </thead>
             <tbody class="align-middle">
+              <!-- Loader mientras se cargan las entradas -->
+              <tr v-if="isLoadingEntries">
+                <td colspan="5" class="text-center py-4">
+                  <div class="d-flex justify-content-center align-items-center">
+                    <div class="spinner-border spinner-border-sm text-primary me-2" role="status">
+                      <span class="visually-hidden">Cargando...</span>
+                    </div>
+                    <span>Cargando registros...</span>
+                  </div>
+                </td>
+              </tr>
+
               <!-- Sin registros - mensaje -->
-              <tr v-if="timeEntries.length === 0">
+              <tr v-else-if="timeEntries.length === 0">
                 <td colspan="5" class="text-center py-4">
                   <h6>Aún no cargaste horas asociadas a este dia.</h6>
                 </td>
@@ -80,10 +100,10 @@
                   <td>{{ formatHours(entry.hours) }}</td>
                   <td>
                     <div class="d-flex">
-                      <button class="btn btn-link text-primary p-1" @click="startEditEntry(entry)">
+                      <button class="btn btn-link text-primary p-1" :disabled="isLoadingEntries" @click="startEditEntry(entry)">
                         <i class="bi bi-pencil"></i>
                       </button>
-                      <button class="btn btn-link text-danger p-1" @click="deleteTimeEntry(entry)">
+                      <button class="btn btn-link text-danger p-1" :disabled="isLoadingEntries" @click="deleteTimeEntry(entry)">
                         <i class="bi bi-trash"></i>
                       </button>
                     </div>
@@ -126,6 +146,7 @@
                       type="text"
                       placeholder="Ingrese una descripción..."
                       class="form-control"
+                      :disabled="entry.isSaving"
                     />
                   </td>
                   <td>
@@ -137,6 +158,7 @@
                           placeholder="0:00"
                           class="form-control input-fixed-width text-end"
                           :class="{ 'is-invalid': v$.editingEntries[index]?.hours.$error }"
+                          :disabled="entry.isSaving"
                           @blur="formatTimeInputForEntry(entry)"
                         />
                         <span class="mx-1">hs</span>
@@ -152,7 +174,10 @@
                         <i class="bi bi-x"></i>
                       </button>
                       <button class="btn btn-link text-success p-1" @click="saveEditedEntry(entry, index)">
-                        <i class="bi bi-check"></i>
+                        <div v-if="entry.isSaving" class="spinner-border spinner-border-sm" role="status">
+                          <span class="visually-hidden">Guardando...</span>
+                        </div>
+                        <i v-else class="bi bi-check"></i>
                       </button>
                     </div>
                   </td>
@@ -166,6 +191,7 @@
                     v-model="currentEntry.idProject"
                     class="form-select"
                     :class="{ 'is-invalid': v$.currentEntry.idProject.$error }"
+                    :disabled="isSavingNewEntry"
                   >
                     <option value="" disabled>Seleccione un proyecto</option>
                     <option v-for="project in projects" :key="project.id" :value="project.id">
@@ -179,6 +205,7 @@
                     v-model="currentEntry.taskType"
                     class="form-select"
                     :class="{ 'is-invalid': v$.currentEntry.taskType.$error }"
+                    :disabled="isSavingNewEntry"
                   >
                     <option value="" disabled>Seleccione una tarea</option>
                     <option v-for="task in taskTypes" :key="task.key" :value="task.key">
@@ -193,6 +220,7 @@
                     type="text"
                     placeholder="Ingrese una descripción..."
                     class="form-control"
+                    :disabled="isSavingNewEntry"
                   />
                 </td>
                 <td>
@@ -203,6 +231,7 @@
                       placeholder="0:00"
                       class="form-control input-fixed-width text-end"
                       :class="{ 'is-invalid': v$.currentEntry.hours.$error }"
+                      :disabled="isSavingNewEntry"
                       @blur="formatTimeInput"
                     />
                     <span class="mx-1">hs</span>
@@ -213,11 +242,14 @@
 
                 <td>
                   <div class="d-flex">
-                    <button class="btn btn-link text-muted p-1" @click="cancelEdit">
+                    <button class="btn btn-link text-muted p-1" :disabled="isSavingNewEntry" @click="cancelEdit">
                       <i class="bi bi-x"></i>
                     </button>
-                    <button class="btn btn-link text-success p-1" @click="saveTimeEntry">
-                      <i class="bi bi-check"></i>
+                    <button class="btn btn-link text-success p-1" :disabled="isSavingNewEntry" @click="saveTimeEntry">
+                      <div v-if="isSavingNewEntry" class="spinner-border spinner-border-sm" role="status">
+                        <span class="visually-hidden">Guardando...</span>
+                      </div>
+                      <i v-else class="bi bi-check"></i>
                     </button>
                   </div>
                 </td>
@@ -227,10 +259,20 @@
 
           <!-- Botón agregar y total -->
           <div class="d-flex justify-content-between p-3">
-            <button class="btn btn-outline-primary" @click="addNewEntry">Agregar</button>
+            <button class="btn btn-outline-primary" :disabled="isLoadingEntries || showEntryForm" @click="addNewEntry">
+              <span v-if="isLoadingEntries" class="spinner-border spinner-border-sm me-2" role="status">
+                <span class="visually-hidden">Cargando...</span>
+              </span>
+              Agregar
+            </button>
             <div class="d-flex align-items-center font-weight-bold">
               <span class="me-2">Total:</span>
-              <span class="h4 mb-0">{{ formatHours(totalHours) }}</span>
+              <span class="h4 mb-0">
+                <span v-if="isLoadingEntries" class="spinner-border spinner-border-sm" role="status">
+                  <span class="visually-hidden">Calculando...</span>
+                </span>
+                <span v-else>{{ formatHours(totalHours) }}</span>
+              </span>
             </div>
           </div>
         </div>
@@ -242,6 +284,7 @@
       confirm-text="Eliminar"
       cancel-text="Cancelar"
       :message="deleteMessage"
+      :is-loading="isDeletingEntry"
       @close="isDeleteModalVisible = false"
       @confirm="confirmDelete"
     >
@@ -304,7 +347,9 @@ export default {
       deleteMessage: '¿Está seguro que desea eliminar este registro?',
       isInitialized: false,
       isLoadingEntries: false,
-      defaultDescription: 'Espacio de trabajo'
+      defaultDescription: 'Espacio de trabajo',
+      isSavingNewEntry: false,
+      isDeletingEntry: false
     }
   },
   computed: {
@@ -445,6 +490,8 @@ export default {
       this.saveCurrentDraftIfHasValidData()
       // Limpiar formulario actual
       this.resetCurrentForm()
+      this.timeEntries = []
+      this.editingEntries = []
       // Cambiar el día seleccionado
       this.selectedDay = new Date(newDay)
       // Cargar datos del nuevo día
@@ -524,13 +571,16 @@ export default {
 
       try {
         this.loading = true
+        this.timeEntries = []
+        this.editingEntries = []
         const response = await this.timeEntriesService.getTimeEntriesByDate(targetDate)
 
         if (response && response.data.data && Array.isArray(response.data.data)) {
           this.timeEntries = response.data.data.map((entry) => ({
             ...entry,
             isEditing: false,
-            timeInput: this.formatHours(entry.hours)
+            timeInput: this.formatHours(entry.hours),
+            isSaving: false
           }))
           this.editingEntries = JSON.parse(JSON.stringify(this.timeEntries))
         } else {
@@ -663,6 +713,7 @@ export default {
       }
 
       this.formatTimeInputForEntry(entry)
+      entry.isSaving = true
 
       try {
         const entryData = {
@@ -684,6 +735,8 @@ export default {
         }
       } catch (error) {
         console.error('Error al guardar entrada de tiempo:', error)
+      } finally {
+        entry.isSaving = false
       }
     },
 
@@ -700,6 +753,7 @@ export default {
       }
 
       this.formatTimeInput()
+      this.isSavingNewEntry = true
 
       try {
         const entryData = {
@@ -725,6 +779,8 @@ export default {
         }
       } catch (error) {
         console.error('Error al guardar entrada de tiempo:', error)
+      } finally {
+        this.isSavingNewEntry = false
       }
     },
 
@@ -734,6 +790,7 @@ export default {
     },
 
     async confirmDelete() {
+      this.isDeletingEntry = true
       try {
         await this.timeEntriesService.deleteTimeEntry(this.entryToDelete.id)
         await this.loadTimeEntries()
@@ -742,6 +799,7 @@ export default {
       } finally {
         this.isDeleteModalVisible = false
         this.entryToDelete = null
+        this.isDeletingEntry = false
       }
     },
 
@@ -940,5 +998,49 @@ select {
 /* Color de fondo para día seleccionado */
 .bg-purple {
   background-color: #6610f2;
+}
+/* Personalizar el color del spinner principal */
+.spinner-border {
+  color: #6f42c1 !important; /* Color púrpura para mantener consistencia */
+}
+
+/* Suavizar la transición cuando aparecen/desaparecen elementos */
+.table tbody tr {
+  transition: opacity 0.2s ease-in-out;
+}
+
+/* Estilo para elementos deshabilitados durante la carga */
+.disabled {
+  opacity: 0.6;
+  pointer-events: none;
+  cursor: not-allowed !important;
+}
+
+/* Mejorar el aspecto del botón "Esta semana" cuando está deshabilitado */
+.btn-grey.disabled {
+  background-color: #e9ecef;
+  border-color: #dee2e6;
+  color: #6c757d;
+}
+
+/* Estilo para los días de la semana cuando están deshabilitados */
+.cursor-pointer.disabled {
+  cursor: not-allowed !important;
+  opacity: 0.5;
+}
+
+/* Animación suave para el spinner en el total */
+.h4 .spinner-border-sm {
+  margin-left: 8px;
+}
+
+/* Mejorar la alineación vertical de los spinners en los botones */
+.btn .spinner-border-sm {
+  vertical-align: middle;
+}
+
+/* Estilo para las filas de la tabla durante la carga */
+.table tbody tr.loading {
+  background-color: rgba(0, 0, 0, 0.02);
 }
 </style>
