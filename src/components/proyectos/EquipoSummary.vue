@@ -12,7 +12,7 @@
             <th scope="col" class="text-center">Hs disponibles del recurso</th>
             <th scope="col" class="col-2">Vendidas</th>
             <th scope="col" class="col-2">Asignadas</th>
-            <th scope="col" class="text-center">Acciones</th>
+            <th v-if="isAdminUser" scope="col" class="text-center">Acciones</th>
           </tr>
         </thead>
         <tbody class="align-middle">
@@ -101,7 +101,7 @@
               </div>
             </td>
             <!-- Acciones -->
-            <td class="text-center">
+            <td v-if="isAdminUser" class="text-center">
               <button v-if="!miembro.editing" class="btn icon" @click="editResource(miembro)">
                 <i class="bi bi-pencil-square"></i>
               </button>
@@ -172,7 +172,7 @@
     </div>
 
     <!-- Botón para agregar recurso -->
-    <div class="d-flex flex-row px-3">
+    <div v-if="isAdminUser" class="d-flex flex-row px-3">
       <button class="btn btn-outline-primary" @click="addNewResource">Agregar recurso</button>
       <div class="col d-flex flex-row justify-content-end text-gray align-items-center">
         <i class="bi bi-arrow-repeat"></i>
@@ -207,11 +207,12 @@
 <script>
 import ConfirmModal from '@/components/shared/ConfirmModal.vue'
 import DeleteModal from '@/components/shared/DeleteModal.vue'
-import FormatDate from '@/mixins/formatting-text/FormatDate.vue'
 import ResourcesService from '@/services/resources'
 import UsersService from '@/services/users'
 import { USER_ROLES } from '@/constants/UserRoles'
 import { helpers, minValue, required } from '@vuelidate/validators'
+import { useFormatDate } from '@/composables/formatting-text/useFormatDate'
+import { useSetupSession } from '@/composables/session/useSetupSession'
 import { useVuelidate } from '@vuelidate/core'
 
 export default {
@@ -219,7 +220,6 @@ export default {
     ConfirmModal,
     DeleteModal
   },
-  mixins: [FormatDate],
   props: {
     equipo: {
       type: Array,
@@ -240,7 +240,9 @@ export default {
   },
   setup() {
     return {
-      v$: useVuelidate()
+      v$: useVuelidate(),
+      ...useSetupSession(),
+      ...useFormatDate()
     }
   },
   validations() {

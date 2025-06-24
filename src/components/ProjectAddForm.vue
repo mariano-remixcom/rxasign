@@ -135,11 +135,11 @@
 
 <script>
 import ClientsService from '@/services/clients'
-import FormatDate from '@/mixins/formatting-text/FormatDate.vue'
 import ProjectState from './proyectos/ProjectState.vue'
 import ProjectsService from '@/services/projects'
 import { PROJECT_STATES } from '@/constants/ProjectStates'
 import { helpers, minValue, required } from '@vuelidate/validators'
+import { useFormatDate } from '@/composables/formatting-text/useFormatDate'
 import { useVuelidate } from '@vuelidate/core'
 
 export default {
@@ -147,7 +147,6 @@ export default {
   components: {
     ProjectState
   },
-  mixins: [FormatDate],
   props: {
     projectEdit: {
       type: Object,
@@ -157,7 +156,8 @@ export default {
   emits: ['update-data', 'add-project', 'save-changes'],
   setup() {
     return {
-      v$: useVuelidate()
+      v$: useVuelidate(),
+      ...useFormatDate()
     }
   },
   data() {
@@ -220,8 +220,6 @@ export default {
     }
   },
   async mounted() {
-    // console.log(this.project, 'project')
-    // console.log(this.projectEdit, 'project')
     if (this.projectEdit) {
       this.project.id = this.projectEdit.id
       this.project.name = this.projectEdit.name

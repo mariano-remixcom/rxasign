@@ -43,7 +43,7 @@
     <div class="col-12 col-md-2">
       <div class="d-flex flex-column">
         <div class="d-flex justify-content-end">
-          <button class="btn btn-soft-primary mb-1" @click="editProject">Editar</button>
+          <button v-if="isAdminUser" class="btn btn-soft-primary mb-1" @click="editProject">Editar</button>
         </div>
         <div class="d-flex flex-row justify-content-end text-muted mt-1">
           <i class="bi bi-arrow-repeat"></i>
@@ -90,10 +90,11 @@
 <script>
 import EditModal from '@/components/proyectos/EditProjectModal.vue'
 import FieldWithLabel from './FieldWithLabel.vue'
-import FormatDate from '@/mixins/formatting-text/FormatDate.vue'
 import ProjectState from '@/components/proyectos/ProjectState.vue'
 import ProjectsService from '@/services/projects'
 import moment from 'moment'
+import { useFormatDate } from '@/composables/formatting-text/useFormatDate'
+import { useSetupSession } from '@/composables/session/useSetupSession'
 
 export default {
   components: {
@@ -101,7 +102,6 @@ export default {
     EditModal,
     ProjectState
   },
-  mixins: [FormatDate],
   props: {
     proyecto: {
       type: Object,
@@ -109,6 +109,12 @@ export default {
     }
   },
   emits: ['fetch-project'],
+  setup() {
+    return {
+      ...useSetupSession(),
+      ...useFormatDate()
+    }
+  },
   data() {
     return {
       projectsService: new ProjectsService(),

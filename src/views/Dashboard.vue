@@ -12,7 +12,7 @@
             <p class="card-text text-secondary">Lista de proyectos por cliente con su equipo.</p>
           </div>
           <div class="d-flex flex-column flex-sm-row gap-2">
-            <router-link to="/proyectos/agregar">
+            <router-link v-if="isAdminUser" to="/proyectos/agregar">
               <button class="btn btn-secondary btn-sm mt-2">Agregar</button>
             </router-link>
             <router-link to="/proyectos">
@@ -23,8 +23,7 @@
       </div>
     </div>
 
-    <!-- inicio card horas -->
-    <!-- <div class="row justify-content-center mb-3">
+    <div v-if="session && session.type === 'ADMIN'" class="row justify-content-center mb-3">
       <div class="card bg-white col-12 col-md-8 col-lg-6">
         <div class="card-body d-flex flex-column flex-sm-row align-items-center">
           <div class="icon-column text-primary mb-3 mb-sm-0">
@@ -41,7 +40,7 @@
           </div>
         </div>
       </div>
-    </div> -->
+    </div>
 
     <!-- inicio card usuarios -->
     <div class="row justify-content-center mb-3">
@@ -55,7 +54,7 @@
             <p class="card-text text-secondary">Lista de usuarios y administradores del sistema.</p>
           </div>
           <div class="d-flex flex-column flex-sm-row gap-2">
-            <button class="btn btn-secondary btn-sm mt-2" @click="addUser">Agregar</button>
+            <button v-if="isAdminUser" class="btn btn-secondary btn-sm mt-2">Agregar</button>
             <router-link to="/usuarios">
               <button class="btn btn-primary btn-sm mt-2">Abrir</button>
             </router-link>
@@ -67,11 +66,11 @@
 </template>
 
 <script>
+import { useSetupSession } from '@/composables/session/useSetupSession'
+
 export default {
-  methods: {
-    addUser() {
-      // console.log('Agregar usuario')
-    }
+  setup() {
+    return useSetupSession()
   }
 }
 </script>

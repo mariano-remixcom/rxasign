@@ -26,8 +26,8 @@
 
 <script>
 import AuthService from '../services/auth'
-import { useSession } from '@/helpers/session/useSession'
-import { useToaster } from '@/helpers/alerts/toasts/useToaster'
+import { useSession } from '@/composables/session/useSession'
+import { useToaster } from '@/composables/alerts/toasts/useToaster'
 
 export default {
   data() {

@@ -47,11 +47,11 @@
 
 <script>
 import EquipoSummary from '@/components/proyectos/EquipoSummary.vue'
-import NavigateBack from '@/mixins/navigation/NavigateBack.vue'
 import ProjectsService from '@/services/projects'
 import ProyectoNoEncontrado from './ProyectoNoEncontrado.vue'
 import ProyectoSummary from '@/components/proyectos/ProyectoSummary.vue'
 import { ref, watch } from 'vue'
+import { useNavigateBack } from '@/composables/navigation/useNavigateBack'
 import { useRoute } from 'vue-router'
 
 export default {
@@ -61,7 +61,6 @@ export default {
     EquipoSummary,
     ProyectoNoEncontrado
   },
-  mixins: [NavigateBack],
   setup: function () {
     const route = useRoute()
 
@@ -93,7 +92,8 @@ export default {
       loading,
       error,
       proyecto,
-      fetchProyectoData
+      fetchProyectoData,
+      ...useNavigateBack()
     }
   },
   methods: {

@@ -11,7 +11,7 @@
             <th scope="col">Asignadas</th>
             <th scope="col">Modificado</th>
             <th scope="col">Estado</th>
-            <th scope="col">Acciones</th>
+            <th v-if="isAdminUser" scope="col">Acciones</th>
           </tr>
         </thead>
         <tbody class="align-middle">
@@ -44,7 +44,7 @@
             <td v-else data-label="Asignadas">-</td>
             <td data-label="Modificado">{{ formatDate(item.updatedAt) }}</td>
             <td data-label="Estado"><project-state :state-key="item.currentState.currentState" /></td>
-            <td data-label="Acciones">
+            <td v-if="isAdminUser" data-label="Acciones">
               <!-- <button class="btn btn-link btn-m"><i class="bi bi-clipboard-data"></i></button>
               <button class="btn btn-link btn-m" @click="finishProject"><i class="bi bi-check-circle"></i></button> -->
               <button class="btn btn-link btn-m" @click="editProject(item)"><i class="bi bi-pencil-square"></i></button>
@@ -59,7 +59,7 @@
     :is-visible="showModalEdit"
     :large="large"
     :project-edit="projectEdit"
-    @updateDataEdit="updateDataEdit"
+    @update-data-edit="updateDataEdit"
     @close="
       () => {
         ;(showModalEdit = false), (large = false)
@@ -83,11 +83,12 @@
 import ClientsService from '@/services/clients'
 import DeleteModal from '@/components/shared/DeleteModal.vue'
 import EditModal from '@/components/proyectos/EditProjectModal.vue'
-import FormatDate from '@/mixins/formatting-text/FormatDate.vue'
 import ProjectState from '@/components/proyectos/ProjectState.vue'
 import ProjectsService from '@/services/projects'
 import ResourcesService from '@/services/resources'
-import { useToaster } from '@/helpers/alerts/toasts/useToaster'
+import { useFormatDate } from '@/composables/formatting-text/useFormatDate'
+import { useSetupSession } from '@/composables/session/useSetupSession'
+import { useToaster } from '@/composables/alerts/toasts/useToaster'
 
 export default {
   name: 'ProyectosTable',
@@ -96,7 +97,12 @@ export default {
     DeleteModal,
     ProjectState
   },
-  mixins: [FormatDate],
+  setup() {
+    return {
+      ...useSetupSession(),
+      ...useFormatDate()
+    }
+  },
   data() {
     return {
       projectsService: new ProjectsService(),
