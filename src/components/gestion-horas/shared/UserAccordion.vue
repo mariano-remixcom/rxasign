@@ -57,12 +57,15 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="timeEntry in userDetails" :key="'detailUser' + user.userId + '-' + timeEntry.id">
-              <td>{{ timeEntry.project.client.name }} - {{ timeEntry.project.name }}</td>
-              <td>{{ timeEntry.taskType }}</td>
-              <td>{{ timeEntry.description }}</td>
-              <td>{{ formatHours(timeEntry.hours) }}</td>
-            </tr>
+            <time-entry-row
+              v-for="timeEntry in userDetails"
+              :key="'detailUser' + user.userId + '-' + timeEntry.id"
+              :client-name="timeEntry.project.client.name"
+              :project-name="timeEntry.project.name"
+              :task-type="timeEntry.taskType"
+              :description="timeEntry.description"
+              :hours="timeEntry.hours"
+            />
           </tbody>
         </table>
         <div v-if="userDetails && userDetails.length === 0" class="text-center text-muted">
@@ -73,9 +76,13 @@
   </div>
 </template>
 <script>
+import TimeEntryRow from './TimeEntryRow.vue'
 import { USER_ROLES } from '@/constants/UserRoles'
 
 export default {
+  components: {
+    'time-entry-row': TimeEntryRow
+  },
   props: {
     user: {
       type: Object,
@@ -104,15 +111,6 @@ export default {
   methods: {
     showUserDetails() {
       this.$emit('showDetails', this.user.userId)
-    },
-    formatHours(hours) {
-      if (hours === undefined || hours === null || hours === '' || hours === 0) {
-        return '0 min'
-      }
-
-      const minutes = Math.round(hours * 60)
-
-      return `${minutes} min`
     },
     toggleUser() {
       if (this.selected) {

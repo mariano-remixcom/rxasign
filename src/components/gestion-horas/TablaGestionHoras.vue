@@ -64,7 +64,7 @@ export default {
     },
     users: {
       type: Array,
-      required: true
+      default: () => []
     },
     usersDetails: {
       type: Object,
