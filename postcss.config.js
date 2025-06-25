@@ -16,7 +16,14 @@ module.exports = {
           /^(?!(|.*?:)cursor-move).+-move$/,
           /^router-link(|-exact)-active$/,
           /data-v-.*/,
-          /^active/
+          /^active/,
+          // Safelist Bootstrap classes that might be used dynamically
+          /^bg-/,
+          /^text-/,
+          /^border-/,
+          /^btn-/,
+          /^alert-/,
+          /^bi-/
         ]
       })
   ]

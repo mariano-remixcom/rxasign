@@ -19,7 +19,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),
-      '~bootstrap': 'bootstrap'
+      '~bootstrap': resolve(__dirname, './node_modules/bootstrap')
     }
   },
   css: {
