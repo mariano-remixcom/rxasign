@@ -152,15 +152,17 @@
                   <td>
                     <div>
                       <div class="d-flex align-items-center">
-                        <input
+                        <select
                           v-model="entry.timeInput"
-                          type="text"
-                          placeholder="0:00"
-                          class="form-control input-fixed-width text-end"
+                          class="form-select input-fixed-width text-end"
                           :class="{ 'is-invalid': v$.editingEntries[index]?.hours.$error }"
                           :disabled="entry.isSaving"
-                          @blur="formatTimeInputForEntry(entry)"
-                        />
+                          @change="formatTimeInputForEntry(entry)"
+                        >
+                          <option v-for="minutes in timeOptions" :key="minutes" :value="formatHours(minutes / 60)">
+                            {{ formatHours(minutes / 60) }}
+                          </option>
+                        </select>
                         <span class="mx-1">hs</span>
                       </div>
                       <div v-if="v$.editingEntries[index]?.hours.$error" class="invalid-feedback d-block">
@@ -225,15 +227,17 @@
                 </td>
                 <td>
                   <div class="d-flex align-items-center">
-                    <input
+                    <select
                       v-model="currentEntry.timeInput"
-                      type="text"
-                      placeholder="0:00"
-                      class="form-control input-fixed-width text-end"
+                      class="form-select input-fixed-width text-end"
                       :class="{ 'is-invalid': v$.currentEntry.hours.$error }"
                       :disabled="isSavingNewEntry"
-                      @blur="formatTimeInput"
-                    />
+                      @change="formatTimeInput"
+                    >
+                      <option v-for="minutes in timeOptions" :key="minutes" :value="formatHours(minutes / 60)">
+                        {{ formatHours(minutes / 60) }}
+                      </option>
+                    </select>
                     <span class="mx-1">hs</span>
                   </div>
 
@@ -271,7 +275,7 @@
                 <span v-if="isLoadingEntries" class="spinner-border spinner-border-sm" role="status">
                   <span class="visually-hidden">Calculando...</span>
                 </span>
-                <span v-else>{{ formatHours(totalHours) }}</span>
+                <span v-else>{{ formatHours(totalHours) }} hs</span>
               </span>
             </div>
           </div>
@@ -349,7 +353,8 @@ export default {
       isLoadingEntries: false,
       defaultDescription: 'Espacio de trabajo',
       isSavingNewEntry: false,
-      isDeletingEntry: false
+      isDeletingEntry: false,
+      timeOptions: Array.from({ length: 24 }, (_, i) => (i + 1) * 15)
     }
   },
   computed: {
@@ -507,7 +512,6 @@ export default {
     formatDayText(day) {
       return format(day, 'EEE d MMM', { locale: es })
     },
-
     formatHours(hours) {
       if (hours === undefined || hours === null) return '0:00'
       const numHours = parseFloat(hours)
@@ -525,33 +529,15 @@ export default {
     },
 
     formatTimeInput() {
-      let timeStr = this.currentEntry.timeInput || ''
+      const timeStr = this.currentEntry.timeInput || '0:00'
 
-      if (/^\d+$/.test(timeStr)) {
-        timeStr = `${timeStr}:00`
-      }
-      if (!timeStr.includes(':')) {
-        timeStr = '0:00'
-      }
-      const [hours, minutes] = timeStr.split(':').map((part) => parseInt(part, 10) || 0)
-
-      this.currentEntry.timeInput = `${hours}:${minutes.toString().padStart(2, '0')}`
-      this.currentEntry.hours = this.parseHours(this.currentEntry.timeInput)
+      this.currentEntry.hours = this.parseHours(timeStr)
     },
 
     formatTimeInputForEntry(entry) {
-      let timeStr = entry.timeInput || ''
+      const timeStr = entry.timeInput || '0:00'
 
-      if (/^\d+$/.test(timeStr)) {
-        timeStr = `${timeStr}:00`
-      }
-      if (!timeStr.includes(':')) {
-        timeStr = '0:00'
-      }
-      const [hours, minutes] = timeStr.split(':').map((part) => parseInt(part, 10) || 0)
-
-      entry.timeInput = `${hours}:${minutes.toString().padStart(2, '0')}`
-      entry.hours = this.parseHours(entry.timeInput)
+      entry.hours = this.parseHours(timeStr)
 
       const editIndex = this.timeEntries.findIndex((e) => e.id === entry.id)
 
@@ -559,7 +545,6 @@ export default {
         this.editingEntries[editIndex].hours = entry.hours
       }
     },
-
     async loadTimeEntries() {
       // Prevenir llamadas múltiples
       if (this.isLoadingEntries) {
@@ -732,6 +717,7 @@ export default {
           if (this.v$ && this.v$.editingEntries && this.v$.editingEntries[index]) {
             this.v$.editingEntries[index].$reset()
           }
+          await this.initializeComponent()
         }
       } catch (error) {
         console.error('Error al guardar entrada de tiempo:', error)

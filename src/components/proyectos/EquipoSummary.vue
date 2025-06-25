@@ -77,28 +77,13 @@
             </td>
             <td v-else>
               <input v-model="miembro.soldHours" class="form-control" type="number" />
-              <div v-if="miembro.showErrors">
-                <div v-for="error in v$.equipoLocal.$each.$response.$errors[index].soldHours" :key="error" class="text-danger">
-                  Las horas vendidas son requeridas.
-                </div>
-              </div>
             </td>
-
             <!-- Horas Asignadas -->
             <td v-if="!miembro.editing">
               {{ miembro.assignedHours }}
             </td>
             <td v-else>
               <input v-model="miembro.assignedHours" class="form-control" type="number" />
-              <div v-if="miembro.showErrors">
-                <div
-                  v-for="error in v$.equipoLocal.$each.$response.$errors[index].assignedHours"
-                  :key="error"
-                  class="text-danger"
-                >
-                  La asignación horaria es requerida.
-                </div>
-              </div>
             </td>
             <!-- Acciones -->
             <td v-if="isAdminUser" class="text-center">
@@ -210,7 +195,7 @@ import DeleteModal from '@/components/shared/DeleteModal.vue'
 import ResourcesService from '@/services/resources'
 import UsersService from '@/services/users'
 import { USER_ROLES } from '@/constants/UserRoles'
-import { helpers, minValue, required } from '@vuelidate/validators'
+import { helpers, required } from '@vuelidate/validators'
 import { useFormatDate } from '@/composables/formatting-text/useFormatDate'
 import { useSetupSession } from '@/composables/session/useSetupSession'
 import { useVuelidate } from '@vuelidate/core'
@@ -257,9 +242,7 @@ export default {
             duplicatedRole: helpers.withMessage('Este usuario ya tiene asignado este rol.', (value, parent, index) =>
               this.checkDuplicateRole(parent.idUser, index)
             )
-          },
-          soldHours: { required, minValue: minValue(1) },
-          assignedHours: { required, minValue: minValue(1) }
+          }
         })
       }
     }
@@ -338,8 +321,8 @@ export default {
         rol: '',
         rolDisplayName: '',
         availableHours: 0,
-        soldHours: '',
-        assignedHours: '',
+        soldHours: 0,
+        assignedHours: 0,
         editing: true,
         showErrors: false,
         adding: true
@@ -367,6 +350,8 @@ export default {
       if (!miembro.id) {
         this.addResource(miembro)
       } else {
+        this.currentResource.soldHours = parseFloat(this.currentResource.soldHours) || 0
+        this.currentResource.assignedHours = parseFloat(this.currentResource.assignedHours) || 0
         this.isVisibleConfirm = true
       }
     },
@@ -380,8 +365,8 @@ export default {
       miembro.adding = false
       const newMember = {
         rol: miembro.rol,
-        soldHours: miembro.soldHours,
-        assignedHours: miembro.assignedHours,
+        soldHours: parseFloat(miembro.soldHours) || 0,
+        assignedHours: parseFloat(miembro.assignedHours) || 0,
         idSquad: this.idSquad,
         idUser: miembro.idUser,
         startDate: new Date().toISOString()
