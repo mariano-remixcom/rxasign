@@ -77,13 +77,30 @@
             </td>
             <td v-else>
               <input v-model="miembro.soldHours" class="form-control" type="number" />
+              <div v-if="miembro.showErrors">
+                <div v-for="error in v$.equipoLocal.$each.$response.$errors[index].soldHours" :key="error" class="text-danger">
+                  <span v-if="error.$validator === 'required'">Las horas vendidas son requeridas.</span>
+                  <span v-if="error.$validator === 'minValue'">Las horas vendidas no pueden ser negativas.</span>
+                </div>
+              </div>
             </td>
+
             <!-- Horas Asignadas -->
             <td v-if="!miembro.editing">
               {{ miembro.assignedHours }}
             </td>
             <td v-else>
               <input v-model="miembro.assignedHours" class="form-control" type="number" />
+              <div v-if="miembro.showErrors">
+                <div
+                  v-for="error in v$.equipoLocal.$each.$response.$errors[index].assignedHours"
+                  :key="error"
+                  class="text-danger"
+                >
+                  <span v-if="error.$validator === 'required'">La asignación horaria es requerida.</span>
+                  <span v-if="error.$validator === 'minValue'">Las horas asignadas no pueden ser negativas.</span>
+                </div>
+              </div>
             </td>
             <!-- Acciones -->
             <td v-if="isAdminUser" class="text-center">
@@ -195,7 +212,7 @@ import DeleteModal from '@/components/shared/DeleteModal.vue'
 import ResourcesService from '@/services/resources'
 import UsersService from '@/services/users'
 import { USER_ROLES } from '@/constants/UserRoles'
-import { helpers, required } from '@vuelidate/validators'
+import { helpers, minValue, required } from '@vuelidate/validators'
 import { useFormatDate } from '@/composables/formatting-text/useFormatDate'
 import { useSetupSession } from '@/composables/session/useSetupSession'
 import { useVuelidate } from '@vuelidate/core'
@@ -242,7 +259,9 @@ export default {
             duplicatedRole: helpers.withMessage('Este usuario ya tiene asignado este rol.', (value, parent, index) =>
               this.checkDuplicateRole(parent.idUser, index)
             )
-          }
+          },
+          soldHours: { required, minValue: minValue(0) },
+          assignedHours: { required, minValue: minValue(0) }
         })
       }
     }
@@ -321,8 +340,8 @@ export default {
         rol: '',
         rolDisplayName: '',
         availableHours: 0,
-        soldHours: 0,
-        assignedHours: 0,
+        soldHours: '',
+        assignedHours: '',
         editing: true,
         showErrors: false,
         adding: true
@@ -350,8 +369,6 @@ export default {
       if (!miembro.id) {
         this.addResource(miembro)
       } else {
-        this.currentResource.soldHours = parseFloat(this.currentResource.soldHours) || 0
-        this.currentResource.assignedHours = parseFloat(this.currentResource.assignedHours) || 0
         this.isVisibleConfirm = true
       }
     },
@@ -365,8 +382,8 @@ export default {
       miembro.adding = false
       const newMember = {
         rol: miembro.rol,
-        soldHours: parseFloat(miembro.soldHours) || 0,
-        assignedHours: parseFloat(miembro.assignedHours) || 0,
+        soldHours: miembro.soldHours,
+        assignedHours: miembro.assignedHours,
         idSquad: this.idSquad,
         idUser: miembro.idUser,
         startDate: new Date().toISOString()

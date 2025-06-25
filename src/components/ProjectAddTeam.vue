@@ -68,7 +68,8 @@
               />
               <div v-if="changed">
                 <div v-for="error in v$.teamMembers.$each.$response.$errors[index].hoursSold" :key="error" class="text-danger">
-                  La horas vendidas son requeridas.
+                  <span v-if="error.$validator === 'required'">Las horas vendidas son requeridas.</span>
+                  <span v-if="error.$validator === 'minValue'">Las horas vendidas no pueden ser negativas.</span>
                 </div>
               </div>
             </td>
@@ -90,7 +91,8 @@
                   :key="error"
                   class="text-danger"
                 >
-                  La asignación horaria es requerida.
+                  <span v-if="error.$validator === 'required'">La asignación horaria es requerida.</span>
+                  <span v-if="error.$validator === 'minValue'">Las horas asignadas no pueden ser negativas.</span>
                 </div>
               </div>
             </td>
@@ -162,8 +164,8 @@ export default {
           role: {
             required
           },
-          hoursAssigned: { required, minValue: minValue(1) },
-          hoursSold: { required, minValue: minValue(1) }
+          hoursAssigned: { required, minValue: minValue(0) },
+          hoursSold: { required, minValue: minValue(0) }
         })
       }
     }
