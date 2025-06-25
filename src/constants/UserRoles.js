@@ -16,11 +16,23 @@ export const USER_ROLES = [
     displayName: 'Project Manager'
   },
   {
+    key: 'BusinessAnalyst',
+    displayName: 'Business Analyst'
+  },
+  {
     key: 'TechLead',
     displayName: 'Tech Lead'
   },
   {
     key: 'CEO',
     displayName: 'CEO'
+  },
+  {
+    key: 'COO',
+    displayName: 'COO'
+  },
+  {
+    key: 'MarketingAndSalesManager',
+    displayName: 'Marketing and Sales Manager'
   }
 ]
