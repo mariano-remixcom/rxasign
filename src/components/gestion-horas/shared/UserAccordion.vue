@@ -50,6 +50,7 @@
         <table v-if="userDetails && userDetails.length > 0" class="table">
           <thead>
             <tr>
+              <th>Fecha</th>
               <th>Proyecto</th>
               <th>Tarea</th>
               <th width="60%">Descripción</th>
@@ -60,6 +61,7 @@
             <time-entry-row
               v-for="timeEntry in userDetails"
               :key="'detailUser' + user.userId + '-' + timeEntry.id"
+              :date="timeEntry.date"
               :client-name="timeEntry.project.client.name"
               :project-name="timeEntry.project.name"
               :task-type="timeEntry.taskType"

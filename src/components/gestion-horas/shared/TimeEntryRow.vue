@@ -1,5 +1,6 @@
 <template>
   <tr>
+    <td>{{ formattedDate }}</td>
     <td>{{ clientName }} - {{ projectName }}</td>
     <td>{{ formattedTaskType }}</td>
     <td>{{ description }}</td>
@@ -7,10 +8,15 @@
   </tr>
 </template>
 <script>
+import moment from 'moment'
 import { TASK_TYPES } from '@/constants/TaskType'
 
 export default {
   props: {
+    date: {
+      type: String,
+      required: true
+    },
     clientName: {
       type: String,
       required: true
@@ -44,6 +50,9 @@ export default {
     },
     formattedTaskType() {
       return TASK_TYPES.find((type) => type.key === this.taskType)?.displayName || this.taskType
+    },
+    formattedDate() {
+      return moment(this.date).format('DD/MM/YY')
     }
   }
 }
