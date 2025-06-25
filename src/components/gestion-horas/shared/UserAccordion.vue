@@ -61,7 +61,7 @@
             <time-entry-row
               v-for="timeEntry in userDetails"
               :key="'detailUser' + user.userId + '-' + timeEntry.id"
-              :date="timeEntry.date"
+              :date="timeEntry.entryDate"
               :client-name="timeEntry.project.client.name"
               :project-name="timeEntry.project.name"
               :task-type="timeEntry.taskType"
