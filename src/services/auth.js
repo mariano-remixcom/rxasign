@@ -1,8 +1,8 @@
 import api from './api'
 
 export default class AuthService {
-  login(username, password) {
-    return api().post('/auth/login', { username, password })
+  login(username, password, rememberMe = false) {
+    return api().post('/auth/login', { username, password, rememberMe })
   }
 
   logout() {
