@@ -60,7 +60,9 @@ export default {
 
         setSession(data)
 
-        this.$router.push({ name: 'Dashboard' })
+        await this.$nextTick()
+
+        this.$router.replace({ name: 'Dashboard' })
       } catch (error) {
         if (error.response && error.response.status === 404) {
           addToast('Usuario o contraseña incorrectos.', 'danger')

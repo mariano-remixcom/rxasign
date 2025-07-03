@@ -1,11 +1,25 @@
 import axios from 'axios'
 
-export default () => {
-  const hostApi = import.meta.env.VITE_HOST_API
-  const api = axios.create({
-    baseURL: hostApi,
-    withCredentials: true
-  })
+let apiInstance = null
 
-  return api
+export default () => {
+  if (!apiInstance) {
+    const hostApi = import.meta.env.VITE_HOST_API
+
+    apiInstance = axios.create({
+      baseURL: hostApi,
+      withCredentials: true
+    })
+  }
+
+  return apiInstance
+}
+
+// Separate function to set up interceptors - call this after all modules are loaded
+export const setupApiInterceptors = () => {
+  import('@/services/interceptors/checkSessionExpired').then(({ checkSessionExpired }) => {
+    const api = apiInstance
+
+    api.interceptors.response.use(undefined, checkSessionExpired)
+  })
 }
