@@ -162,7 +162,7 @@
 
                 <td>
                   <div class="d-flex">
-                    <button class="btn btn-link text-muted p-1" :disabled="isSavingNewEntry" @click="cancelEdit">
+                    <button class="btn btn-link text-muted p-1" :disabled="isSavingNewEntry" @click="cancelCreate">
                       <i class="bi bi-x"></i>
                     </button>
                     <button class="btn btn-link text-success p-1" :disabled="isSavingNewEntry" @click="saveTimeEntry">
@@ -253,7 +253,6 @@ export default {
       projects: [],
       timeEntries: [],
       showEntryForm: false,
-      isEditing: false,
       currentEntry: {
         id: null,
         idProject: '',
@@ -487,7 +486,6 @@ export default {
     },
     resetCurrentForm() {
       this.showEntryForm = false
-      this.isEditing = false
       this.currentEntry = {
         id: null,
         idProject: '',
@@ -502,11 +500,42 @@ export default {
         this.v$.currentEntry.$reset()
       }
     },
-    cancelEdit() {
+    cancelCreate() {
       this.clearDraftForDate(this.selectedDateFormatted)
       this.resetCurrentForm()
     },
+    async saveTimeEntry() {
+      const result = await this.v$.currentEntry.$validate()
 
+      if (!result) {
+        return
+      }
+
+      this.formatTimeInput()
+      this.isSavingNewEntry = true
+
+      try {
+        const entryData = {
+          idProject: this.currentEntry.idProject,
+          taskType: this.currentEntry.taskType,
+          description: this.currentEntry.description || this.defaultDescription,
+          hours: this.currentEntry.hours,
+          entryDate: this.currentEntry.entryDate || this.selectedDateFormatted
+        }
+
+        const response = await this.timeEntriesService.createTimeEntry(entryData)
+
+        if (response && response.data) {
+          this.clearDraftForDate(this.selectedDateFormatted)
+          await this.loadTimeEntries()
+          this.resetCurrentForm()
+        }
+      } catch (error) {
+        console.error('Error al guardar entrada de tiempo:', error)
+      } finally {
+        this.isSavingNewEntry = false
+      }
+    },
     async updateEntry(updatedEntry, index) {
       this.timeEntries[index] = updatedEntry
     },
@@ -628,7 +657,6 @@ export default {
             entryDate: dateToCheck
           }
           this.showEntryForm = true
-          this.isEditing = !!entry.id
 
           if (this.v$) {
             this.v$.currentEntry.$reset()

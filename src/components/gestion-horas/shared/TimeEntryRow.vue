@@ -55,7 +55,7 @@ export default {
       return this.getTaskDisplayName(this.taskType)
     },
     formattedDate() {
-      return moment(this.date).format('DD/MM/YY')
+      return moment(this.date).utc().format('DD/MM/YY')
     }
   }
 }
