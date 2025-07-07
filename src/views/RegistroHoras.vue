@@ -527,7 +527,9 @@ export default {
 
         if (response && response.data) {
           this.clearDraftForDate(this.selectedDateFormatted)
-          await this.loadTimeEntries()
+          // Hacer esto en vez de consultar el back evita que cancelen los edit y
+          // se pierdan entradas que no se hayan guardado
+          this.timeEntries.push(response.data.data)
           this.resetCurrentForm()
         }
       } catch (error) {
