@@ -487,8 +487,7 @@ export default {
 
       // Solo proceder si es un día diferente
       if (newDateStr === currentDateStr) {
-        console.log('Es el mismo día, no se hace nada')
-
+        // Es el mismo día, no hacer nada
         return
       }
       // Guardar borrador actual SI HAY DATOS VÁLIDOS
