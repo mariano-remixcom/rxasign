@@ -93,97 +93,13 @@
 
               <!-- Filas de registros existentes -->
               <tr v-for="(entry, index) in timeEntries" :key="entry.id || `temp-${index}`">
-                <template v-if="!entry.isEditing">
-                  <td>{{ getProjectName(entry.idProject) }}</td>
-                  <td>{{ getTaskDisplayName(entry.taskType) }}</td>
-                  <td>{{ entry.description }}</td>
-                  <td>{{ formatHours(entry.hours) }}</td>
-                  <td>
-                    <div class="d-flex">
-                      <button class="btn btn-link text-primary p-1" :disabled="isLoadingEntries" @click="startEditEntry(entry)">
-                        <i class="bi bi-pencil"></i>
-                      </button>
-                      <button class="btn btn-link text-danger p-1" :disabled="isLoadingEntries" @click="deleteTimeEntry(entry)">
-                        <i class="bi bi-trash"></i>
-                      </button>
-                    </div>
-                  </td>
-                </template>
-
-                <!-- Modo edición en línea -->
-                <template v-else>
-                  <td>
-                    <select
-                      v-model="entry.idProject"
-                      class="form-select"
-                      :class="{ 'is-invalid': v$.editingEntries[index]?.idProject.$error }"
-                    >
-                      <option value="" disabled>Seleccione un proyecto</option>
-                      <option v-for="project in projects" :key="project.id" :value="project.id">
-                        {{ project.name }}
-                      </option>
-                    </select>
-                    <div v-if="v$.editingEntries[index]?.idProject.$error" class="invalid-feedback">
-                      Debe seleccionar un proyecto
-                    </div>
-                  </td>
-                  <td>
-                    <select
-                      v-model="entry.taskType"
-                      class="form-select"
-                      :class="{ 'is-invalid': v$.editingEntries[index]?.taskType.$error }"
-                    >
-                      <option value="" disabled>Seleccione una tarea</option>
-                      <option v-for="task in taskTypes" :key="task.key" :value="task.key">{{ task.displayName }}</option>
-                    </select>
-                    <div v-if="v$.editingEntries[index]?.taskType.$error" class="invalid-feedback">
-                      Debe seleccionar una tarea
-                    </div>
-                  </td>
-                  <td>
-                    <input
-                      v-model="entry.description"
-                      type="text"
-                      placeholder="Ingrese una descripción..."
-                      class="form-control"
-                      :disabled="entry.isSaving"
-                    />
-                  </td>
-                  <td>
-                    <div>
-                      <div class="d-flex align-items-center">
-                        <select
-                          v-model="entry.timeInput"
-                          class="form-select input-fixed-width text-end"
-                          :class="{ 'is-invalid': v$.editingEntries[index]?.hours.$error }"
-                          :disabled="entry.isSaving"
-                          @change="formatTimeInputForEntry(entry)"
-                        >
-                          <option v-for="minutes in timeOptions" :key="minutes" :value="formatHours(minutes / 60)">
-                            {{ formatHours(minutes / 60) }}
-                          </option>
-                        </select>
-                        <span class="mx-1">hs</span>
-                      </div>
-                      <div v-if="v$.editingEntries[index]?.hours.$error" class="invalid-feedback d-block">
-                        El tiempo debe ser mayor a 0
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    <div class="d-flex">
-                      <button class="btn btn-link text-muted p-1" @click="cancelEditInline(entry)">
-                        <i class="bi bi-x"></i>
-                      </button>
-                      <button class="btn btn-link text-success p-1" @click="saveEditedEntry(entry, index)">
-                        <div v-if="entry.isSaving" class="spinner-border spinner-border-sm" role="status">
-                          <span class="visually-hidden">Guardando...</span>
-                        </div>
-                        <i v-else class="bi bi-check"></i>
-                      </button>
-                    </div>
-                  </td>
-                </template>
+                <Row
+                  :entry="entry"
+                  :projects="projects"
+                  @edit-entry="startEditEntry(entry)"
+                  @delete-entry="(entry) => deleteTimeEntry(entry)"
+                  @update-entry="(updatedEntry) => updateEntry(updatedEntry, index)"
+                />
               </tr>
 
               <!-- Fila de nuevo registro -->
@@ -300,25 +216,30 @@
 <script>
 import DeleteModal from '@/components/shared/DeleteModal.vue'
 import ProjectsService from '@/services/projects'
+import Row from './time-entries/Row.vue'
 import TimeEntriesService from '@/services/time-entries'
-import { TASK_TYPES } from '@/constants/TaskType'
 import { addDays, endOfWeek, format, isSameDay, isWeekend, parse, startOfWeek, subDays } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { minValue, required } from '@vuelidate/validators'
+import { useFormatHours } from './time-entries/composables/useFormatHours'
+import { useTaskTypes } from '@/composables/constants/taskTypes/useTaskTypes'
 import { useVuelidate } from '@vuelidate/core'
 
 export default {
   components: {
-    DeleteModal
+    DeleteModal,
+    Row
   },
-
   beforeRouteLeave(to, from, next) {
     this.saveCurrentDraftIfHasValidData()
     next()
   },
-
   setup() {
-    return { v$: useVuelidate() }
+    return {
+      v$: useVuelidate(),
+      ...useFormatHours(),
+      ...useTaskTypes()
+    }
   },
   data() {
     return {
@@ -330,9 +251,7 @@ export default {
       weekStart: startOfWeek(new Date(), { weekStartsOn: 1 }),
       weekEnd: endOfWeek(new Date(), { weekStartsOn: 1 }),
       projects: [],
-      taskTypes: TASK_TYPES,
       timeEntries: [],
-      editingEntries: [],
       showEntryForm: false,
       isEditing: false,
       currentEntry: {
@@ -344,7 +263,6 @@ export default {
         timeInput: '',
         entryDate: ''
       },
-      entriesBackup: [],
       unsavedChanges: false,
       isDeleteModalVisible: false,
       entryToDelete: null,
@@ -391,13 +309,6 @@ export default {
         idProject: { required },
         taskType: { required },
         hours: { required, minValue: minValue(0.01) }
-      },
-      editingEntries: {
-        $each: {
-          idProject: { required },
-          taskType: { required },
-          hours: { required, minValue: minValue(0.01) }
-        }
       }
     }
   },
@@ -495,7 +406,6 @@ export default {
       // Limpiar formulario actual
       this.resetCurrentForm()
       this.timeEntries = []
-      this.editingEntries = []
       // Cambiar el día seleccionado
       this.selectedDay = new Date(newDay)
       // Cargar datos del nuevo día
@@ -511,14 +421,6 @@ export default {
     formatDayText(day) {
       return format(day, 'EEE d MMM', { locale: es })
     },
-    formatHours(hours) {
-      if (hours === undefined || hours === null) return '0:00'
-      const numHours = parseFloat(hours)
-      const wholeHours = Math.floor(numHours)
-      const minutes = Math.round((numHours - wholeHours) * 60)
-
-      return `${wholeHours}:${minutes.toString().padStart(2, '0')}`
-    },
 
     parseHours(timeStr) {
       if (!timeStr) return 0
@@ -532,18 +434,6 @@ export default {
 
       this.currentEntry.hours = this.parseHours(timeStr)
     },
-
-    formatTimeInputForEntry(entry) {
-      const timeStr = entry.timeInput || '0:00'
-
-      entry.hours = this.parseHours(timeStr)
-
-      const editIndex = this.timeEntries.findIndex((e) => e.id === entry.id)
-
-      if (editIndex !== -1 && this.editingEntries[editIndex]) {
-        this.editingEntries[editIndex].hours = entry.hours
-      }
-    },
     async loadTimeEntries() {
       // Prevenir llamadas múltiples
       if (this.isLoadingEntries) {
@@ -556,27 +446,18 @@ export default {
       try {
         this.loading = true
         this.timeEntries = []
-        this.editingEntries = []
         const response = await this.timeEntriesService.getTimeEntriesByDate(targetDate)
 
         if (response && response.data.data && Array.isArray(response.data.data)) {
-          this.timeEntries = response.data.data.map((entry) => ({
-            ...entry,
-            isEditing: false,
-            timeInput: this.formatHours(entry.hours),
-            isSaving: false
-          }))
-          this.editingEntries = JSON.parse(JSON.stringify(this.timeEntries))
+          this.timeEntries = response.data.data
         } else {
           this.timeEntries = []
-          this.editingEntries = []
         }
 
         this.checkForDraftForCurrentDay(targetDate)
       } catch (error) {
         console.error('Error al cargar entradas de tiempo:', error)
         this.timeEntries = []
-        this.editingEntries = []
       } finally {
         this.loading = false
         this.isLoadingEntries = false
@@ -600,19 +481,10 @@ export default {
 
       return project ? project.name : 'Proyecto desconocido'
     },
-
-    getTaskDisplayName(key) {
-      const task = TASK_TYPES.find((t) => t.key === key)
-
-      return task ? task.displayName : key
-    },
-
     addNewEntry() {
-      this.cancelAllEditing()
       this.resetCurrentForm()
       this.showEntryForm = true
     },
-
     resetCurrentForm() {
       this.showEntryForm = false
       this.isEditing = false
@@ -630,145 +502,14 @@ export default {
         this.v$.currentEntry.$reset()
       }
     },
-
-    startEditEntry(entry) {
-      this.cancelAllEditing()
-      this.showEntryForm = false
-      this.entriesBackup = JSON.parse(JSON.stringify(this.timeEntries))
-      entry.isEditing = true
-      entry.timeInput = this.formatHours(entry.hours)
-      this.editingEntries = JSON.parse(JSON.stringify(this.timeEntries))
-
-      if (this.v$ && this.v$.editingEntries) {
-        const index = this.timeEntries.findIndex((e) => e.id === entry.id)
-
-        if (index !== -1 && this.v$.editingEntries[index]) {
-          this.v$.editingEntries[index].$reset()
-        }
-      }
-    },
-
-    cancelAllEditing() {
-      if (this.entriesBackup.length > 0) {
-        this.timeEntries = JSON.parse(JSON.stringify(this.entriesBackup))
-        this.entriesBackup = []
-      } else {
-        this.timeEntries.forEach((entry) => {
-          entry.isEditing = false
-        })
-      }
-
-      if (this.v$ && this.v$.editingEntries) {
-        this.v$.editingEntries.$reset()
-      }
-    },
-
-    cancelEditInline(entry) {
-      const originalEntry = this.entriesBackup.find((e) => e.id === entry.id)
-
-      if (originalEntry) {
-        const index = this.timeEntries.findIndex((e) => e.id === entry.id)
-
-        if (index !== -1) {
-          originalEntry.isEditing = false
-          this.timeEntries.splice(index, 1, { ...originalEntry })
-          this.editingEntries[index] = { ...originalEntry }
-        }
-      } else {
-        entry.isEditing = false
-      }
-
-      if (this.v$ && this.v$.editingEntries) {
-        const index = this.timeEntries.findIndex((e) => e.id === entry.id)
-
-        if (index !== -1 && this.v$.editingEntries[index]) {
-          this.v$.editingEntries[index].$reset()
-        }
-      }
-    },
-
-    async saveEditedEntry(entry, index) {
-      if (this.v$.editingEntries[index]) {
-        const result = await this.v$.editingEntries[index].$validate()
-
-        if (!result) {
-          return
-        }
-      }
-
-      this.formatTimeInputForEntry(entry)
-      entry.isSaving = true
-
-      try {
-        const entryData = {
-          idProject: entry.idProject,
-          taskType: entry.taskType,
-          description: entry.description || this.defaultDescription,
-          hours: entry.hours,
-          entryDate: entry.entryDate || this.selectedDateFormatted
-        }
-
-        const response = await this.timeEntriesService.updateTimeEntry(entry.id, entryData)
-
-        if (response && response.data) {
-          entry.isEditing = false
-          this.entriesBackup = []
-          if (this.v$ && this.v$.editingEntries && this.v$.editingEntries[index]) {
-            this.v$.editingEntries[index].$reset()
-          }
-          await this.initializeComponent()
-        }
-      } catch (error) {
-        console.error('Error al guardar entrada de tiempo:', error)
-      } finally {
-        entry.isSaving = false
-      }
-    },
-
     cancelEdit() {
       this.clearDraftForDate(this.selectedDateFormatted)
       this.resetCurrentForm()
     },
 
-    async saveTimeEntry() {
-      const result = await this.v$.currentEntry.$validate()
-
-      if (!result) {
-        return
-      }
-
-      this.formatTimeInput()
-      this.isSavingNewEntry = true
-
-      try {
-        const entryData = {
-          idProject: this.currentEntry.idProject,
-          taskType: this.currentEntry.taskType,
-          description: this.currentEntry.description || this.defaultDescription,
-          hours: this.currentEntry.hours,
-          entryDate: this.currentEntry.entryDate || this.selectedDateFormatted
-        }
-
-        let response
-
-        if (this.isEditing && this.currentEntry.id) {
-          response = await this.timeEntriesService.updateTimeEntry(this.currentEntry.id, entryData)
-        } else {
-          response = await this.timeEntriesService.createTimeEntry(entryData)
-        }
-
-        if (response && response.data) {
-          this.clearDraftForDate(this.selectedDateFormatted)
-          await this.loadTimeEntries()
-          this.resetCurrentForm()
-        }
-      } catch (error) {
-        console.error('Error al guardar entrada de tiempo:', error)
-      } finally {
-        this.isSavingNewEntry = false
-      }
+    async updateEntry(updatedEntry, index) {
+      this.timeEntries[index] = updatedEntry
     },
-
     async deleteTimeEntry(entry) {
       this.entryToDelete = entry
       this.isDeleteModalVisible = true

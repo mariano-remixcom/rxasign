@@ -9,7 +9,7 @@
 </template>
 <script>
 import moment from 'moment'
-import { useGetTaskDisplayName } from '@/composables/constants/useGetTaskDisplayName'
+import { useGetTaskDisplayName } from '@/composables/constants/taskTypes/useGetTaskDisplayName'
 
 export default {
   props: {

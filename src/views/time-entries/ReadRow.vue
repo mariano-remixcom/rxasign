@@ -1,14 +1,14 @@
 <template>
-  <td>{{ entry.projectName }}</td>
+  <td>{{ projectName }}</td>
   <td>{{ getTaskDisplayName(entry.taskType) }}</td>
   <td>{{ entry.description }}</td>
   <td>{{ formatHours(entry.hours) }}</td>
   <td>
     <div class="d-flex">
-      <button class="btn btn-link text-primary p-1" :disabled="isLoadingEntries" @click="startEditEntry(entry)">
+      <button class="btn btn-link text-primary p-1" @click="startEditEntry">
         <i class="bi bi-pencil"></i>
       </button>
-      <button class="btn btn-link text-danger p-1" :disabled="isLoadingEntries" @click="deleteTimeEntry(entry)">
+      <button class="btn btn-link text-danger p-1" @click="deleteTimeEntry">
         <i class="bi bi-trash"></i>
       </button>
     </div>
@@ -16,17 +16,17 @@
 </template>
 <script>
 import { useFormatHours } from './composables/useFormatHours'
-import { useGetTaskDisplayName } from '@/composables/constants/useGetTaskDisplayName'
+import { useGetTaskDisplayName } from '@/composables/constants/taskTypes/useGetTaskDisplayName'
 
 export default {
   props: {
+    projectName: {
+      type: String,
+      required: true
+    },
     entry: {
       type: Object,
       required: true
-    },
-    isLoadingEntries: {
-      type: Boolean,
-      default: false
     }
   },
   emits: ['edit-entry', 'delete-entry'],
@@ -42,11 +42,11 @@ export default {
     }
   },
   methods: {
-    startEditEntry(entry) {
-      this.$emit('edit-entry', entry)
+    startEditEntry() {
+      this.$emit('edit-entry')
     },
-    deleteTimeEntry(entry) {
-      this.$emit('delete-entry', entry)
+    deleteTimeEntry() {
+      this.$emit('delete-entry')
     }
   }
 }
