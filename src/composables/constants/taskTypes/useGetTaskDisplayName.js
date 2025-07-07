@@ -8,7 +8,7 @@ export const useGetTaskDisplayName = function () {
     if (taskDictionary.value) return
 
     taskDictionary.value = TASK_TYPES.reduce((acc, task) => {
-      acc[task.key] = task
+      acc[task.key] = task.displayName
 
       return acc
     }, {})
@@ -17,7 +17,7 @@ export const useGetTaskDisplayName = function () {
   _setup()
 
   const getTaskDisplayName = (key) => {
-    return taskDictionary[key] || key
+    return taskDictionary.value[key] || key
   }
 
   return { getTaskDisplayName }
