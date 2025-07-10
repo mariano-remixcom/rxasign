@@ -9,7 +9,7 @@
 </template>
 <script>
 import moment from 'moment'
-import { TASK_TYPES } from '@/constants/TaskType'
+import { useGetTaskDisplayName } from '@/composables/constants/taskTypes/useGetTaskDisplayName'
 
 export default {
   props: {
@@ -38,6 +38,9 @@ export default {
       required: true
     }
   },
+  setup() {
+    return useGetTaskDisplayName()
+  },
   computed: {
     formattedHours() {
       if (this.hours === undefined || this.hours === null || this.hours === '' || this.hours === 0) {
@@ -49,10 +52,10 @@ export default {
       return `${minutes} min`
     },
     formattedTaskType() {
-      return TASK_TYPES.find((type) => type.key === this.taskType)?.displayName || this.taskType
+      return this.getTaskDisplayName(this.taskType)
     },
     formattedDate() {
-      return moment(this.date).format('DD/MM/YY')
+      return moment(this.date).utc().format('DD/MM/YY')
     }
   }
 }
