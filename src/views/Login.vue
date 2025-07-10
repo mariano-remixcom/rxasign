@@ -3,17 +3,23 @@
     <form class="login-form" @submit.prevent="login">
       <h1><strong>Hola!</strong></h1>
       <p>Ingrese sus datos de acceso para iniciar sesión.</p>
-      <div class="form-group">
+      <div class="form-group custom-form-group">
         <label for="email">Email</label>
         <input id="email" v-model="email" type="email" />
       </div>
-      <div class="form-group">
+      <div class="form-group custom-form-group">
         <label for="password">Password</label>
         <div class="input-password-container">
           <input id="password" v-model="password" :type="showPassword ? 'text' : 'password'" />
           <span class="input-group-text" @click="toggleShowPassword">
             <i :class="showPassword ? 'bi bi-eye' : 'bi bi-eye-slash'"></i>
           </span>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="form-check">
+          <input id="rememberMe" v-model="rememberMe" type="checkbox" class="form-check-input" />
+          <label for="rememberMe" class="form-check-label d-flex"> Recordarme</label>
         </div>
       </div>
       <div class="form-actions">
@@ -34,7 +40,8 @@ export default {
     return {
       email: '',
       password: '',
-      showPassword: false
+      showPassword: false,
+      rememberMe: false
     }
   },
   async mounted() {
@@ -55,12 +62,14 @@ export default {
       const authService = new AuthService()
 
       try {
-        const { data } = await authService.login(this.email, this.password)
+        const { data } = await authService.login(this.email, this.password, this.rememberMe)
         const { setSession } = useSession()
 
         setSession(data)
 
-        this.$router.push({ name: 'Dashboard' })
+        await this.$nextTick()
+
+        this.$router.replace({ name: 'Dashboard' })
       } catch (error) {
         if (error.response && error.response.status === 404) {
           addToast('Usuario o contraseña incorrectos.', 'danger')
@@ -119,12 +128,12 @@ p {
   font-size: 18px;
 }
 
-.form-group {
+.custom-form-group {
   margin-bottom: 20px;
   position: relative;
 }
 
-.form-group label {
+.custom-form-group label {
   display: block;
   font-size: 0.9em;
   color: #837d7d;
@@ -132,7 +141,7 @@ p {
   text-align: left;
 }
 
-.form-group input {
+.custom-form-group input {
   width: 100%;
   padding: 12px;
   border: 1px solid #ccc;
@@ -156,7 +165,7 @@ p {
 }
 
 .input-password-container .input-group-text {
-  padding: 12px;
+  padding: 9px 12px;
   border-left: 1px solid #ccc;
   cursor: pointer;
 }
