@@ -54,7 +54,7 @@
             <p class="card-text text-secondary">Lista de usuarios y administradores del sistema.</p>
           </div>
           <div class="d-flex flex-column flex-sm-row gap-2">
-            <button v-if="isAdminUser" class="btn btn-secondary btn-sm mt-2">Agregar</button>
+            <!-- <button v-if="isAdminUser" class="btn btn-secondary btn-sm mt-2">Agregar</button> -->
             <router-link to="/usuarios">
               <button class="btn btn-primary btn-sm mt-2">Abrir</button>
             </router-link>
