@@ -71,9 +71,7 @@ export default {
 
         this.$router.replace({ name: 'Dashboard' })
       } catch (error) {
-        if (error.response && error.response.status === 404) {
-          addToast('Usuario o contraseña incorrectos.', 'danger')
-        } else if (error.response && error.response.status === 401) {
+        if (error.response && error.response.status === 401) {
           addToast(error.response.data, 'danger')
         } else if (error.response && error.response.status === 500) {
           addToast('Error interno del servidor.', 'danger')

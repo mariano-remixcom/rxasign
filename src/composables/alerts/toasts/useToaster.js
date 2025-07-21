@@ -15,11 +15,21 @@ export function useToaster() {
       delay
     })
     setTimeout(() => removeToast(id), delay + 1000)
+
+    return id
   }
 
   const removeToast = (id) => {
     toasts.value = toasts.value.filter((toast) => toast.id !== id)
   }
 
-  return { toasts, removeToast, addToast }
+  const getToast = (id) => {
+    if (id === undefined || id === null) {
+      return undefined
+    }
+
+    return toasts.value.find((toast) => toast.id === id)
+  }
+
+  return { toasts, removeToast, addToast, getToast }
 }
