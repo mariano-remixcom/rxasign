@@ -5,6 +5,10 @@ export default class ProjectsService {
     return api().post(`/projects`, data)
   }
 
+  getMyProjects() {
+    return api().get(`/projects/user/me`)
+  }
+
   getAllProjects() {
     return api().get(`/projects`)
   }
