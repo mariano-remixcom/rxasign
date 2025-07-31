@@ -163,13 +163,13 @@
                 <td>
                   <div class="d-flex">
                     <button class="btn btn-link text-muted p-1" :disabled="isSavingNewEntry" @click="cancelCreate">
-                      <i class="bi bi-x"></i>
+                      <i class="bi bi-x fs-3"></i>
                     </button>
                     <button class="btn btn-link text-success p-1" :disabled="isSavingNewEntry" @click="saveTimeEntry">
                       <div v-if="isSavingNewEntry" class="spinner-border spinner-border-sm" role="status">
                         <span class="visually-hidden">Guardando...</span>
                       </div>
-                      <i v-else class="bi bi-check"></i>
+                      <i v-else class="bi bi-check fs-3"></i>
                     </button>
                   </div>
                 </td>
@@ -378,7 +378,6 @@ export default {
     },
 
     selectDay(day) {
-      // console.log(`SELECCIONANDO DÍA: ${format(day, 'yyyy-MM-dd')}`)
       // Verificar si necesitamos cambiar la semana visible
       const dayIsInVisibleWeek = this.workingDays.some((workingDay) => isSameDay(new Date(workingDay), new Date(day)))
 
@@ -465,7 +464,7 @@ export default {
 
     async getProjects() {
       try {
-        const response = await this.projectsService.getAllProjects()
+        const response = await this.projectsService.getMyProjects()
 
         if (response && response.data && Array.isArray(response.data)) {
           this.projects = response.data

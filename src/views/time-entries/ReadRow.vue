@@ -5,11 +5,11 @@
   <td>{{ formatHours(entry.hours) }}</td>
   <td>
     <div class="d-flex">
-      <button class="btn btn-link text-primary p-1" @click="startEditEntry">
-        <i class="bi bi-pencil"></i>
+      <button class="btn btn-link text-primary p-2" @click="startEditEntry">
+        <i class="bi bi-pencil fs-5"></i>
       </button>
-      <button class="btn btn-link text-danger p-1" @click="deleteTimeEntry">
-        <i class="bi bi-trash"></i>
+      <button class="btn btn-link text-danger p-2" @click="deleteTimeEntry">
+        <i class="bi bi-trash fs-5"></i>
       </button>
     </div>
   </td>
