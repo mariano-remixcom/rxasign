@@ -44,8 +44,13 @@
                           isSelectedDay(day) ? 'bg-purple text-white fw-semibold' : 'text-secondary cursor-pointer',
                           isLoadingEntries ? 'disabled' : ''
                         ]"
-                        style="min-width: 100px; text-align: center; cursor: pointer"
-                        @click="!isLoadingEntries && selectDay(day)"
+                        :style="{
+                          minWidth: '100px',
+                          textAlign: 'center',
+                          cursor: isFutureDay(day) ? 'not-allowed' : 'pointer',
+                          opacity: isFutureDay(day) ? '0.6' : '1'
+                        }"
+                        @click="!isLoadingEntries && !isFutureDay(day) && selectDay(day)"
                       >
                         {{ formatDayText(day) }}
                       </div>
@@ -83,7 +88,16 @@
                   </div>
                 </td>
               </tr>
-
+              <!-- Mensaje para días futuros -->
+              <tr v-else-if="isFutureDay(selectedDay)">
+                <td colspan="5" class="text-center py-4">
+                  <div class="text-muted">
+                    <i class="bi bi-calendar-x fs-1 mb-2 d-block"></i>
+                    <h6>No puedes registrar horas en días futuros</h6>
+                    <p class="mb-0">Selecciona el día de hoy o un día anterior para registrar tus horas.</p>
+                  </div>
+                </td>
+              </tr>
               <!-- Sin registros - mensaje -->
               <tr v-else-if="timeEntries.length === 0">
                 <td colspan="5" class="text-center py-4">
@@ -218,7 +232,7 @@ import DeleteModal from '@/components/shared/DeleteModal.vue'
 import ProjectsService from '@/services/projects'
 import Row from './time-entries/Row.vue'
 import TimeEntriesService from '@/services/time-entries'
-import { addDays, endOfWeek, format, isSameDay, isWeekend, parse, startOfWeek, subDays } from 'date-fns'
+import { addDays, endOfWeek, format, isAfter, isSameDay, isWeekend, parse, startOfDay, startOfWeek, subDays } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { minValue, required } from '@vuelidate/validators'
 import { useFormatHours } from './time-entries/composables/useFormatHours'
@@ -330,6 +344,13 @@ export default {
   },
 
   methods: {
+    isFutureDay(day) {
+      if (!day) return false
+      const today = startOfDay(new Date())
+      const dayToCheck = startOfDay(new Date(day))
+
+      return isAfter(dayToCheck, today)
+    },
     handleBeforeUnload(event) {
       this.saveCurrentDraftIfHasValidData()
     },
@@ -378,6 +399,10 @@ export default {
     },
 
     selectDay(day) {
+      // No permitir seleccionar días futuros
+      if (this.isFutureDay(day)) {
+        return
+      }
       // Verificar si necesitamos cambiar la semana visible
       const dayIsInVisibleWeek = this.workingDays.some((workingDay) => isSameDay(new Date(workingDay), new Date(day)))
 
@@ -444,15 +469,17 @@ export default {
       try {
         this.loading = true
         this.timeEntries = []
-        const response = await this.timeEntriesService.getTimeEntriesByDate(targetDate)
+        if (!this.isFutureDay(this.selectedDay)) {
+          const response = await this.timeEntriesService.getTimeEntriesByDate(targetDate)
 
-        if (response && response.data.data && Array.isArray(response.data.data)) {
-          this.timeEntries = response.data.data
-        } else {
-          this.timeEntries = []
+          if (response && response.data.data && Array.isArray(response.data.data)) {
+            this.timeEntries = response.data.data
+          } else {
+            this.timeEntries = []
+          }
+
+          this.checkForDraftForCurrentDay(targetDate)
         }
-
-        this.checkForDraftForCurrentDay(targetDate)
       } catch (error) {
         console.error('Error al cargar entradas de tiempo:', error)
         this.timeEntries = []
@@ -480,6 +507,10 @@ export default {
       return project ? project.name : 'Proyecto desconocido'
     },
     addNewEntry() {
+      // No permitir agregar entradas en días futuros
+      if (this.isFutureDay(this.selectedDay)) {
+        return
+      }
       this.resetCurrentForm()
       this.showEntryForm = true
     },
@@ -615,6 +646,15 @@ export default {
           return false
         }
 
+        // Verificar si el borrador es de un día futuro, si es así, no restaurarlo
+        const draftDate = parse(selectedDate, 'yyyy-MM-dd', new Date())
+
+        if (this.isFutureDay(draftDate)) {
+          this.clearDraftForDate(lastDraftDate)
+
+          return false
+        }
+
         this.selectedDay = parse(selectedDate, 'yyyy-MM-dd', new Date())
         if (weekStart && weekEnd) {
           this.weekStart = new Date(weekStart)
@@ -652,6 +692,14 @@ export default {
 
           return
         }
+
+        // No mostrar borrador si es un día futuro
+        if (this.isFutureDay(this.selectedDay)) {
+          this.clearDraftForDate(dateToCheck)
+
+          return
+        }
+
         if (dateToCheck === this.selectedDateFormatted) {
           this.currentEntry = {
             ...entry,
