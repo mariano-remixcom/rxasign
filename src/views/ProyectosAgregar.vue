@@ -63,6 +63,7 @@ export default {
       try {
         const response = await new ProjectsService().createProject({
           name: this.project.name,
+          description: this.project.description ? this.project.description : null,
           monthlyContractedHours: this.project.monthlyContractedHours,
           startDate: new Date(this.project.startDate),
           endDate: this.project.endDate ? new Date(this.project.endDate) : null,

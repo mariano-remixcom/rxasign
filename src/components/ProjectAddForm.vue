@@ -47,6 +47,23 @@
           </div>
         </div>
 
+        <div class="mb-3 row align-items-start">
+          <div class="col-12 col-md-4 d-flex flex-column">
+            <label for="descripcion" class="h6 mb-0">Descripción</label>
+            <small>Descripción del proyecto</small>
+          </div>
+          <div class="col-12 col-md-8">
+            <textarea
+              id="descripcion"
+              v-model="project.description"
+              class="form-control bg-white"
+              rows="4"
+              placeholder="Ingresá una descripción general del proyecto, cliente o necesidades específicas"
+              @input="updateData"
+            ></textarea>
+          </div>
+        </div>
+
         <!-- Horas -->
         <div class="mb-3 row align-items-center">
           <div class="col-12 col-md-4 d-flex flex-column">
@@ -169,6 +186,7 @@ export default {
         id: 0,
         idClient: '',
         name: '',
+        description: '',
         monthlyContractedHours: '',
         startDate: '',
         endDate: '',
@@ -223,6 +241,7 @@ export default {
     if (this.projectEdit) {
       this.project.id = this.projectEdit.id
       this.project.name = this.projectEdit.name
+      this.project.description = this.projectEdit.description || ''
       this.project.monthlyContractedHours = this.projectEdit.monthlyContractedHours
       this.project.idClient = this.projectEdit.client.id
       this.project.startDate = this.formatDate(this.projectEdit.startDate, 'isoDate')

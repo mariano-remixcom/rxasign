@@ -53,6 +53,16 @@
     </div>
   </div>
 
+  <!-- Descripción del proyecto -->
+  <div v-if="proyecto.description" class="px-3 py-1">
+    <div class="mb-2">
+      <div class="text-muted">
+        <small>Descripción:</small>
+      </div>
+      <div class="text-dark" style="white-space: pre-wrap">{{ proyecto.description }}</div>
+    </div>
+  </div>
+
   <!-- Toast -->
   <div
     v-if="showToast"
@@ -124,6 +134,7 @@ export default {
         id: 0,
         idClient: '',
         name: '',
+        description: '',
         monthlyContractedHours: 0,
         startDate: '',
         endDate: ''
@@ -165,6 +176,7 @@ export default {
       try {
         await new ProjectsService().updateProject(this.editForm.id, {
           name: this.editForm.name,
+          description: this.editForm.description,
           monthlyContractedHours: this.editForm.monthlyContractedHours,
           startDate: new Date(this.editForm.startDate),
           endDate: this.editForm.endDate ? new Date(this.editForm.endDate) : null,
@@ -220,6 +232,13 @@ export default {
   .row {
     margin-left: 0;
     margin-right: 0;
+  }
+  .section-header-secondary {
+    background-color: #f8f9fa;
+    padding: 0.5rem 1rem;
+    border-left: 4px solid #007bff;
+    font-weight: 600;
+    color: #495057;
   }
 }
 </style>
