@@ -51,3 +51,8 @@ export default {
   }
 }
 </script>
+<style scoped>
+td {
+  padding: 0.75rem;
+}
+</style>
