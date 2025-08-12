@@ -55,13 +55,13 @@
   <td>
     <div class="d-flex">
       <button class="btn btn-link text-muted p-1" @click="cancelEditInline()">
-        <i class="bi bi-x"></i>
+        <i class="bi bi-x fs-3"></i>
       </button>
       <button class="btn btn-link text-success p-1" @click="onFormSubmit()">
         <div v-if="isSaving" class="spinner-border spinner-border-sm" role="status">
           <span class="visually-hidden">Guardando...</span>
         </div>
-        <i v-else class="bi bi-check"></i>
+        <i v-else class="bi bi-check fs-3"></i>
       </button>
     </div>
   </td>
@@ -167,6 +167,7 @@ export default {
 <style scoped>
 .input-fixed-width {
   width: 90px;
+  max-width: 90px;
 }
 
 /* Animación suave para el spinner en el total */
@@ -196,5 +197,9 @@ export default {
 /* Personalizar el color del spinner principal */
 .spinner-border {
   color: #6f42c1 !important; /* Color púrpura para mantener consistencia */
+}
+
+td {
+  padding: 0.75rem;
 }
 </style>
