@@ -88,6 +88,14 @@ const routes = [
     meta: {
       layout: LoginLayout
     }
+  },
+  {
+    path: '/valores',
+    name: 'Valores',
+    component: () => import(/* webpackChunkName: "usuarios" */ '../views/Valores.vue'),
+    meta: {
+      layout: DefaultLayout
+    }
   }
 ]
 
