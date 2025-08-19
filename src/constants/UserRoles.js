@@ -34,5 +34,13 @@ export const USER_ROLES = [
   {
     key: 'MarketingAndSalesManager',
     displayName: 'Marketing and Sales Manager'
+  },
+  {
+    key: 'Infrastructure',
+    displayName: 'Infrastructure'
+  },
+  {
+    key: 'DataAnalytics',
+    displayName: 'Data Analytics'
   }
 ]
