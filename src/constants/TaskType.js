@@ -8,6 +8,10 @@ export const TASK_TYPES = [
     displayName: 'Capacitación'
   },
   {
+    key: 'Contabilidad',
+    displayName: 'Contabilidad'
+  },
+  {
     key: 'Daily',
     displayName: 'Daily'
   },
