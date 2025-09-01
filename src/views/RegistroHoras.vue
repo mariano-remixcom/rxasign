@@ -769,9 +769,6 @@ select {
 .table td {
   padding: 0.75rem;
 }
-.input-fixed-width {
-  width: 80px;
-}
 .bg-purple {
   background-color: #5227cc !important;
 }
@@ -795,7 +792,8 @@ select {
 
 /* Ancho fijo para el campo de tiempo */
 .input-fixed-width {
-  max-width: 80px;
+  width: 90px;
+  max-width: 90px;
 }
 
 /* Color de fondo para día seleccionado */
