@@ -28,5 +28,12 @@ export default defineConfig({
         additionalData: `@import "./src/scss/variables";`
       }
     }
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    coverage: {
+      provider: 'v8'
+    }
   }
 })
