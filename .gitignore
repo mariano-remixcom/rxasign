@@ -1,7 +1,6 @@
 .DS_Store
 node_modules
 dist
-coverage/**
 
 # local env files
 .env.local
@@ -25,3 +24,4 @@ pnpm-debug.log*
 # Custom ignores
 .editorconfig
 .prettierrc
+coverage/**
