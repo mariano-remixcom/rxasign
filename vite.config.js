@@ -25,8 +25,18 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
-        additionalData: `@import "./src/scss/variables";`
+        additionalData: `@import "@/scss/variables";`,
+        // Remove deprecation warnings from bootstrap 5
+        // Apparently, it's gonna be fixed in Bootstrap 6. Reenable if updated
+        silenceDeprecations: ['mixed-decls', 'color-functions', 'global-builtin', 'import']
       }
+    }
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    coverage: {
+      provider: 'v8'
     }
   }
 })

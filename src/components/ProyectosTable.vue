@@ -21,7 +21,7 @@
           </tr>
 
           <!-- Mostrar proyectos si existen -->
-          <tr v-for="item in projects" v-else :key="item.id">
+          <tr v-for="item in projects" v-else :id="'row' + item.id" :key="item.id">
             <td data-label="Nombre">
               <a class="link pointer" @click="goToVerProyecto(item.id)">{{ item.name }}</a>
             </td>
