@@ -5,6 +5,9 @@
   "license": "MIT",
   "repository": "https://github.com/kouts/vue3-vite-starter-template",
   "private": true,
+  "engines": {
+    "node": "20.19.6"
+  },
   "scripts": {
     "dev": "vite",
     "serve": "vite preview",
