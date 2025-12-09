@@ -66,6 +66,14 @@ const routes = [
     }
   },
   {
+    path: '/agregar',
+    name: 'Agregar Usuario',
+    component: () => import(/* webpackChunkName: "proyectosagregar" */ '../views/UsuariosAgregar.vue'),
+    meta: {
+      layout: FormsLayout
+    }
+  },
+  {
     path: '/login',
     name: 'Login',
     component: () => import(/* webpackChunkName: "login" */ '../views/Login.vue'),

@@ -32,4 +32,13 @@ export default class UsersService {
   updateUser(id, data) {
     return api().patch(`/users/${id}`, data)
   }
+
+  async createUser(userData) {
+    try {
+      return api().post(`users/create`, userData)
+    } catch (error) {
+      console.error('Error creating user:', error)
+      throw error
+    }
+  }
 }
