@@ -38,6 +38,9 @@
           <li class="nav-item">
             <router-link to="/usuarios" class="nav-link" @click="collapseNavbar">Usuarios</router-link>
           </li>
+          <li class="nav-item">
+            <router-link to="/valores" class="nav-link" @click="collapseNavbar">Valores</router-link>
+          </li>
         </ul>
       </div>
 
