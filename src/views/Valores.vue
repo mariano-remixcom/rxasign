@@ -7,8 +7,10 @@
             <div class="hero-text">
               <h1 class="display-4 fw-bold text-dark mb-4">Sobre Remix</h1>
               <p class="text-muted mb-0">
-                Remix es una empresa que se apoya en encontrar entre las características y la funcionalidad a las disposiciones
-                remix.
+                Fortalecemos organizaciones a través de transformaciones profundas. Somos especialistas en la gestión,
+                producción y ejecución de proyectos complejos. <br /><br />
+                Trabajamos con una mirada innovadora enfocada en la escalabilidad y agilidad como buenas prácticas, gracias a
+                nuestros +10 años de experiencia en Startups y el desarrollo de productos y soluciones integrales.
               </p>
             </div>
           </div>
@@ -37,7 +39,8 @@
             <div class="value-card text-start header-card">
               <h2 class="display-5 fw-bold text-dark mb-3">Nuestros valores</h2>
               <p class="text-muted mb-0">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.
+                Remix es una empresa que se apoya en encontrar entre las características y la funcionalidad a las disposiciones
+                remix.
               </p>
             </div>
           </div>
@@ -64,7 +67,7 @@
               <div class="value-icon mb-4">
                 <img :src="valor3" alt="Improvement icon" class="icon-image" width="250" height="142" />
               </div>
-              <h5 class="fw-semibold text-dark">Actuamos con coherencia</h5>
+              <h5 class="fw-semibold text-dark">Lo mejor para cada proyecto es también lo mejor para nosotros</h5>
             </div>
           </div>
 
@@ -87,14 +90,14 @@
           </div>
         </div>
 
-        <div class="row">
+        <!-- <div class="row">
           <div class="col-12">
             <div class="cta-buttons text-center">
               <button class="btn btn-primary me-3">Link</button>
               <button class="btn btn-outline-primary">Link</button>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
     </section>
   </div>
@@ -166,18 +169,22 @@ $font-weight-bold: 700;
 
 .hero-text {
   h1 {
-    font-size: 52px;
+    font-size: 54px;
     font-weight: $font-weight-bold;
-    line-height: 1.2;
+    line-height: 1.25; // un poco más aire
+    letter-spacing: -0.5px; // más moderno
     color: $gray-800;
-    margin-bottom: 24px;
+    margin-bottom: 28px;
+    font-family: Inter, sans-serif;
   }
 
   p {
-    font-size: 15px;
-    line-height: 1.5;
-    color: $gray;
-    font-weight: $font-weight-normal;
+    font-size: 17px; // un toque más grande
+    line-height: 1.7; // mucho más agradable de leer
+    color: $gray-600;
+    font-weight: 400;
+    font-family: Inter, sans-serif;
+    max-width: 720px; // para evitar líneas muy largas
   }
 }
 
@@ -338,11 +345,12 @@ $font-weight-bold: 700;
 }
 
 .text-muted {
-  color: #adb5bd !important;
+  color: #6f767c !important; // un gris más suave
   font-family: Inter !important;
-  font-size: 14px !important;
+  font-size: 17px !important;
   font-weight: 400 !important;
-  line-height: 100% !important;
+  line-height: 1.6 !important; // ARMONÍA
+  letter-spacing: 0.2px !important; // microairado
 }
 
 .value-card h5.fw-semibold {
