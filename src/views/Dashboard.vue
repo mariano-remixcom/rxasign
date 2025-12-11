@@ -43,7 +43,7 @@
     </div>
 
     <!-- inicio card usuarios -->
-    <div class="row justify-content-center mb-3">
+    <div v-if="session && session.type === 'ADMIN'" class="row justify-content-center mb-3">
       <div class="card bg-white col-12 col-md-8 col-lg-6">
         <div class="card-body d-flex flex-column flex-sm-row align-items-center">
           <div class="icon-column text-primary mb-3 mb-sm-0">
@@ -54,7 +54,7 @@
             <p class="card-text text-secondary">Lista de usuarios y administradores del sistema.</p>
           </div>
           <div class="d-flex flex-column flex-sm-row gap-2">
-            <router-link v-if="isAdminUser" to="/agregar">
+            <router-link to="/agregar">
               <button class="btn btn-secondary btn-sm mt-2">Agregar</button>
             </router-link>
             <router-link to="/usuarios">

@@ -35,7 +35,7 @@
           <li v-if="isAdminUser" class="nav-item">
             <router-link to="/horas" class="nav-link" @click="collapseNavbar">Gestión de Horas</router-link>
           </li>
-          <li class="nav-item">
+          <li v-if="isAdminUser" class="nav-item">
             <router-link to="/usuarios" class="nav-link" @click="collapseNavbar">Usuarios</router-link>
           </li>
           <li class="nav-item">
