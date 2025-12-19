@@ -1,6 +1,5 @@
 import Dashboard from '@/views/Dashboard.vue'
 import { RouterLinkStub, shallowMount } from '@vue/test-utils'
-import { afterEach, describe, expect, it, vi } from 'vitest'
 import { useSetupSession } from '@/composables/session/useSetupSession'
 
 vi.mock('@/composables/session/useSetupSession', () => ({

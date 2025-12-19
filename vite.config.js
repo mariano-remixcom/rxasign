@@ -31,12 +31,5 @@ export default defineConfig({
         silenceDeprecations: ['mixed-decls', 'color-functions', 'global-builtin', 'import']
       }
     }
-  },
-  test: {
-    globals: true,
-    environment: 'jsdom',
-    coverage: {
-      provider: 'v8'
-    }
   }
 })
