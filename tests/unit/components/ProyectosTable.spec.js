@@ -1,5 +1,4 @@
 import ProyectosTable from '@/components/ProyectosTable.vue'
-import { beforeEach, expect, vi } from 'vitest'
 import { flushPromises, shallowMount } from '@vue/test-utils'
 
 const PROJECTS = [
@@ -81,8 +80,6 @@ describe('ProyectosTable.vue', () => {
     })
 
     await flushPromises()
-
-    console.log(wrapper.vm.projects)
 
     expect(wrapper.text()).toContain('Aún no hay proyectos cargados')
   })

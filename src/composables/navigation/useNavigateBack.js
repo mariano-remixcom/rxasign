@@ -7,8 +7,6 @@ export function useNavigateBack() {
   const router = useRouter()
 
   const goBack = () => {
-    console.log(window.history.length)
-    console.log(localHistory.value)
     if (localHistory.value > 1) {
       router.go(-1)
     } else {

@@ -1,3 +1,4 @@
+import { EXCLUDED_URLS } from '@/services/interceptors/excluded-urls.const'
 import { router } from '@/router/index'
 import { useSession } from '@/composables/session/useSession'
 import { useToaster } from '@/composables/alerts/toasts/useToaster'
@@ -5,7 +6,6 @@ import { useToaster } from '@/composables/alerts/toasts/useToaster'
 let toastId = null
 
 export async function checkSessionExpired(error) {
-  const EXCLUDED_URLS = ['/auth/login', '/auth/request-password-reset']
   const BASE_URL = import.meta.env.VITE_HOST_API
 
   if (EXCLUDED_URLS.some((url) => `${BASE_URL}${url}` === error.request.responseURL)) {
