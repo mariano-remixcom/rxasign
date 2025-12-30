@@ -9,8 +9,8 @@ const history = createWebHistory()
 const routes = [
   {
     path: '/',
-    name: 'Dashboard',
-    component: () => import(/* webpackChunkName: "dashboard" */ '../views/Dashboard.vue'),
+    name: 'Valores',
+    component: () => import(/* webpackChunkName: "dashboard" */ '../views/Valores.vue'),
     meta: {
       layout: DefaultLayout
     }
@@ -95,14 +95,6 @@ const routes = [
     component: () => import(/* webpackChunkName: "restablecer" */ '../views/PasswordReset.vue'),
     meta: {
       layout: LoginLayout
-    }
-  },
-  {
-    path: '/valores',
-    name: 'Valores',
-    component: () => import(/* webpackChunkName: "usuarios" */ '../views/Valores.vue'),
-    meta: {
-      layout: DefaultLayout
     }
   }
 ]
