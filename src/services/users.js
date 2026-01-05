@@ -34,11 +34,6 @@ export default class UsersService {
   }
 
   async createUser(userData) {
-    try {
-      return api().post(`users/create`, userData)
-    } catch (error) {
-      console.error('Error creating user:', error)
-      throw error
-    }
+    return api().post(`users/create`, userData)
   }
 }
