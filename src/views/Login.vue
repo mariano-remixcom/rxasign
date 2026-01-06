@@ -48,7 +48,7 @@ export default {
     const { isAuthenticated } = useSession()
 
     if (await isAuthenticated()) {
-      this.$router.push({ name: 'Dashboard' })
+      this.$router.push({ name: 'Valores' })
     }
   },
   methods: {
@@ -69,7 +69,7 @@ export default {
 
         await this.$nextTick()
 
-        this.$router.replace({ name: 'Dashboard' })
+        this.$router.replace({ name: 'Valores' })
       } catch (error) {
         if (error.response && error.response.status === 401) {
           addToast(error.response.data, 'danger')
