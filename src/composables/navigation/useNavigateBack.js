@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
-const localHistory = ref(0)
+export const localHistory = ref(0)
 
 export function useNavigateBack() {
   const router = useRouter()
