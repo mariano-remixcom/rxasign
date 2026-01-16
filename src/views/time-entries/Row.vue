@@ -1,8 +1,10 @@
 <template>
   <ReadRow
     v-if="!isEditing"
+    id="read-row-component"
     :entry="entry"
     :project-name="projectName"
+    @repeat-task="repeatTask"
     @edit-entry="startEditEntry"
     @delete-entry="deleteTimeEntry"
   />
@@ -29,7 +31,7 @@ export default {
       required: true
     }
   },
-  emits: ['edit-entry', 'delete-entry', 'update-entry'],
+  emits: ['repeat-task', 'edit-entry', 'delete-entry', 'update-entry'],
   data() {
     return {
       isEditing: false
@@ -48,6 +50,9 @@ export default {
         return
       }
       entry.hours = parseFloat(entry.timeInput)
+    },
+    repeatTask() {
+      this.$emit('repeat-task', this.entry)
     },
     startEditEntry() {
       this.isEditing = true

@@ -5,6 +5,9 @@
   <td>{{ formatHours(entry.hours) }}</td>
   <td>
     <div class="d-flex">
+      <button id="repeat-task" class="btn btn-link text-primary p-2" @click="repeatTask">
+        <i class="bi bi-clock fs-5"></i>
+      </button>
       <button class="btn btn-link text-primary p-2" @click="startEditEntry">
         <i class="bi bi-pencil fs-5"></i>
       </button>
@@ -42,6 +45,9 @@ export default {
     }
   },
   methods: {
+    repeatTask() {
+      this.$emit('repeat-task')
+    },
     startEditEntry() {
       this.$emit('edit-entry')
     },

@@ -212,6 +212,7 @@
         </div>
       </div>
     </div>
+    <RepeatTaskModal />
     <DeleteModal
       :is-visible="isDeleteModalVisible"
       title="Eliminar"
@@ -230,6 +231,7 @@
 <script>
 import DeleteModal from '@/components/shared/DeleteModal.vue'
 import ProjectsService from '@/services/projects'
+import RepeatTaskModal from './time-entries/RepeatTaskModal.vue'
 import Row from './time-entries/Row.vue'
 import TimeEntriesService from '@/services/time-entries'
 import { addDays, endOfWeek, format, isAfter, isSameDay, isWeekend, parse, startOfDay, startOfWeek, subDays } from 'date-fns'
@@ -242,7 +244,8 @@ import { useVuelidate } from '@vuelidate/core'
 export default {
   components: {
     DeleteModal,
-    Row
+    Row,
+    RepeatTaskModal
   },
   beforeRouteLeave(to, from, next) {
     this.saveCurrentDraftIfHasValidData()
