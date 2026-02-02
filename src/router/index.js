@@ -96,6 +96,14 @@ const routes = [
     meta: {
       layout: LoginLayout
     }
+  },
+  {
+    path: '/daily',
+    name: 'DailyReport',
+    component: () => import(/* webpackChunkName: "daily" */ '../views/daily/DailyReport.vue'),
+    meta: {
+      layout: DefaultLayout
+    }
   }
 ]
 

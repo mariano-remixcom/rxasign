@@ -36,4 +36,8 @@ export default class UsersService {
   async createUser(userData) {
     return api().post(`users/create`, userData)
   }
+
+  getDailyUsers() {
+    return api().get('/users/daily-users')
+  }
 }

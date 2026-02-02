@@ -38,6 +38,9 @@
           <li v-if="isAdminUser" class="nav-item">
             <router-link to="/usuarios" class="nav-link" @click="collapseNavbar">Usuarios</router-link>
           </li>
+          <li class="nav-item">
+            <router-link to="/daily" class="nav-link" @click="collapseNavbar">Daily Report</router-link>
+          </li>
         </ul>
       </div>
 
