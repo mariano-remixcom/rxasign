@@ -29,6 +29,7 @@
     "date-fns": "^4.1.0",
     "moment": "^2.30.1",
     "vue": "^3.3.4",
+    "vue-fortune-wheel": "^2.1.0",
     "vue-router": "^4.2.2"
   },
   "devDependencies": {

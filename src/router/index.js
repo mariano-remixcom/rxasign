@@ -104,6 +104,22 @@ const routes = [
     meta: {
       layout: DefaultLayout
     }
+  },
+  {
+    path: '/ruleta',
+    name: 'Ruleta',
+    component: () => import(/* webpackChunkName: "daily" */ '../views/daily/Ruleta.vue'),
+    meta: {
+      layout: DefaultLayout
+    }
+  },
+  {
+    path: '/monthly',
+    name: 'MonthlyReport',
+    component: () => import(/* webpackChunkName: "daily" */ '../views/daily/MonthlyReport.vue'),
+    meta: {
+      layout: DefaultLayout
+    }
   }
 ]
 

@@ -24,8 +24,4 @@ export default class ProjectsService {
   deleteProject(id) {
     return api().delete(`/projects/${id}`)
   }
-
-  getActiveProjects() {
-    return api().get(`/projects/active`)
-  }
 }
