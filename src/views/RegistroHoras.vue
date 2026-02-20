@@ -212,7 +212,7 @@
         </div>
       </div>
     </div>
-    <RepeatTaskModal />
+    <RepeatTaskModal :task="{ type: 'Test', description: 'test' }" />
     <DeleteModal
       :is-visible="isDeleteModalVisible"
       title="Eliminar"
